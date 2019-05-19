@@ -1,0 +1,47 @@
+ <!DOCTYPE html>
+ <title>AWESOME BROUGHLIKE</title>
+   <style>
+   canvas{
+       outline: 1px solid white;
+   }
+
+   body{
+       background-color: seagreen;
+       text-align: center;
+       margin-top: 50px;
+   }
+</style>
+
+<canvas></canvas>
+   <script src="js/game.js"></script>
+   <script src="js/map.js"></script>
+   <script src="js/tile.js"></script>
+   <script src="js/monster.js"></script>
+   <script src="js/util.js"></script>
+   <script src="js/spell.js"></script>
+<script>
+	   const tileSize = 64;
+       const numTiles = 9;
+       const uiWidth = 4;
+
+  let x = y = 0;
+  let spritesheet = new Image();
+  spritesheet.src = 'spritesheet.png';
+
+   document.querySelector("html").onkeypress = function(e){
+       if(e.which==119) y--;       //W
+       if(e.which==115) y++;       //S
+       if(e.which== 97) x--;       //A
+       if(e.which==100) x++;       //D
+   };
+
+   setInterval(draw, 15);
+
+   setupCanvas();
+
+	generateLevel();
+
+  let startingTile = randomPassableTile();
+  x = startingTile.x;
+  y = startingTile.y;
+</script>

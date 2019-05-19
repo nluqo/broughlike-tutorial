@@ -1,0 +1,149 @@
+html, body{
+	margin: 0;
+	padding: 0;
+	color: #222222;
+}
+
+.centered{
+	text-align: center;
+}
+
+a{
+	text-decoration: none;
+	color: #aa00ff;
+}
+
+img{
+	margin: 0 auto;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+
+h1, h2, h3{
+	font-family: Helvetica, Arial, Sans-serif;
+	color: #40424C;
+}
+
+h2, h3{
+	margin-bottom: 10px;
+}
+
+p{
+	font-family: Georgia, Serif;
+}
+
+#outer{
+	max-width: 1000px;
+	margin: 0 auto;
+	font-size: 20px;
+	padding-bottom: 50px;
+}
+
+#outer pre{
+	margin: 0;
+}
+
+.code-container-inline, .code-container{
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 7px 0;
+	margin: 10px 0;
+}
+
+.code-container-inline.inline{
+	padding: 2px 5px;
+	text-align: center;
+	vertical-align: top;
+}
+
+.code-container-inline{
+	display: inline-flex;
+	flex-direction: column;
+	margin: 0 0 5px 0;
+}
+
+.code-container{
+	display: flex;
+	flex-direction: column;
+}
+
+#outer pre code{
+	padding: 0 30px 0 0;
+	font-size: 14px;
+	/*text-shadow: 1px 1px 0px black;*/
+}
+
+#outer .inline pre code{
+	padding: 0;
+}
+
+#outer .code-container-inline:not(.inline) pre code:first-line, #outer .code-container pre code:first-line{
+	line-height: 0;
+}
+
+#outer pre code.add{
+	background-color: #DAF7DE;
+}
+
+#outer pre code.remove{
+	background-color: #F5D4D4;
+}
+
+
+#outer pre code.remove, #outer pre code.remove *{
+	/*color: white !important;*/
+	/*filter: invert(1);*/
+}
+
+.remove .diff{
+	color: #C10000;
+}
+
+
+
+
+.add .diff{
+	color: #006E03;
+}
+
+.filename{
+	color: #777;
+	font-size: 16px;
+	font-weight: bold;
+	font-family: monospace;
+	margin-top: 15px;
+	text-align: right;
+	margin-bottom: -5px;
+}
+
+img{
+	margin: 15px auto;
+	display: block;
+}
+
+.screen{
+	border-radius: 3px;
+	box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.drawing-section{
+	background-color: #DAE5E7;
+	border: 3px solid #53575C;
+	border-radius: 10px;
+	padding: 10px;
+}
+.drawing-section img{
+	margin: 10px 20px 20px 20px;
+}
+
+.drawing-section li{
+	padding: 10px;
+	font-size: .9em;
+}
+
+.noselect{
+	user-select: none;
+}

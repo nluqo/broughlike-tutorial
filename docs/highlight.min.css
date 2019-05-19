@@ -1,0 +1,130 @@
+.hljs{
+	display:block;
+	overflow-x:auto;
+	padding:0.5em;
+}
+/*
+
+#232224;
+#656f78;
+#434346;
+
+#007cff;
+#835c1d;
+#8a00a3;
+#ff3ac1;
+#001978;
+#006405;
+#ff6f00;
+*/
+
+body{
+	--color-default: #007CCA;
+	--color-comment: #929EA8;
+	--color-string: #6A0638;
+	--color-addition: #5200A5;
+	--color-meta: #B1B061;
+
+	--color-tag: #B34DBC;
+	--color-keyword: #FF45D1;
+	--color-name: #FF45D1;
+	--color-attribute: #FF80E0;
+	--color-params: #499901;
+	--color-number: #B32600;
+
+	/* no idea */
+	--color-title: red; 
+	--color-variable: red;
+	--color-literal: red;
+	--color-metastring: red;
+}
+
+body .remove, body .add, body .greyCode{/*
+
+	--color-default: #f8f8f2;
+	--color-comment: #888888;
+	--color-string: #ac80e8;
+	--color-title: #880000;
+	--color-variable: #BC6060;
+	--color-literal: #78A960;
+	--color-addition: #56d8ef;
+	--color-meta: #1f7199;
+	--color-metastring: #4d99bf;
+
+	--color-tag: #f8f8f2;
+	--color-keyword: #f92472;
+	--color-attribute: #98e22a;
+	--color-name: #f92472;
+	--color-params: #fd9622;
+	--color-number: #ac80ff;*/
+}
+
+.hljs,.hljs-subst{
+	color: var(--color-default);
+}
+
+.hljs-params{
+	color: var(--color-params);
+}
+
+.hljs-comment{
+	color: var(--color-comment);
+}
+
+.hljs-name{
+	color: var(--color-name);
+}
+
+.hljs-keyword,.hljs-selector-tag,.hljs-meta-keyword,.hljs-doctag{
+	font-weight: bold;
+	color: var(--color-keyword);
+}
+
+.hljs-attribute, .hljs-attr{
+	color: var(--color-attribute);
+}
+
+.hljs-type,.hljs-string,.hljs-selector-id,.hljs-selector-class,.hljs-quote,.hljs-template-tag,.hljs-deletion{
+	color: var(--color-string);
+}
+
+.hljs-number{
+	color: var(--color-number);
+}
+
+.hljs-tag{
+	color: var(--color-tag);
+}
+
+.hljs-title,.hljs-section{
+	color: var(--color-title);
+	font-weight:bold
+}
+
+.hljs-regexp,.hljs-symbol,.hljs-variable,.hljs-template-variable,.hljs-link,.hljs-selector-attr,.hljs-selector-pseudo{
+	color: var(--color-variable);
+}
+
+.hljs-literal{
+	color: var(--color-literal);
+}
+
+.hljs-built_in,.hljs-bullet,.hljs-code,.hljs-addition, .hljs-function{
+	color: var(--color-addition);
+}
+
+.hljs-meta{
+	color: var(--color-meta);
+}
+
+.hljs-metastring{
+	color: var(--color-metastring);
+}
+
+.hljs-emphasis{
+	font-style:italic
+}
+
+.hljs-strong{
+	font-weight:bold
+}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Broughlike tutorial - Stage 0</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <div id="outer">
+        <h1>Drawing to the screen</h1>
+        You should already everything you need installed: a browser, a text editor, and an image editor. The apps that I'm going to use and that I recommend are Google Chrome, Sublime Text, and <a href="https://www.gimp.org/" target="_blank">GIMP</a>.
+        <h2>Getting started</h2>
+        First open your text editor and create a file called <em>index.html</em>, type in
+        <div class="code-container-inline inline"><pre><code class="html inline">Hello World!</code></pre></div>,
+        and save the file.
+        <br><br>
+        Open the file in your chosen browser. Be aware that this isn't valid HTML but the browser will render it just fine anyway.
+        <img class="screen" src="screens/helloworld.png">
+        <br><br>
+        Let's replace our "Hello World!" text with the next 6 lines, which are all you need to draw to the screen:
+        <div class="code-container"><pre><code id="contentA" class="html"></code></pre></div>
+        The 
+        <div class="code-container-inline inline"><pre><code class="html inline">canvas</code></pre></div> is an HTML tag on which we can draw shapes, images, and text. Our
+        <div class="code-container-inline inline"><pre><code class="html inline">script</code></pre></div>
+        tag is where our JavaScript code goes. Here, we're grabbing a reference to the
+        <div class="code-container-inline inline"><pre><code class="html inline">canvas</code></pre></div>
+        tag, getting the 2D context which is what we'll use to draw, and then drawing a rectangle.
+
+        <br><br>
+        Three lines might seem excessive for a single draw operation, but the first two lines are boilerplate. We'll only need to write them once for the whole project.
+        <br><br>
+        Our little black rectangle might not look like much yet, but that's our player character!  Sadly the player doesn't move. We just need a little bit more code to handle the player's current position (I'll be highlighting removed lines with red and added lines with green).
+
+        <div class="code-container">
+                <pre><code id="contentB" class="html"></code></pre>
+                <pre><code id="contentC" class="javascript remove"></code></pre>
+                <pre><code id="contentD" class="javascript add"></code></pre>
+                <pre><code id="contentE" class="html"></code></pre>
+        </div>
+        
+        We're managing our player's position with
+        <div class="code-container-inline inline"><pre><code class="javascript inline">x</code></pre></div>
+        and
+        <div class="code-container-inline inline"><pre><code class="javascript inline">y</code></pre></div>
+        coordinates (counted in grid tiles since our game will be played on a grid). 
+        <br><br>
+        Then the 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">onkeypress</code></pre></div>
+        will fire whenever the user presses a key. 119? 115? 97? 100? Huh? These cryptic numbers are simply identifiers for certain keys (lowercase "wasd" controls as it were). We'll move the player horizontally or vertically by changing 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">x</code></pre></div>
+        or
+        <div class="code-container-inline inline"><pre><code class="javascript inline">y</code></pre></div>
+        as appropriate. 
+        <br><br>
+        Finally, the 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">fillRect</code></pre></div>
+        call is updated to use our new coordinate variables, moved into a function, and triggered with
+        <div class="code-container-inline inline"><pre><code class="javascript inline">setInterval</code></pre></div>
+        to make sure the screen is drawn every 15 milliseconds (more than 60 frames per second).
+        <br><br>
+        There's no code to clear the character aftering rendering though. Let's do that at the beginning of every draw call.
+
+        <div class="code-container">
+                <pre><code id="contentF" class="javascript"></code></pre>
+                <pre><code id="contentG" class="javascript add"></code></pre>
+                <pre><code id="contentH" class="javascript"></code></pre>
+        </div>
+
+        In 20 lines of code, we have a moving player. We're 90% of the way to having a functioning game. 😉
+        <br><br>
+        One problem is the canvas is not aligned properly and we don't know where it ends. Let's add an outline and center the canvas. To do this, we're going to add a 
+        <div class="code-container-inline inline"><pre><code class="html inline">style</code></pre></div>
+        tag to the top of our file and put CSS in it. If we had a lot of CSS, it would be better to put it in a separate file but the small amount we need fits well in the document.
+
+        <div class="code-container">
+            <pre><code id="contentSTYLE" class="html add"></code></pre>
+            <pre><code id="contentSTYLEAFTER" class="html"></code></pre>
+        </div>
+        <br>
+        A couple more lines at the top to make this truly valid HTML. The 
+        <div class="code-container-inline inline"><pre><code class="html inline">doctype</code></pre></div>
+        tells the browser we're an HTML page, duh. And a
+        <div class="code-container-inline inline"><pre><code class="html inline">title</code></pre></div>
+        is required for... reasons.
+
+        <div class="code-container"><pre><code id="contentDOCTYPE" class="html"></code></pre></div>
+
+        By the way, you might be used to 
+        <div class="code-container-inline inline"><pre><code class="html inline">html</code></pre></div>
+        /
+        <div class="code-container-inline inline"><pre><code class="html inline">head</code></pre></div>
+        /
+        <div class="code-container-inline inline"><pre><code class="html inline">body</code></pre></div>
+        tags but they're all optional! Seriously. Include them if you'd like.
+
+        <h2>Getting organized</h2>
+        Let's lay the groundwork for the rest of the project by creating a couple folders and empty files. Keep in mind, this is only to help us stay organized. There's no requirement to have a specific directory layout. If we keep all of our code in one file, it'll get really hard to dig through. But it's certainly not impossible. I know a major roguelike project that consists of a single 80,000 line python file.
+        <br><br>
+        Create a folder called <strong>js</strong> where all our script files will go and one called <strong>sounds</strong> where our sounds will go.
+        <br><br>
+        Go ahead and create six empty JavaScript files in the new <strong>js</strong> folder:
+
+        <ul>
+            <li>game.js</li>
+            <li>map.js</li>
+            <li>tile.js</li>
+            <li>monster.js</li>
+            <li>util.js</li>
+            <li>spell.js</li>
+        </ul>
+        Now we'll include those JavaScript files using
+        <div class="code-container-inline inline"><pre><code class="html inline">script</code></pre></div>
+        tags.
+
+        <div class="code-container">
+                <pre><code id="contentI" class="html"></code></pre>
+                <pre><code id="contentJ" class="html add"></code></pre>
+                <pre><code id="contentK" class="javascript"></code></pre>
+        </div>
+        <br>
+        I'll be defining everything in these files globally and without using any sort of namespacing or modules. This makes the code shorter, but potentially harder to track down. One easy alternative is defining the entire file as an object like this:
+        <div class="filename">game.js</div>
+        <div class="code-container"><pre><code id="contentNAMESPACE" class="javascript"></code></pre></div>
+        Then when you read
+        <div class="code-container-inline inline"><pre><code class="javascript inline">game.someFunction()</code></pre></div>
+        you'll know exactly where to find it. For now, I'm going to stick to global functions.
+        <br><br>
+        Let's <em>move</em> our
+        <div class="code-container-inline inline"><pre><code class="javascript inline">canvas</code></pre></div>
+        and
+        <div class="code-container-inline inline"><pre><code class="javascript inline">ctx</code></pre></div>
+        definitions to a new function in game.js and call that new function from index.html.
+        <div class="filename">index.html</div>
+
+        <div class="code-container">
+                <pre><code id="contentL" class="html"></code></pre>
+                <pre><code id="contentM" class="html remove"></code></pre>
+                <pre><code id="contentN" class="javascript"></code></pre>
+                <pre><code id="contentO" class="javascript add"></code></pre>
+                <pre><code id="contentP" class="html"></code></pre>
+        </div>
+
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+                <pre><code id="contentQ" class="javascript add"></code></pre>
+        </div>
+
+        If you test the game, nothing should have changed. But we have taken the first step towards organizing our code.
+        <br><br>
+        We want to dynamically size the canvas based on some constants. This will make it really easy to tweak the design of the game later, making the grid size tiny or huge instantly.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+                <pre><code id="contentR" class="javascript"></code></pre>
+                <pre><code id="contentS" class="javascript add"></code></pre>
+                <pre><code id="contentT" class="javascript"></code></pre>
+        </div>
+        Run the code.
+        <br><br>
+        <img class="screen" src="screens/tileSizeUndefined.png">
+        You should get an error. We forgot to define a few variables. Let's do that now.
+
+
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+                <pre><code id="contentU" class="html"></code></pre>
+                <pre><code id="contentV" class="javascript add"></code></pre>
+                <pre><code id="contentW" class="javascript"></code></pre>
+        </div>
+
+        That should fix the error we saw. Now we can also utilize some of these variables in the draw call.
+        <br><br>
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+                <pre><code id="contentX" class="javascript"></code></pre>
+                <pre><code id="contentY" class="javascript remove"></code></pre>
+                <pre><code id="contentZ" class="javascript add"></code></pre>
+                <pre><code id="contentAA" class="javascript"></code></pre>
+        </div>
+        You'll notice that the "player" rectangle gets bigger and when you move to the bottom/edge of the screen, it lines up nicely.
+        
+        <h2>Drawing sprites</h2>  
+
+        <div class="drawing-section">
+            Finally, let's replace our little rectangle with a real sprite. You could make the whole game in rectangles if you wanted (it worked for Mike Bithell), but I'm not talented enough for that. 
+            <br><br>
+            Open up your favorite image editor. I'm going to use <a href="https://www.gimp.org/" target="_blank">GIMP</a>.
+            <br><br>
+            Here are some setup tips specific to GIMP:
+            <ul>
+                <li>
+                    Select <strong>File > New</strong> and create a new file that's <strong>512 by 16 pixels</strong>. Make sure your starting background is transparent (under <strong>Advanced Options</strong> choose <strong>Fill with: Transparency</strong>). Normally, a spritesheet is arranged in big square but it's a little simpler to make it a long line of sprites.
+                </li>
+                <li>
+                    A visible grid will help us distinguish our sprites. Select <strong>Image > Configure Grid</strong>, and configure the spacing to be <strong>16 pixels</strong> in both directions. Then select <strong>View > Show Grid</strong>.
+                </li>
+                <li>
+                    Configure your <strong>Eraser Tool</strong> to use <strong>Hard edge</strong>. Otherwise, you won't fully erase things.
+                </li>
+                <li>
+                    Select the <strong>Pencil Tool</strong> and make sure your <strong>Brush</strong> setting is configured to be <strong>Size: 1</strong>.
+                </li>
+                <li>
+                    One extra, optional tip: sprites can be hard to see on the checkerboard pattern of transparent layers, so try adding an extra background layer filled with a darkish grey color.
+                </li>
+            </ul>
+            With the <strong>Pencil Tool</strong> in hand, you're ready. We're going to use a simple 3 step process to draw our sprites:
+            <ol>
+                <li>Fill in a basic shape with 1 or 2 colors</li>
+                <li>Add some shading</li>
+                <li>Finish details and highlights</li>
+            </ol>
+
+            I'm going to show you each of my 3 steps, but only as a hint. Feel free to really make this art your own.
+            <br><br>
+            Draw your character sprite in the first 16 by 16 pixel tile.
+            <img src="art/player.png">
+            Draw your a corpse sprite in the next spot over. I cheated a bit by rotating the a copy of the first sprite 90 degrees.
+            <img src="art/player-corpse.png">
+            The last step after drawing each sprite is exporting your spritesheet by selecting <strong>File > Export</strong> and exporting to a file name <strong>spritesheet.png</strong> in your game's directory.
+            <br><br>
+            As a sanity check, here's what your spritesheet should look like at this point.
+            <img src="screens/first-draw.png">
+
+
+        </div>
+        <br>
+        Let's use the sprite we just drew. This code will load the PNG file.
+        <div class="filename">index.html</div>
+        <div class="code-container">
+                <pre><code id="contentAB" class="html"></code></pre>
+                <pre><code id="contentAC" class="javascript add"></code></pre>
+        </div>
+        <br>
+        We're going to draw a sprite from that spritesheet now instead of drawing a rectangle. Let's try the simplest way to call 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">drawImage</code></pre></div>
+        with 3 arguments.
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentAD" class="javascript"></code></pre>
+            <pre><code id="contentAE" class="javascript remove"></code></pre>
+            <pre><code id="contentAF" class="javascript add"></code></pre>
+            <pre><code id="contentAG" class="javascript"></code></pre>
+        </div>
+
+
+        It works, but there's a few problem. The sprites are too small for one. The bigger problem though is that this displays the <em>whole</em> spritesheet. We need to call drawImage with <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage" target="_blank">9 arguments</a>.
+        <br><br>
+        It sounds bad, but it's pretty simple once you see the purpose. The first argument is the name of the image. The last four arguments are totally identical to the ones we used in 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">drawRect</code></pre></div>.
+        Those specify how to draw to the <em>destination</em> on screen. But we're using a spritesheet which consists of many sprites. We can't use the whole image, so we need 4 more arguments to specify how to pull from the <em>source</em>.
+        <br><br>
+        One image, 4 source variables, and 4 destination variables.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);</code></pre></div>
+        <br><br>
+        Since we're going to be making this same call repeatedly, let's move this code out to a new function in game.js and move the draw function too. And let's put each argument on a different line to make it clearer.
+        <div class="filename">index.html</div>
+        <div class="code-container">
+                <pre><code id="contentAH" class="javascript remove"></code></pre>
+        </div>
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentAI" class="javascript"></code></pre>
+            <pre><code id="contentAJ" class="javascript add"></code></pre>
+        </div>
+
+        Now one more hiccup. Our sprite looks like poop. The reason is the way browser scales images by default. It makes sene for photos but not for pixel art. For years, displaying scaled pixel art in browsers was basically impossible. Luckily we only need one line to correct it.
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentAK" class="javascript"></code></pre>
+            <pre><code id="contentAL" class="javascript add"></code></pre>
+            <pre><code id="contentAM" class="javascript"></code></pre>
+        </div>
+        And we're done! If you're feeling a little overwhelmed by all these arcane references to interacting with the DOM, take heart that we're pretty much past all of that. Our entry point into drawing stuff on the screen is to load images, grab a canvas element, get its context, and start calling draw operations on it. A lot of boilerplate right? But the good news is that we don't need any more hooks into the DOM and the rest of the code we write will be fairly self contained.
+
+    </div>
+
+    <script>
+        const content = {
+            A: `
+<canvas></canvas>
+<script>
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+    ctx.fillRect(0,0,20,20,20);
+<\/script>
+            `,
+            STYLE: `
+<style>
+    canvas{
+        outline: 1px solid white;
+    }
+
+    body{
+        background-color: seagreen;
+        text-align: center;
+        margin-top: 50px;
+    }
+<\/style>
+            `,
+            B: `
+<script>
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+            `,
+            C: `
+    ctx.fillRect(0,0,20,20,20);
+            `,
+            D: `
+    let x = y = 0;
+
+    document.querySelector("html").onkeypress = function(e){
+        if(e.which==119) y--;       //W
+        if(e.which==115) y++;       //S
+        if(e.which== 97) x--;       //A
+        if(e.which==100) x++;       //D
+    };
+
+    function draw(){
+        ctx.fillRect (x*20,y*20,20,20);
+    }
+
+    setInterval(draw, 15);
+            `,
+            E: `
+<\/script>
+            `,
+            F: `
+function draw(){
+            `,
+            G: `
+    ctx.clearRect(0,0,1000,1000);
+            `,
+            H: `
+    ctx.fillRect (x*20,y*20,20,20);
+}
+            `,
+            DOCTYPE: `
+<!DOCTYPE html>
+<title>AWESOME BROUGHLIKE</title>
+            `,
+            I: `
+<canvas></canvas>
+            `,
+            J: `
+<script src="js/game.js"><\/script>
+<script src="js/map.js"><\/script>
+<script src="js/tile.js"><\/script>
+<script src="js/monster.js"><\/script>
+<script src="js/util.js"><\/script>
+<script src="js/spell.js"><\/script>
+            `,
+            K: `
+<script>
+    canvas = document.querySelector("canvas");
+            `,
+            NAMESPACE: `
+game = {
+    someFunction: function(){
+        ...
+    },
+    anotherFunction: function(){
+        ...
+    },
+    andAnother: function(){
+        ...
+    }
+}
+            `,
+            L: `
+<script>
+            `,
+            M: `
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+          `,
+            N: `
+    let x = y = 0;
+
+    document.querySelector("html").onkeypress = function(e){
+        if(e.which==119) y--;
+        if(e.which==115) y++;
+        if(e.which==97) x--;
+        if(e.which==100) x++;
+    };
+
+    function draw(){
+        ctx.fillRect (x*20,y*20,20,20);
+    }
+
+    setInterval(draw, 15);
+            `,
+            O: `
+
+    setupCanvas();
+            `,
+            P: `
+<\/script>
+            `,
+            Q: `
+function setupCanvas(){
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+}
+            `,
+            R: `
+function setupCanvas(){
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+
+            `,
+            S: `
+    canvas.width = tileSize*(numTiles+uiWidth);
+    canvas.height = tileSize*numTiles;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+            `,
+            T: `
+}
+            `,
+            U: `
+<script>
+            `,
+            V: `
+    const tileSize = 64;
+    const numTiles = 9;
+    const uiWidth = 4;
+            `,
+            W: `
+
+    let x = y = 0;
+            `,
+            X: `
+function draw(){
+            `,
+            Y: `
+    ctx.clearRect(0,0,1000,1000);
+    ctx.fillRect (x*20,y*20,20,20);
+            `,
+            Z: `
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
+            `,
+            AA: `
+}
+            `,
+            AB: `
+<script>
+    const tileSize = 64;
+    const numTiles = 9;
+    const uiWidth = 4;
+
+    let x = y = 0;
+            `,
+            AC: `
+    let spritesheet = new Image();
+    spritesheet.src = 'spritesheet.png';
+            `,
+            AD: `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+            `,
+            AE: `
+    ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
+            `,
+            AF: `
+    ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
+            `,
+            AG: `
+}
+            `,
+            AH: `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
+}
+            `,
+            AI: `
+function setupCanvas(){
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+
+    canvas.width = tileSize*(numTiles+uiWidth);
+    canvas.height = tileSize*numTiles;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+}
+
+            `,
+            AJ: `
+function drawSprite(sprite, x, y){
+    ctx.drawImage(
+        spritesheet,
+        sprite*16,
+        0,
+        16,
+        16,
+        x*tileSize,
+        y*tileSize,
+        tileSize,
+        tileSize
+    );
+}
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawSprite(0, x, y);
+}
+            `,
+            AK: `
+function setupCanvas(){
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+
+    canvas.width = tileSize*(numTiles+uiWidth);
+    canvas.height = tileSize*numTiles;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+            `,
+            AL: `
+    ctx.imageSmoothingEnabled = false;
+            `,
+            AM: `
+}
+            `,
+            STYLEAFTER: `
+
+<canvas></canvas>
+<script>
+    canvas = document.querySelector("canvas");
+            `
+        };
+
+    </script>
+
+    <link rel="stylesheet" href="highlight.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="highlight.min.js"></script>
+    <script src="diff.js"></script>
+</body>
+</html>

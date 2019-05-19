@@ -1,1 +1,171 @@
-test
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 0</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<pre><code id="contentA" class="html"></code></pre>
+		<pre><code id="contentB" class="html add"></code></pre>
+		<pre><code id="contentC" class="html remove"></code></pre>
+		<pre><code id="contentD" class="javascript"></code></pre>
+		<pre><code id="contentE" class="javascript add "></code></pre>
+		<pre><code id="contentF" class="javascript remove"></code></pre>
+	</div>
+
+	<script>
+		//foo
+		const content = {
+			A: `
+			<!DOCTYPE html>
+			<!-- wot -->
+			<html>
+			<head>
+				<title>Broughlike tutorial - Stage 0</title>
+				<meta charset="utf-8">
+			</head>
+			<body>
+				<div id="outer">
+					<pre><code id="contentA" class="html"></code></pre>
+					<pre><code id="contentB" class="html add"></code></pre>
+					<pre><code id="contentC" class="html remove"></code></pre>
+					<pre><code id="contentD" class="javascript"></code></pre>
+				</div>
+
+				<link rel="stylesheet" href="highlight.min.css">
+				<link rel="stylesheet" href="style.css">
+			</body>
+			</html>
+			`,
+			B: `
+			<!-- wot -->
+			<script src="js/game.js"><\/script>
+			<script src="js/map.js"><\/script>
+			<script src="js/tile.js"><\/script>
+			<script src="js/monster.js"><\/script>
+			<script src="js/util.js"><\/script>
+			<script src="js/spell.js"><\/script>
+			`,
+			C: `
+			<!-- wot -->
+			<script src="js/game.js"><\/script>
+			<script src="js/map.js"><\/script>
+			<script src="js/tile.js"><\/script>
+			<script src="js/monster.js"><\/script>
+			<script src="js/util.js"><\/script>
+			<script src="js/spell.js"><\/script>
+			`,
+			D: `
+			//wot
+			Object.keys(content).forEach(k => {
+				const contentContainer = document.querySelector("#content"+k);
+				if(contentContainer){
+					contentContainer.textContent = content[k];
+				}else{
+					console.log("MISSING CONTAINER FOR #content"+k);
+				}
+			});
+
+			hljs.initHighlightingOnLoad();
+
+			document.querySelectorAll("pre code").forEach(n => {
+				let lines = n.innerHTML.split("\n");
+				let prefixChar = '';
+				if(n.classList.contains('add')){
+					prefixChar = '+';
+				}else if(n.classList.contains('remove')){
+					prefixChar = '-';
+				}
+				if(lines.length){
+					let lineHtml = lines[0];
+					//ignore first and last lines
+					for(let i=1;i<lines.length-1;i++){
+						lineHtml += "\n";
+						lineHtml += prefixChar;
+						lineHtml += lines[i] ;
+					}
+					n.innerHTML = lineHtml;
+				}
+			});
+
+			`,
+			E: `
+			//wot
+			Object.keys(content).forEach(k => {
+				const contentContainer = document.querySelector("#content"+k);
+				if(contentContainer){
+					contentContainer.textContent = content[k];
+				}else{
+					console.log("MISSING CONTAINER FOR #content"+k);
+				}
+			});
+
+			hljs.initHighlightingOnLoad();
+
+			document.querySelectorAll("pre code").forEach(n => {
+				let lines = n.innerHTML.split("\n");
+				let prefixChar = '';
+				if(n.classList.contains('add')){
+					prefixChar = '+';
+				}else if(n.classList.contains('remove')){
+					prefixChar = '-';
+				}
+				if(lines.length){
+					let lineHtml = lines[0];
+					//ignore first and last lines
+					for(let i=1;i<lines.length-1;i++){
+						lineHtml += "\n";
+						lineHtml += prefixChar;
+						lineHtml += lines[i] ;
+					}
+					n.innerHTML = lineHtml;
+				}
+			});
+
+			`,
+			F: `
+			//wot
+			Object.keys(content).forEach(k => {
+				const contentContainer = document.querySelector("#content"+k);
+				if(contentContainer){
+					contentContainer.textContent = content[k];
+				}else{
+					console.log("MISSING CONTAINER FOR #content"+k);
+				}
+			});
+
+			hljs.initHighlightingOnLoad();
+
+			document.querySelectorAll("pre code").forEach(n => {
+				let lines = n.innerHTML.split("\n");
+				let prefixChar = '';
+				if(n.classList.contains('add')){
+					prefixChar = '+';
+				}else if(n.classList.contains('remove')){
+					prefixChar = '-';
+				}
+				if(lines.length){
+					let lineHtml = lines[0];
+					//ignore first and last lines
+					for(let i=1;i<lines.length-1;i++){
+						lineHtml += "\n";
+						lineHtml += prefixChar;
+						lineHtml += lines[i] ;
+					}
+					n.innerHTML = lineHtml;
+				}
+			});
+
+			`
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>
+
+

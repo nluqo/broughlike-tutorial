@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 2</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Map Generation</h1>
+
+		In this step, we want to generate a map to play on.
+		<br><br>
+		A map is often stored as a 2D array, which is nothing more than an array where every element is another array. Specifically, our map will be an array of columns and each column will be an array of tiles. You could do it with rows, whatever, same thing.
+
+		Make a new class called
+		<div class="code-container-inline inline"><pre><code class="javascript">Tile</code></pre></div>
+		in tile.js. 
+		<div class="filename">tile.js</div>
+        <div class="code-container">
+			<pre><code id="contentTILE" class="javascript add"></code></pre>
+        </div>
+        Each tile will have 
+        <div class="code-container-inline inline"><pre><code class="javascript">x</code></pre></div>
+        and 
+        <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>
+        coordinates, a 
+        <div class="code-container-inline inline"><pre><code class="javascript">sprite</code></pre></div>
+        (simply the position in the spritesheet),
+        and a 
+        <div class="code-container-inline inline"><pre><code class="javascript">passable</code></pre></div>
+        flag. For the most basic maps, all you need to know is how to distinguish between walls and floors and
+        <div class="code-container-inline inline"><pre><code class="javascript">passable</code></pre></div>
+        does that for us. You can also see that we're using
+		<div class="code-container-inline inline"><pre><code class="javascript">drawSprite</code></pre></div>
+		like we did for the player.
+        <br><br>
+        Let's extend
+        <div class="code-container-inline inline"><pre><code class="javascript">Tile</code></pre></div>
+        to make floors and walls.
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentTILE2" class="javascript"></code></pre>
+            <pre><code id="contentFLOORANDWALL" class="javascript add"></code></pre>
+        </div>
+        We have the code for floor and wall tiles, but we need the sprites.
+        <h2>Drawing Map Tiles</h2>  
+         <div class="drawing-section">
+            The floor uses dark colors and not too much contrast since we don't want it to compete with the foreground sprites. With tiles, keep in mind how they're going to repeat. Pixels on the left of our sprite will appear next to pixels on the right (likewise for bottom and top). An easy technique I'm using here is drawing a bunch of connecting lines and then breaking them up with a few pixels of the background color.
+            <img src="art/floor.png">
+            For the wall tile, we'll start with the same background color from the floor tile. This allows us to have rounded walls that blend in seamlessly.
+            <img src="art/wall.png">
+            Don't forget to export your file after updating it!
+         </div>
+         <br><br>
+         In map.js, we're going to start making the map.
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentPREGENERATELEVEL" class="javascript"></code></pre>
+            <pre><code id="contentGENERATELEVEL" class="javascript add"></code></pre>
+        </div>
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentGENERATETILES" class="javascript add"></code></pre>
+        </div>
+        This makes a 2D array called 
+        <div class="code-container-inline inline"><pre><code class="javascript">tiles</code></pre></div>
+        and populates it with about 30% walls and 70% floors.
+        <img src="screens/2darray.png">
+        So our map is actually there and the way you can confirm this is by going into the dev tools and simply typing "tiles".
+        <br><br>
+        But let's draw it. All we need to do is iterate over every tile and call draw on it.
+        <br><br>
+        But first, I want to wrap access to the tile array in a function called
+        <div class="code-container-inline inline"><pre><code class="javascript">getTile</code></pre></div>
+        . There are a lot of reasons for doing this. For one it reads a little cleaner, but it also lets us pull off shenanigans like returning tiles <em>outside</em> the bounds of the array and which don't actually exist (which might happen if, for instance, the player casts a giant area of effect spell that extends past the outer dungeon walls).
+
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentGENERATETILES" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentINBOUNDS" class="javascript add"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentGETTILE" class="javascript add"></code></pre>
+        </div>
+        <br>
+        Now with that out of the way, we can get to drawing simply by looping over each tile and telling it to draw itself.
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentBEFOREITERATETILES" class="javascript"></code></pre>
+            <pre><code id="contentITERATETILES" class="javascript add"></code></pre>
+            <pre><code id="contentAFTERITERATETILES" class="javascript"></code></pre>
+        </div>
+
+        Cool.
+        <br><br> 
+        We haven't added an outer wall though. Let's modify generateTiles() and reuse the inBounds() function to make one.
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentBEFOREINBOUND" class="javascript"></code></pre>
+            <pre><code id="contentDELETEINBOUND" class="javascript remove"></code></pre>
+            <pre><code id="contentADDINBOUND" class="javascript add"></code></pre>
+            <pre><code id="contentAFTERINBOUND" class="javascript"></code></pre>
+        </div>
+
+        We're not interacting with the tiles though. We start on a wall and we're walking right through them!
+        <br><br>
+        To fix that first problem, we're simply going to teleport the player to a random floor tile when the game starts.
+        <br><br>
+        How do we find a random floor tile though? One really dumb, easy way to do so is repeatedly grab random tiles until we find a floor tile. This pattern works really well for a variety of map generation techniques: try to do something at random and keep doing it until we get it right. Add a timeout to make sure we don't get stuck in an infinite loop on accident. You don't want to lock up your browser after all.
+        <br><br>
+        We'll also need a simple utility function to generate random integers within a given range.
+
+        <div class="filename">util.js</div>
+        <div class="code-container">
+            <pre><code id="contentTRYTO" class="javascript add"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentRANDOMRANGE" class="javascript add"></code></pre>
+        </div>
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentGETTILE" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentRANDOMPASSABLE" class="javascript add"></code></pre>
+        </div>
+        Our 
+        <div class="code-container-inline inline"><pre><code class="javascript">tryTo</code></pre></div>
+        function needs to be passed a callback that attempts something and returns 
+        <div class="code-container-inline inline"><pre><code class="javascript">true</code></pre></div>
+        only if it worked. That's why we're passing an anonymous function that rolls some random coordinates, gets the corresponding tile, and returns true only if the following expression is true:
+        <div class="code-container-inline inline"><pre><code class="javascript">tile.passable && !tile.monster</code></pre></div>
+        (the tile is passable and has no monster).
+        <br><br>Notice that nowhere else in our program have we defined
+        <div class="code-container-inline inline"><pre><code class="javascript">tile.monster</code></pre></div>
+        . Thanks to JavaScript's lenient property and type handling, this will work fine. A missing property will have a value of 
+        <div class="code-container-inline inline"><pre><code class="javascript">undefined</code></pre></div>
+        and that will get coerced to
+        <div class="code-container-inline inline"><pre><code class="javascript">false</code></pre></div>
+        and we're good.
+        Let's take
+        <div class="code-container-inline inline"><pre><code class="javascript">randomPassableTile</code></pre></div>
+        out for a spin by teleporting the player to random tile as mentioned earlier.
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentGENERATELEVEL" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentUSERANDOMPASSABLETILE" class="javascript add"></code></pre>
+        </div>
+        Refresh several times and you'll see that the player spawns in random locations, none of which are walls.
+        <br><br>
+        Our map is generated and our player is spawned in the correct place. We're almost done.
+        <br><br>
+        <h2>Banishing disconnected islands (a roguelike developer's greatest enemy)</h2>
+        One more big problem first and this one is a super common headache when procedurally generating the maps. With our extremely dumb way of making the levels, there are often areas of the map not connected to other areas. Disconnected islands. We need a way a check that <em>everything is connected</em>.
+        <br><br>
+        This part is a little tricky, so first let's some write some pseudocode:
+
+        <div class="code-container">
+            <pre><code id="contentPSEUDO_A" class="javascript"></code></pre>
+        </div>
+        That's the basic idea. Now let's convert that into real code:
+
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentREROLL1" class="javascript"></code></pre>
+            <pre><code id="contentREROLL2" class="javascript remove"></code></pre>
+            <pre><code id="contentREROLL3" class="javascript add"></code></pre>
+            <pre><code id="contentREROLL4" class="javascript"></code></pre>
+            <pre><code id="contentREROLL5" class="javascript add"></code></pre>
+            <pre><code id="contentREROLL6" class="javascript"></code></pre>
+            <pre><code id="contentREROLL7" class="javascript add"></code></pre>
+            <pre><code id="contentREROLL8" class="javascript"></code></pre>
+            <pre><code id="contentREROLL9" class="javascript add"></code></pre>
+            <pre><code id="contentREROLL10" class="javascript"></code></pre>
+        </div>
+
+
+       They key here is 
+       <div class="code-container-inline inline"><pre><code class="javascript">getConnectedTiles</code></pre></div>.
+       Imagine you are drawing a dungeon map on grid paper and you want to color in the floors. How do you do it?
+       <br><br>
+       One way is pick a random floor tile on the grid, expand outwards repeatedly, and color connected floor tiles until you're done. You obviously wouldn't draw wall tiles the same color as the floor and you wouldn't recolor floor tiles once you drew them the first time. That's exactly the idea behind the <a href="https://en.wikipedia.org/wiki/Flood_fill">flood fill</a> algorithm and here's more pseudocode for a function that does it:
+        <div class="code-container">
+            <pre><code id="contentPSEUDO_B" class="javascript"></code></pre>
+        </div>
+        We'll convert that to JavaScript as well by breaking it down into several smaller functions:
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentCONNECTEDOLD" class="javascript"></code></pre>
+            <pre><code id="contentCONNECTEDNEW" class="javascript add"></code></pre>
+        </div>
+        OK, that seems like a lot so let's break it down.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">getNeighbor</code></pre></div>
+        is pretty straightforward. It's a wrapper around  
+        <div class="code-container-inline inline"><pre><code class="javascript">getTile</code></pre></div>. Even though it's a simple wrapper, 
+        this method is useful when implementing all sorts of mechanics. Also note that it works for <em>more</em> than just adjacent neighbors.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">getAdjacentNeighbors</code></pre></div>
+        returns the adjacent neighbors of a tile and shuffles them before returning.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">getAdjacentPassableNeighbors</code></pre></div>
+        additionally filters out non-passable tiles (e.g. walls). 
+        <div class="code-container-inline inline"><pre><code class="javascript">filter</code></pre></div>
+        is a nifty JavaScript array function where we pass in a callback and we return true for only the elements we want to keep.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">getConnectedTiles</code></pre></div>
+        does exactly what the pseudocode said. It uses
+        <div class="code-container-inline inline"><pre><code class="javascript">filter</code></pre></div>
+        again and also 
+         <div class="code-container-inline inline"><pre><code class="javascript">concat</code></pre></div>,
+         which adds one array to another.
+        <div class="filename">util.js</div>
+        <div class="code-container">
+            <pre><code id="contentSHUFFLEOLD" class="javascript"></code></pre>
+            <pre><code id="contentSHUFFLENEW" class="javascript add"></code></pre>
+        </div>
+        And finally <div class="code-container-inline inline"><pre><code class="javascript">shuffle</code></pre></div>
+        is an implementation of <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle">Fisher-Yates shuffle</a>. All it's doing is a random swap for each element in an array, leading to a perfectly shuffled array. 
+        <br><br>
+        To reiterate: we keep trying to make levels until we find one that has no disconnected islands. The way we know there are no disconencted islands is when we've made only a single connected "island". If we have one big island of floor tiles, the number of tiles on that island should match the total number of floor tiles on the map. When we're able to satisfy that condition, we're happy with our level and we can stop.
+        <br><br>
+        So now let's check our work. Refresh a bunch of times and you'll never see a disconnected island again.
+        <br><br>
+        In the next section we'll create our monsters and make sure the player can't walk through walls.
+	<!--
+
+
+
+
+
+
+
+	-->
+
+	<script>
+		const content = {
+			TILE: `
+class Tile{
+	constructor(x, y, sprite, passable){
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.passable = passable;
+	}
+
+	draw(){
+        drawSprite(this.sprite, this.x, this.y);
+	}
+}
+            `,
+            TILE2: `
+class Tile{
+    constructor(x, y, sprite, passable){
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.passable = passable;
+    }
+
+    draw(){
+        drawSprite(this.sprite, this.x, this.y);
+    }
+}
+
+            `,
+			FLOORANDWALL: `
+class Floor extends Tile{
+    constructor(x,y){
+        super(x, y, 2, true);
+    };
+}
+
+class Wall extends Tile{
+    constructor(x, y){
+        super(x, y, 3, false);
+    }
+}
+            `,
+            PREGENERATELEVEL:
+            `
+setInterval(draw, 15);
+
+setupCanvas();
+
+            `,
+            GENERATELEVEL:
+            `
+generateLevel();
+            `,
+            GENERATETILES:
+            `
+function generateLevel(){
+    generateTiles();
+}
+
+function generateTiles(){
+    tiles = [];
+    for(let i=0;i<numTiles;i++){
+        tiles[i] = [];
+        for(let j=0;j<numTiles;j++){
+            if(Math.random() < 0.3){
+                tiles[i][j] = new Wall(i,j);
+            }else{
+                tiles[i][j] = new Floor(i,j);
+            }
+        }
+    }
+}
+            `,
+            INBOUNDS: `
+function inBounds(x,y){
+    return x>0 && y>0 && x<numTiles-1 && y<numTiles-1;
+}
+            `,
+            GETTILE: `
+function getTile(x, y){
+    if(inBounds(x,y)){
+        return tiles[x][y];
+    }else{
+        return new Wall(x,y);
+    }
+}
+            `,
+            BEFOREITERATETILES: 
+            `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+            `,
+            ITERATETILES: 
+            `
+    for(let i=0;i<numTiles;i++){
+        for(let j=0;j<numTiles;j++){
+            getTile(i,j).draw();
+        }
+    }
+            `,
+            AFTERITERATETILES: 
+            `
+
+    drawSprite(0, x, y);
+}
+            `,
+            BEFOREINBOUND:
+            `
+function generateTiles(){
+    tiles = [];
+    for(let i=0;i<numTiles;i++){
+        tiles[i] = [];
+        for(let j=0;j<numTiles;j++){
+            `,
+            DELETEINBOUND:
+            `
+            if(Math.random() < 0.3){
+            `,
+            ADDINBOUND:
+            `
+            if(Math.random() < 0.3 || !inBounds(i,j)){
+            `,
+            AFTERINBOUND:
+            `
+                tiles[i][j] = new Wall(i,j);
+            }else{
+                tiles[i][j] = new Floor(i,j);
+            }
+        }
+    }
+}
+            `,
+            TRYTO: `
+function tryTo(description, callback){
+    for(let timeout=1000;timeout>0;timeout--){
+        if(callback()){
+            return;
+        }
+    }
+    throw 'Timeout while trying to '+description;
+}
+            `,
+            RANDOMRANGE:`
+function randomRange(min, max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+            `,
+            RANDOMPASSABLE:`
+function randomPassableTile(){
+    let tile;
+    tryTo('get random passable tile', function(){
+        const x = randomRange(0,numTiles-1);
+        const y = randomRange(0,numTiles-1);
+        tile = tiles[x][y];
+        return tile.passable && !tile.monster;
+    });
+    return tile;
+}
+            `,
+            XY:`
+let x = y = 0;
+            `,
+            XYAFTER: `
+let spritesheet = new Image();
+  spritesheet.src = 'spritesheet.png';
+
+   document.querySelector("html").onkeypress = function(e){
+       if(e.which==119) y--;       //W
+       if(e.which==115) y++;       //S
+       if(e.which== 97) x--;       //A
+       if(e.which==100) x++;       //D
+   };
+
+   setInterval(draw, 15);
+
+   setupCanvas();
+
+    generateLevel();
+            `,
+            USERANDOMPASSABLETILE: `
+let startingTile = randomPassableTile();
+x = startingTile.x;
+y = startingTile.y;
+            `,
+            PSEUDO_A: `
+/*
+    generate a level
+    make a note of how many passable tiles we generated
+
+    starting from a random passable tile, get all tiles connected to it
+
+    if the total number of passsable tiles matches the number of connected tiles
+        everything is connected!
+    else 
+        start over
+
+*/
+            `,
+            PSEUDO_B: `
+/*
+    create a list of tiles to check for connectedness
+    create a list of connected tiles
+
+    add a single random passable tile to both lists
+
+    while there are more tiles to check...
+        pick one
+        get its neighbors
+        filter out the walls
+        filter out the tiles we've already checked
+        add the filtered neighbors to a list of connected tiles and to the tiles that need to be checked
+
+    return the list of connected tiles
+*/
+            `,
+            REROLL1: `
+function generateLevel(){
+            `,
+            REROLL2: `
+    generateTiles();
+            `,
+            REROLL3: `
+    tryTo('generate map', function(){
+        return generateTiles() == randomPassableTile().getConnectedTiles().length;
+    });
+            `,
+            REROLL4: `
+}
+
+function generateTiles(){
+            `,
+            REROLL5: `
+    let passableTiles=0;
+            `,
+            REROLL6: `
+    tiles = [];
+    for(let i=0;i<numTiles;i++){
+        tiles[i] = [];
+        for(let j=0;j<numTiles;j++){
+            if(Math.random() < 0.3 || !inBounds(i,j)){
+                tiles[i][j] = new Wall(i,j);
+            }else{
+                tiles[i][j] = new Floor(i,j);
+            `,
+            REROLL7: `
+                passableTiles++;
+            `,
+            REROLL8: `
+            }
+        }
+    }
+            `,
+            REROLL9: `
+    return passableTiles;
+            `,
+            REROLL10: `
+}
+            `,
+            CONNECTEDOLD: `
+class Tile{
+    constructor(x, y, sprite, passable){
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.passable = passable;
+    }
+
+            `,
+            CONNECTEDNEW: `
+    getNeighbor(dx, dy){
+        return getTile(this.x + dx, this.y + dy)
+    }
+
+    getAdjacentNeighbors(){
+        return shuffle([
+            this.getNeighbor(0, -1),
+            this.getNeighbor(0, 1),
+            this.getNeighbor(-1, 0),
+            this.getNeighbor(1, 0)
+        ]);
+    }
+
+    getAdjacentPassableNeighbors(){
+        return this.getAdjacentNeighbors().filter(t => t.passable);
+    }
+
+    getConnectedTiles(){
+        let connectedTiles = [this];
+        let frontier = [this];
+        while(frontier.length){
+            const neighbors = frontier.pop()
+                                .getAdjacentPassableNeighbors()
+                                .filter(t => !connectedTiles.includes(t));
+            connectedTiles = connectedTiles.concat(neighbors);
+            frontier = frontier.concat(neighbors);
+        }
+        return connectedTiles;
+    }
+            `,
+            SHUFFLEOLD: `
+function randomRange(min, max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+            `,
+            SHUFFLENEW: `
+function shuffle(arr){
+    let temp, r;
+    for (let i = 1; i < arr.length; i++) {
+        r = randomRange(0,i);
+        temp = arr[i];
+        arr[i] = arr[r];
+        arr[r] = temp;
+    }
+    return arr;
+}
+            `
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>

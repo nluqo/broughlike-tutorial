@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 3</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Monsters</h1>
+		In this section, we're going to make a Monster class just like we did with the Tile class.
+		<br><br>
+		Earlier, we used just two variables (
+        <div class="code-container-inline inline"><pre><code class="javascript">x</code></pre></div>
+         & 
+         <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>) to represent position, but Tile already has that. So when we want to move a monster around, we'll simply pass it a tile.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTER" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript add"></code></pre>
+        </div>
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTER" class="javascript"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentMOVE" class="javascript add"></code></pre>
+        </div>
+
+		<!--
+
+		Monsters
+		========
+
+		-------------------------------------- monster.js
+		class Monster{
+			constructor(tile, sprite, hp){
+				this.move(tile);
+				this.sprite = sprite;
+				this.hp = hp;
+			}
+
+			draw(){
+				drawSprite(this.sprite, this.tile.x, this.tile.y);
+			}
+		}
+		--------------------------------------
+
+		Which monster are we going to make first? The player!
+
+		"Beware that, when fighting monsters, you yourself do not become a monster... "
+
+		When I first started writing roguelikes I naturally coded the player as a separate thing from the monsters, but they share so much behavior. And also, it's a common roguelike staple that monsters and players behave in similar ways.
+
+		-------------------------------------- monster.js
+		class Player extends Monster{
+			constructor(tile){
+				super(tile, 0, 3);
+				this.isPlayer = true;
+			}
+		}
+		-------------------------------------- 
+
+		This should look similar to our Floor and Walls. We're passing a tile that we live on and a sprite index.
+
+		I'm setting an extra flag called "isPlayer". This is a little bit unclean I suppose, since it's more proper handle subclass behavior through overriding methods, but I find this kind of flag to be easy to use.
+
+
+		Ok, now let's put that player class to use. Instead of manipulating a single pair of x & y variables (which is clearly not maintainable), let's replace all that with references to a new player instance.
+
+		-------------------------------------- index.html (DELETE AND REPLACE)
+		x = y = 0;
+
+		...
+
+		let startingTile = randomPassableTile();
+		x = startingTile.x;
+		y = startingTile.y;
+		-------------------------------------- 
+		let player = new Player(randomPassableTile());
+		-------------------------------------- 
+
+		-------------------------------------- index.html (DELETE AND REPLACE)
+		document.querySelector("html").onkeypress = function(e){
+		    if(e.which==119) y--;
+		    if(e.which==115) y++;
+		    if(e.which==97) x--;
+		    if(e.which==100) x++;
+		};
+		-------------------------------------- 
+		document.querySelector("html").onkeypress = function(e){
+		    if(e.which==119) player.tryMove(0, -1);
+		    if(e.which==115) player.tryMove(0, 1);
+		    if(e.which==97) player.tryMove(-1, 0);
+		    if(e.which==100) player.tryMove(1, 0);
+		};
+		-------------------------------------- 
+
+		Likewise, replace the drawSprite call in game.js with the player version.
+
+		-------------------------------------- game.js - draw() function (REPLACE)
+		drawSprite(0, x, y);
+		--------------------------------------
+		player.draw();
+		--------------------------------------
+
+		Test out the game. Our player moves around but can't go through walls. Awesome.
+
+		Now let's switch to our spritesheet and do some art.
+
+		[DRAW ALL MONSTERS and HP]
+
+		[I want to go ahead and draw five different monsters. If you want to do this piecemeal, that's fine too.]
+
+		[Also, we're going to need a simple way to represent HP so let's draw a tiny red circle to do this.]
+
+		Let's make our monsters. They'll be extremely simple for now, only differing by sprite and starting HP, but we'll add more detail later.
+
+		-------------------------------------- monster.js
+
+
+		class Bird extends Monster{
+			constructor(tile){
+				super(tile, 5, 3);
+			}
+		}
+
+		class Snake extends Monster{
+			constructor(tile){
+				super(tile, 6, 1);
+			}
+		}
+
+		class Tank extends Monster{
+			constructor(tile){
+				super(tile, 7, 2);
+			}
+		}
+
+		class Eater extends Monster{
+			constructor(tile){
+				super(tile, 8, 1);
+			}
+		}
+
+		class Jester extends Monster{
+			constructor(tile){
+				super(tile, 9, 2);
+			}
+		}
+		--------------------------------------
+
+		We've got to get them in the level though.
+
+		The number of monsters spawned each level is going to be related to the level number, so let's define a variable for that in index.html
+
+		-------------------------------------- index.html
+		let level = 1;
+		-------------------------------------- 
+
+		Then two new functions: one to spawn a single monster and another to create an array of monsters by repeatedly spawning them:
+
+		-------------------------------------- map.js
+		function generateMonsters(){
+			monsters = [];
+			const numMonsters = level+1;
+			for(let i=0;i<numMonsters;i++){
+				spawnMonster();
+			}
+		}
+
+		function spawnMonster(){
+			let monsterType = shuffle([Snake, Eater, Tank, Jester, Bird])[0];
+			const monster = new monsterType(randomPassableTile());
+			monsters.push(monster);
+		}
+
+		And make sure to call this generateMonsters() function at the end of generateLevel();
+
+		-------------------------------------- map.js
+		generateMonsters();
+		--------------------------------------
+
+		Lastly, we have to draw our monsters. Add this right before "player.draw()" in game.js
+
+		-------------------------------------- game.js
+		for(let k=monsters.length-1;k>=0;k--){
+			monsters[k].draw();
+		}
+		-------------------------------------- 
+
+
+		Check it out. We got monsters on the map. They aren't doing much besides blocking our path. We'll need some monster AI to make this interesting.
+
+
+		So let's start moving the monsters. Normally, I'd use a pathfinding algorithm called A*. But take a look at the psuedocode. It's slightly hard to get right, even if you've written it before: https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
+
+		Instead we're going to take a shortcut and use "greedy" movement. Monsters will try to move closer, even if that gets them trapped. IMHO, this can still offer really interesting gameplay, just different than having smart monters.
+
+		-------------------------------------- monster.js (within Monster class)
+			update(){
+				this.doStuff();
+			}
+
+			doStuff(){
+				const neighbors = this.tile.getAdjacentPassableNeighbors()
+									.filter(t => t.passable && (!t.monster || t.monster.isPlayer));
+
+				const sortedNeighbors = neighbors.sort(function(a,b){
+					return a.dist(player.tile) - b.dist(player.tile);
+				});
+
+				if(sortedNeighbors.length){
+					const newTile = sortedNeighbors[0];
+					this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+				}
+			}
+		-------------------------------------- 
+
+		-------------------------------------- tile.js (within Tile Class)
+		//manhattan distance
+		dist(other){
+			return Math.abs(this.x-other.x)+Math.abs(this.y-other.y);
+		}
+
+		-------------------------------------- 
+
+		Let's review this one. We've added a method called update (which then calls doStuff).
+
+		Here's how doStuff() works. It gets the monster's passable neighbors that are either empty or have the player there (which will later be attacked).
+
+		It sorts these according a simple "Manhattan distance" (the distance you have to go on city blocks, since you have to drive *around* the buildings instead of straight through them).
+
+		We select the closest adjacent tile and "try to move" to it.
+
+
+
+		Now we just need to give the monsters a chance to move after the player moves. We'll do this in a "tick()" call. We iterate over the monster array (importantly in reverse so we can safely delete entries), call the monster update if they're alive, and deletes them otherwise. Notice we haven't ever defined a "dead" property on Monster. That's fine! JavaScript lets us do this because a) we don't have to define object properties to put them in conditionals and b) undefined or null properties are considered "falsy". Super dirty but useful.
+
+		We override tryMove in the Player class. If and only if the super class tryMove works (like the player didn't bump into a wall), we call tick().
+
+		-------------------------------------- game.js
+		function tick(){
+			for(let k=monsters.length-1;k>=0;k--){
+				if(!monsters[k].dead){
+					monsters[k].update();
+				}else{
+					monsters.splice(k,1);
+				}
+			}
+		}
+		--------------------------------------
+
+		-------------------------------------- monster.js (within Player class)
+			tryMove(dx, dy){
+				if(super.tryMove(dx,dy)){
+					tick();
+				}
+			}
+
+		--------------------------------------
+
+		Now your monsters are moving around when you do.
+
+		In the next section, we're going to get the monsters attacking and fill out the details in our 5 monster implementations.
+
+		-->
+	</div>
+
+	<script>
+		const content = {
+			MONSTER: `
+class Monster{
+	constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+	}
+
+	draw(){
+        drawSprite(this.sprite, this.tile.x, this.tile.y);
+	}
+			`,
+			CLOSEBRACE: `
+}
+			`,
+			MOVE: `
+tryMove(dx, dy){
+    const newTile = this.tile.getNeighbor(dx,dy);
+    if(newTile.passable){
+        if(!newTile.monster){
+            this.move(newTile);
+        }
+        return true;
+    }
+}
+
+move(tile){
+    if(this.tile){
+        this.tile.monster = null;
+    }
+    this.tile = tile;
+    tile.monster = this;
+}
+			`
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>
