@@ -19,103 +19,100 @@
             <pre><code id="contentMONSTER" class="javascript add"></code></pre>
             <pre><code id="contentCLOSEBRACE" class="javascript add"></code></pre>
         </div>
+        Add in the movement code for monsters. Before moving we first check a 
+        <div class="code-container-inline inline"><pre><code class="javascript">tryMove</code></pre></div>
+        function. Why is this needed?
+        <br><br>
+        Because in a broughlike the player and other monsters may often "try" to move into tiles where they can't fit! This might mean bouncing off a wall or it might turn into bump combat, a staple of classic roguelikes.
 
+        For now, we'll check if a tile is passable and only allow a 
+        <div class="code-container-inline inline"><pre><code class="javascript">move</code></pre></div>
+        if the tile is passable and has monster in it.
         <div class="filename">monster.js</div>
         <div class="code-container">
             <pre><code id="contentMONSTER" class="javascript"></code></pre>
-            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
             <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
             <pre><code id="contentMOVE" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
         </div>
+
+
+        Which monster are we going to make first? The player!
+        <br><br>
+        "Beware that, when fighting monsters, you yourself do not become a monster... "
+        <br><br>
+        When I first started writing roguelikes I naturally coded the player as a separate thing from the monsters, but they share so much behavior. And also, it's a common roguelike mechanic that monsters and players behave in similar ways.
+        
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTER" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentMOVE" class="javascript"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentPLAYER" class="javascript add"></code></pre>
+        </div>
+
+        This should look similar to our Floor and Walls. We're passing a tile that we live on, a sprite index, and a maximum HP.
+        <br><br>
+        I'm setting an extra flag called "isPlayer". This is a little bit unclean I suppose, since it's more proper to handle subclass behavior through overriding methods, but I find this kind of flag very easy to use.
+        <br><br>
+        Ok, now let's put that player class to use. Instead of manipulating a single pair of x & y variables (which is clearly not maintainable), let's replace all that with references to a new player instance.
+
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentREPLACEX1" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX2" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEX3" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX4" class="javascript remove "></code></pre>
+            <pre><code id="contentREPLACEX5" class="javascript add"></code></pre>
+            <pre><code id="contentREPLACEX6" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX7" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEX8" class="javascript add"></code></pre>
+        </div>
+
+        Likewise, replace the drawSprite call in game.js with the player version.
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentREPLACEDRAW1" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEDRAW2" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEDRAW3" class="javascript add"></code></pre>
+            <pre><code id="contentREPLACEDRAW4" class="javascript "></code></pre>
+        </div>
+
+        Test out the game. Our player moves around but can't go through walls. Awesome.
+
+        Now let's switch to our spritesheet and do some art.
+
+        <h2>Drawing Monsters</h2>  
+        <div class="drawing-section">
+            The floor uses dark colors and not too much contrast since we don't want it to compete with the foreground sprites. With tiles, keep in mind how they're going to repeat. Pixels on the left of our sprite will appear next to pixels on the right (likewise for bottom and top). An easy technique I'm using here is drawing a bunch of connecting lines and then breaking them up with a few pixels of the background color.
+            <img src="art/bird.png">
+            <img src="art/snake.png">
+            <img src="art/tank.png">
+            <img src="art/eater.png">
+            <img src="art/jester.png">
+            <img src="art/hp.png">
+            For the wall tile, we'll start with the same background color from the floor tile. This allows us to have rounded walls that blend in seamlessly.
+            <img src="art/wall.png">
+            Don't forget to export your file after updating it!
+         </div>
+        [DRAW ALL MONSTERS and HP]
+
+        [I want to go ahead and draw five different monsters. If you want to do this piecemeal, that's fine too.]
+
+        [Also, we're going to need a simple way to represent HP so let's draw a tiny red circle to do this.]
+
+        Let's make our monsters. They'll be extremely simple for now, only differing by sprite and starting HP, but we'll add more detail later.
 
 		<!--
 
-		Monsters
-		========
+		
 
-		-------------------------------------- monster.js
-		class Monster{
-			constructor(tile, sprite, hp){
-				this.move(tile);
-				this.sprite = sprite;
-				this.hp = hp;
-			}
+	
 
-			draw(){
-				drawSprite(this.sprite, this.tile.x, this.tile.y);
-			}
-		}
-		--------------------------------------
-
-		Which monster are we going to make first? The player!
-
-		"Beware that, when fighting monsters, you yourself do not become a monster... "
-
-		When I first started writing roguelikes I naturally coded the player as a separate thing from the monsters, but they share so much behavior. And also, it's a common roguelike staple that monsters and players behave in similar ways.
-
-		-------------------------------------- monster.js
-		class Player extends Monster{
-			constructor(tile){
-				super(tile, 0, 3);
-				this.isPlayer = true;
-			}
-		}
-		-------------------------------------- 
-
-		This should look similar to our Floor and Walls. We're passing a tile that we live on and a sprite index.
-
-		I'm setting an extra flag called "isPlayer". This is a little bit unclean I suppose, since it's more proper handle subclass behavior through overriding methods, but I find this kind of flag to be easy to use.
-
-
-		Ok, now let's put that player class to use. Instead of manipulating a single pair of x & y variables (which is clearly not maintainable), let's replace all that with references to a new player instance.
-
-		-------------------------------------- index.html (DELETE AND REPLACE)
-		x = y = 0;
-
-		...
-
-		let startingTile = randomPassableTile();
-		x = startingTile.x;
-		y = startingTile.y;
-		-------------------------------------- 
-		let player = new Player(randomPassableTile());
-		-------------------------------------- 
-
-		-------------------------------------- index.html (DELETE AND REPLACE)
-		document.querySelector("html").onkeypress = function(e){
-		    if(e.which==119) y--;
-		    if(e.which==115) y++;
-		    if(e.which==97) x--;
-		    if(e.which==100) x++;
-		};
-		-------------------------------------- 
-		document.querySelector("html").onkeypress = function(e){
-		    if(e.which==119) player.tryMove(0, -1);
-		    if(e.which==115) player.tryMove(0, 1);
-		    if(e.which==97) player.tryMove(-1, 0);
-		    if(e.which==100) player.tryMove(1, 0);
-		};
-		-------------------------------------- 
-
-		Likewise, replace the drawSprite call in game.js with the player version.
-
-		-------------------------------------- game.js - draw() function (REPLACE)
-		drawSprite(0, x, y);
-		--------------------------------------
-		player.draw();
-		--------------------------------------
-
-		Test out the game. Our player moves around but can't go through walls. Awesome.
-
-		Now let's switch to our spritesheet and do some art.
-
-		[DRAW ALL MONSTERS and HP]
-
-		[I want to go ahead and draw five different monsters. If you want to do this piecemeal, that's fine too.]
-
-		[Also, we're going to need a simple way to represent HP so let's draw a tiny red circle to do this.]
-
-		Let's make our monsters. They'll be extremely simple for now, only differing by sprite and starting HP, but we'll add more detail later.
+		
 
 		-------------------------------------- monster.js
 
@@ -286,25 +283,109 @@ class Monster{
 }
 			`,
 			MOVE: `
-tryMove(dx, dy){
-    const newTile = this.tile.getNeighbor(dx,dy);
-    if(newTile.passable){
-        if(!newTile.monster){
-            this.move(newTile);
+    tryMove(dx, dy){
+        const newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
+            }
+            return true;
         }
-        return true;
     }
-}
 
-move(tile){
-    if(this.tile){
-        this.tile.monster = null;
+    move(tile){
+        if(this.tile){
+            this.tile.monster = null;
+        }
+        this.tile = tile;
+        tile.monster = this;
     }
-    this.tile = tile;
-    tile.monster = this;
+			`,
+            PLAYER: `
+class Player extends Monster{
+    constructor(tile){
+        super(tile, 0, 3);
+        this.isPlayer = true;
+    }
 }
-			`
-		};
+        `,
+        REPLACEX1:
+        `
+    const tileSize = 64;
+    const numTiles = 9;
+    const uiWidth = 4;
+        `,
+        REPLACEX2:
+        `
+    let x = y = 0;
+        `,
+        REPLACEX3:
+        `
+    let spritesheet = new Image();
+    spritesheet.src = 'spritesheet.png';
+
+    document.querySelector("html").onkeypress = function(e){
+        `,
+        REPLACEX4:
+        `
+        if(e.which==119) y--;       //W
+        if(e.which==115) y++;       //S
+        if(e.which== 97) x--;       //A
+        if(e.which==100) x++;       //D
+        `,
+        REPLACEX5:
+        `
+        if(e.which==119) player.tryMove(0, -1);
+        if(e.which==115) player.tryMove(0, 1);
+        if(e.which==97) player.tryMove(-1, 0);
+        if(e.which==100) player.tryMove(1, 0);
+        `,
+        REPLACEX6:
+        `
+    };
+
+    setInterval(draw, 15);
+
+    setupCanvas();
+
+    generateLevel();
+
+        `,
+        REPLACEX7:
+        `
+    let startingTile = randomPassableTile();
+    x = startingTile.x;
+    y = startingTile.y;       
+        `,
+        REPLACEX8:
+        `
+    let player = new Player(randomPassableTile());
+        `,
+        REPLACEDRAW1:
+        `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<numTiles;i++){
+        for(let j=0;j<numTiles;j++){
+            getTile(i,j).draw();
+        }
+    }
+
+        `,
+        REPLACEDRAW2:
+        `
+    drawSprite(0, x, y);
+        `,
+        REPLACEDRAW3:
+        `
+    player.draw();
+        `,
+        REPLACEDRAW4:
+        `
+}
+        `
+	   };
 	</script>
 
 	<link rel="stylesheet" href="highlight.min.css">

@@ -24,15 +24,15 @@
        const numTiles = 9;
        const uiWidth = 4;
 
-  let x = y = 0;
+
   let spritesheet = new Image();
   spritesheet.src = 'spritesheet.png';
 
    document.querySelector("html").onkeypress = function(e){
-       if(e.which==119) y--;       //W
-       if(e.which==115) y++;       //S
-       if(e.which== 97) x--;       //A
-       if(e.which==100) x++;       //D
+    if(e.which==119) player.tryMove(0, -1);
+    if(e.which==115) player.tryMove(0, 1);
+    if(e.which==97) player.tryMove(-1, 0);
+    if(e.which==100) player.tryMove(1, 0);
    };
 
    setInterval(draw, 15);
@@ -41,7 +41,5 @@
 
 	generateLevel();
 
-  let startingTile = randomPassableTile();
-  x = startingTile.x;
-  y = startingTile.y;
+  let player = new Player(randomPassableTile());
 </script>

@@ -16,7 +16,11 @@ class Monster{
 	draw(){
 		drawSprite(this.sprite, this.tile.x, this.tile.y);
 	}
+-------------------------------------- 
 
+
+
+-------------------------------------- 
 	tryMove(dx, dy){
 		const newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
