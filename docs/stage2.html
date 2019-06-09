@@ -44,7 +44,7 @@
         </div>
         We have the code for floor and wall tiles, but we need the sprites.
         <h2>Drawing Map Tiles</h2>  
-         <div class="drawing-section">
+        <div class="drawing-section">
             The floor uses dark colors and not too much contrast since we don't want it to compete with the foreground sprites. With tiles, keep in mind how they're going to repeat. Pixels on the left of our sprite will appear next to pixels on the right (likewise for bottom and top). An easy technique I'm using here is drawing a bunch of connecting lines and then breaking them up with a few pixels of the background color.
             <img src="art/floor.png">
             For the wall tile, we'll start with the same background color from the floor tile. This allows us to have rounded walls that blend in seamlessly.
