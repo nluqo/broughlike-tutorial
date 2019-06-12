@@ -234,7 +234,7 @@
 	-->
 
 	<script>
-		const content = {
+		let content = {
 			TILE: `
 class Tile{
 	constructor(x, y, sprite, passable){
@@ -387,8 +387,8 @@ function randomRange(min, max){
 function randomPassableTile(){
     let tile;
     tryTo('get random passable tile', function(){
-        const x = randomRange(0,numTiles-1);
-        const y = randomRange(0,numTiles-1);
+        let x = randomRange(0,numTiles-1);
+        let y = randomRange(0,numTiles-1);
         tile = tiles[x][y];
         return tile.passable && !tile.monster;
     });
@@ -526,7 +526,7 @@ class Tile{
         let connectedTiles = [this];
         let frontier = [this];
         while(frontier.length){
-            const neighbors = frontier.pop()
+            let neighbors = frontier.pop()
                                 .getAdjacentPassableNeighbors()
                                 .filter(t => !connectedTiles.includes(t));
             connectedTiles = connectedTiles.concat(neighbors);

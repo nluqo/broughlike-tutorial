@@ -16,7 +16,7 @@
 
 	<script>
 		//foo
-		const content = {
+		let content = {
 			A: `
 			<!DOCTYPE html>
 			<!-- wot -->
@@ -59,7 +59,7 @@
 			D: `
 			//wot
 			Object.keys(content).forEach(k => {
-				const contentContainer = document.querySelector("#content"+k);
+				let contentContainer = document.querySelector("#content"+k);
 				if(contentContainer){
 					contentContainer.textContent = content[k];
 				}else{
@@ -93,7 +93,7 @@
 			E: `
 			//wot
 			Object.keys(content).forEach(k => {
-				const contentContainer = document.querySelector("#content"+k);
+				let contentContainer = document.querySelector("#content"+k);
 				if(contentContainer){
 					contentContainer.textContent = content[k];
 				}else{
@@ -127,7 +127,7 @@
 			F: `
 			//wot
 			Object.keys(content).forEach(k => {
-				const contentContainer = document.querySelector("#content"+k);
+				let contentContainer = document.querySelector("#content"+k);
 				if(contentContainer){
 					contentContainer.textContent = content[k];
 				}else{

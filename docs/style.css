@@ -53,6 +53,10 @@ p{
 	margin: 10px 0;
 }
 
+.margin-bottom{
+	margin-bottom: 30px;
+}
+
 .code-container-inline.inline{
 	padding: 2px 5px;
 	text-align: center;
@@ -134,6 +138,7 @@ img{
 	border: 3px solid #53575C;
 	border-radius: 10px;
 	padding: 10px;
+	margin-bottom: 30px;
 }
 .drawing-section img{
 	margin: 10px 20px 20px 20px;

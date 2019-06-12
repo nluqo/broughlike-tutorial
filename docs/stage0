@@ -76,7 +76,7 @@ let bottles = 99;
 This is how we declare variables and assign them an initial value in one shot. 
 
 ------------------------
-const problems = 99;
+let problems = 99;
 ------------------------
 Same as let, but the variable is constant and cannot be modified.
 
@@ -166,7 +166,7 @@ The really important thing to know about functions in JavaScript is that they're
 
 You should also be aware there are a few other ways to represent functions such as "fat arrow" syntax, which does pretty much the same thing:
 ------------------------
-const sayHi = name => alert("Hi, " + name);
+let sayHi = name => alert("Hi, " + name);
 sayHi("my dude");
 ------------------------
 
@@ -260,8 +260,8 @@ class FireBreathingDragon extends Dragon{
 	}
 }
 
-const dragonA = new Dragon("RAWR");
-const dragonB = new FireBreathingDragon("RAWR!");
+let dragonA = new Dragon("RAWR");
+let dragonB = new FireBreathingDragon("RAWR!");
 
 dragonA.rawr();					//logs "RAWR"
 dragonA.breathe();				//logs "..."

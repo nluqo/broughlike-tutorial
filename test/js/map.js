@@ -2,6 +2,8 @@ function generateLevel(){
    tryTo('generate map', function(){
        return generateTiles() == randomPassableTile().getConnectedTiles().length;
    });
+
+   generateMonsters();
 }
 
 function generateTiles(){
@@ -36,10 +38,24 @@ function inBounds(x,y){
 function randomPassableTile(){
    let tile;
    tryTo('get random passable tile', function(){
-       const x = randomRange(0,numTiles-1);
-       const y = randomRange(0,numTiles-1);
+       let x = randomRange(0,numTiles-1);
+       let y = randomRange(0,numTiles-1);
        tile = tiles[x][y];
        return tile.passable && !tile.monster;
    });
    return tile;
+}
+
+function spawnMonster(){
+   let monsterType = shuffle([Bird, Snake, Tank, Eater, Jester])[0];
+   let monster = new monsterType(randomPassableTile());
+   monsters.push(monster);
+}
+
+function generateMonsters(){
+   monsters = [];
+   let numMonsters = level+1;
+   for(let i=0;i<numMonsters;i++){
+       spawnMonster();
+   }
 }

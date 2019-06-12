@@ -281,7 +281,7 @@
     </div>
 
     <script>
-        const content = {
+        let content = {
             A: `
 <canvas></canvas>
 <script>
@@ -427,9 +427,9 @@ function setupCanvas(){
 <script>
             `,
             V: `
-    const tileSize = 64;
-    const numTiles = 9;
-    const uiWidth = 4;
+    let tileSize = 64;
+    let numTiles = 9;
+    let uiWidth = 4;
             `,
             W: `
 
@@ -451,9 +451,9 @@ function draw(){
             `,
             AB: `
 <script>
-    const tileSize = 64;
-    const numTiles = 9;
-    const uiWidth = 4;
+    let tileSize = 64;
+    let numTiles = 9;
+    let uiWidth = 4;
 
     let x = y = 0;
             `,

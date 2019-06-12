@@ -6,6 +6,11 @@ class Tile{
          this.passable = passable;
  	}
 
+  //manhattan distance
+   dist(other){
+       return Math.abs(this.x-other.x)+Math.abs(this.y-other.y);
+   }
+
   getNeighbor(dx, dy){
        return getTile(this.x + dx, this.y + dy)
    }
@@ -27,7 +32,7 @@ class Tile{
        let connectedTiles = [this];
        let frontier = [this];
        while(frontier.length){
-           const neighbors = frontier.pop()
+           let neighbors = frontier.pop()
                                .getAdjacentPassableNeighbors()
                                .filter(t => !connectedTiles.includes(t));
            connectedTiles = connectedTiles.concat(neighbors);

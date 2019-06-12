@@ -38,7 +38,7 @@ When dying, the sprite is set to index 1 (our player corpse). We don't want to d
 
 --------------------------------------  monster.js
 tryMove(dx, dy){
-	const newTile = this.tile.getNeighbor(dx,dy);
+	let newTile = this.tile.getNeighbor(dx,dy);
 	if(newTile.passable){
 		if(!newTile.monster){
 			this.move(newTile);
@@ -102,7 +102,7 @@ We need one tie-in within tryMove to set this flag to true upon attacking.
 
 -------------------------------------- monster.js
 tryMove(dx, dy){
-	const newTile = this.tile.getNeighbor(dx,dy);
+	let newTile = this.tile.getNeighbor(dx,dy);
 	if(newTile.passable){
 		if(!newTile.monster){
 			this.move(newTile);
@@ -123,7 +123,7 @@ For the Tank, we'll introduce a "stunned" flag which we can reuse to stun monste
 
 -------------------------------------- monster.js
 tryMove(dx, dy){
-	const newTile = this.tile.getNeighbor(dx,dy);
+	let newTile = this.tile.getNeighbor(dx,dy);
 	if(newTile.passable){
 		if(!newTile.monster){
 			this.move(newTile);
@@ -209,10 +209,10 @@ replace(newTileType){
 <script src="js/spell.js"></script>
 
 <script>
-	const maxHp = 6; 
+	let maxHp = 6; 
 	
-	const tileSize = 64;
-	const numTiles = 11;
+	let tileSize = 64;
+	let numTiles = 11;
 --------------------------------------
 
 

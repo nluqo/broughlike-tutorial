@@ -166,9 +166,9 @@ We forgot to define a few variables. Let's do that now in the original script ta
 
 
 --------------------------------------
-	const tileSize = 64;
-	const numTiles = 9;
-	const uiWidth = 4;
+	let tileSize = 64;
+	let numTiles = 9;
+	let uiWidth = 4;
 --------------------------------------
 
 That should fix the error we saw. Now we can also utilize some of these variables in the draw call.

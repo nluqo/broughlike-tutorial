@@ -31,6 +31,21 @@ function draw(){
            getTile(i,j).draw();
        }
    }
+   
+
+   for(let i=0;i<monsters.length;i++){
+       monsters[i].draw();
+   }
 
    player.draw();
+}
+   
+function tick(){
+   for(let k=monsters.length-1;k>=0;k--){
+       if(!monsters[k].dead){
+           monsters[k].update();
+       }else{
+           monsters.splice(k,1);
+       }
+   }
 }

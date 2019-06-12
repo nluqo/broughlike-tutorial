@@ -83,11 +83,6 @@
 		Type any previously defined variable like
 		<div class="code-container-inline inline"><pre><code class="javascript inline">bottles</code></pre></div>
 		into the console to see its value.
-
-		<br><br>
-		<div class="code-container-inline"><pre><code id="contentB" class="javascript"></code></pre></div>
-		<br>
-		Same as let, but the variable is constant and cannot be modified.
 		<br><br>
 		<div class="code-container-inline"><pre><code id="contentC" class="javascript"></code></pre></div>
 		<br>
@@ -240,12 +235,12 @@
 	</div>
 
 	<script>
-		const content = {
+		let content = {
 			A: `
 let bottles = 99;
 			`,
 			B: `
-const problems = 99;
+let problems = 99;
 			`,
 			C: `
 balloons = 99;
@@ -287,7 +282,7 @@ function sayHello(name){
 sayHello("friendo");
 			`,
 			M: `
-const sayHi = name => alert("Hi, " + name);
+let sayHi = name => alert("Hi, " + name);
 sayHi("my dude");
 			`,
 			N: `
@@ -351,8 +346,8 @@ class FireBreathingDragon extends Dragon{
     }
 }
 
-const dragonA = new Dragon("RAWR");
-const dragonB = new FireBreathingDragon("RAWR!");
+let dragonA = new Dragon("RAWR");
+let dragonB = new FireBreathingDragon("RAWR!");
 
 dragonA.rawr();             //logs "RAWR"
 dragonA.breathe();          //logs "..."
