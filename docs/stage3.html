@@ -215,6 +215,10 @@
             <pre><code id="contentMONSTERUPDATE" class="javascript add"></code></pre>
             <pre><code id="contentPOSTMONSTERUPDATE" class="javascript"></code></pre>
         </div>
+        Our movement code will go in a method called
+        <div class="code-container-inline inline"><pre><code class="javascript">doStuff</code></pre></div>. Why not just do it all in 
+        <div class="code-container-inline inline"><pre><code class="javascript">update</code></pre></div>? We very often want to separate updates (things like status effect counters or health regeneration) from monster actions.
+        <br><br>
         We start by getting a monster's passable, adjacent neighbors that are either empty and can be moved to or contain the player and can be attacked. Now we need to pick the <em>closest</em> tile to the player. We do that with a
         <div class="code-container-inline inline"><pre><code class="javascript">sort</code></pre></div>
         that is going to sort our 
@@ -525,6 +529,10 @@ class Monster{
         MONSTERUPDATE:
         `
     update(){
+        this.doStuff();
+    }
+
+    doStuff(){
        let neighbors = this.tile.getAdjacentPassableNeighbors();
        
        neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);

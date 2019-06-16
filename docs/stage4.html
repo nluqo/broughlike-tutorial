@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 4</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Monsters - Part 2</h1>
+
+		Since the monsters will be attacking the player and vice versa, let's first draw the HP for each.
+		
+		<div class="filename">monster.js</div>
+        <div class="code-container">
+			<pre><code id="contentDRAWHP1" class="javascript"></code></pre>
+			<pre><code id="contentDRAWHP2" class="javascript add"></code></pre>
+			<pre><code id="contentDRAWHP3" class="javascript"></code></pre>
+			<pre><code id="contentDRAWHP4" class="javascript add"></code></pre>
+        </div>
+        Monster HP now displays nicely.
+        <br><br>
+        The idea here is to draw one HP pip sprite for each unit of HP the monster has. We can't just draw each pip in the same spot; you would only see the top one in that case. We've got a bit of funky math to layout all the pips:
+        <br><br>
+        <ul>
+            <li>
+                <strong>
+                    <div class="code-container-inline inline"><pre><code class="javascript">5/16</code></pre></div>
+                </strong> - Since 
+                <div class="code-container-inline inline"><pre><code class="javascript">drawSprite</code></pre></div>
+                operates on a sprite index we normally pass in whole numbers representing 16 pixel sprites. However, we can instead work in individual pixels by using fractions. So  
+                <div class="code-container-inline inline"><pre><code class="javascript">5/16</code></pre></div>
+                means 5 pixels within a 16 pixel sprite.
+            </li>
+            <li>
+                <strong>
+                    <div class="code-container-inline inline"><pre><code class="javascript">i%3</code></pre></div>
+                </strong> - this resets to 0 every 3 pips.
+            </li>
+            <li>
+                <strong>
+                    <div class="code-container-inline inline"><pre><code class="javascript">Math.floor(i,3)</code></pre></div>
+                </strong> - this increases by one every 3 pips.
+            </li>
+        </ul>
+        The result means pips are drawn first left to right offset by 5 pixels each and then stacked vertically offset by 5 pixels for each row.
+        <h2>Attacking</h2>
+        Now onto attacking. We can let the monsters attack the player and vice versa with a small addition to
+        <div class="code-container-inline inline"><pre><code class="javascript">tryMove</code></pre></div>.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentATTACK1" class="javascript"></code></pre>
+            <pre><code id="contentATTACK2" class="javascript add"></code></pre>
+            <pre><code id="contentATTACK3" class="javascript"></code></pre>
+            <pre><code id="contentATTACK4" class="javascript add"></code></pre>
+        </div>
+        We're comparing 
+        <div class="code-container-inline inline"><pre><code class="javascript">isPlayer</code></pre></div>
+        flags to make sure monsters don't attack each other.
+        <br><br>
+        When an attack is successful, that triggers
+        <div class="code-container-inline inline"><pre><code class="javascript">hit</code></pre></div>,
+        applying damage to the target monster's HP and if they run out of HP, they
+        <div class="code-container-inline inline"><pre><code class="javascript">die</code></pre></div>. When dying, the monster sprite is set to index 
+        <div class="code-container-inline inline"><pre><code class="javascript">1</code></pre></div>
+        (our player corpse). This will only apply to the player since we earlier wrote code to delete monsters as soon as they are 
+        <div class="code-container-inline inline"><pre><code class="javascript">dead</code></pre></div>.
+        <br><br>
+        Cool beans! Attacking is in the game. If you let the monsters kill you, you'll notice that you're still able to move around the map as a corpse. We'll tackle that later.
+        <br><br>
+        Monsters are working as expected, but with identical behavior. Here's the plan for making each one unique:
+
+        <ul>
+            <li><strong>Bird:</strong> our basic monster with no special behavior</li>
+            <li><strong>Snake:</strong> moves twice (yes, basically copied from 868-HACK's Virus)</li>
+            <li><strong>Tank:</strong> moves every other turn</li>
+            <li><strong>Eater:</strong> destroys walls and heals by doing so</li>
+            <li><strong>Jester:</strong> moves randomly</li>
+        </ul>
+        <h2>Snake</h2>
+        Since 
+        <div class="code-container-inline inline"><pre><code class="javascript">Bird</code></pre></div>
+        is already done, let's start with 
+        <div class="code-container-inline inline"><pre><code class="javascript">Snake</code></pre></div>. Make sure to test out each monster after updating their code. While testing this code, it may be easier to temporarily modify the 
+        <div class="code-container-inline inline"><pre><code class="javascript">spawnMonster</code></pre></div>
+        code to only generate a specific kind of monster (left as an exercise for the reader). Or you can just refresh a bunch of times.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentSNAKE" class="javascript"></code></pre>
+            <pre><code id="contentSNAKEADD" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+        Rather simple. The Snake can move twice, move and attack, but not attack twice (that's overpowered!).
+
+        We need one tie-in within tryMove to set 
+        <div class="code-container-inline inline"><pre><code class="javascript">attackedThisTurn</code></pre></div>
+        to true upon attacking.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREATTACKEDTHISTURN" class="javascript"></code></pre>
+            <pre><code id="contentATTACKEDTHISTURN" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTATTACKEDTHISTURN" class="javascript"></code></pre>
+        </div>
+
+        <h2>Tank</h2>
+        While working on the Tank, we'll introduce a 
+        <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>
+        flag. When a monster is stunned, they'll be unable to react until the next turn.
+        <br><br>
+        We'll be able to use this flag in multiple ways: to stun monsters whenever they are hit by the player or hit by certain spells and to pause the action of monsters like the Tank.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREATTACKEDTHISTURN" class="javascript"></code></pre>
+            <pre><code id="contentATTACKEDTHISTURN" class="javascript"></code></pre>
+            <pre><code id="contentSTUNFLAG" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTATTACKEDTHISTURN" class="javascript"></code></pre>
+        </div>
+        When monsters are attacked, they get 
+        <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>,
+        making it easier  for the player to take on tough monsters.
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREUPDATEDUPDATE" class="javascript"></code></pre>
+            <pre><code id="contentUPDATEDUPDATE" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTUPDATEDUPDATE" class="javascript"></code></pre>
+        </div>
+        If the
+        <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>
+        flag is true, we reset it to false and do a 
+        <div class="code-container-inline inline"><pre><code class="javascript">return</code></pre></div>
+        which exits the function and prevents the monster from doing anything until next turn.
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentTANK" class="javascript"></code></pre>
+            <pre><code id="contentTANKADD" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+        Here, the 
+        <div class="code-container-inline inline"><pre><code class="javascript">Tank</code></pre></div>
+        monster stuns itself if it wasn't already
+        <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>
+        at the beginning of the turn. Effectively, this results in action only ever other turn.
+        <!--
+
+
+			
+
+
+			-------------------------------------- monster.js
+			tryMove(dx, dy){
+				let newTile = this.tile.getNeighbor(dx,dy);
+				if(newTile.passable){
+					if(!newTile.monster){
+						this.move(newTile);
+					}else{
+						if(this.isPlayer != newTile.monster.isPlayer){
+							this.attackedThisTurn = true;
+							newTile.monster.stunned = true;							//ADD
+							newTile.monster.hit(1);
+						}
+					}
+					return true;
+				}
+			}
+			...
+
+			update(){
+				if(this.stunned){													//ADD
+					this.stunned = false;
+					return;
+				}
+				this.doStuff();
+			}
+
+			...
+
+			class Tank extends Monster{
+				constructor(tile){
+					super(tile, 3, 7);
+				}
+
+				update(){															//ADD
+					let startedStunned = this.stunned;
+					super.update();
+					if(!startedStunned){
+						this.stunned = true;
+					}
+				}
+			}
+			--------------------------------------
+
+
+			Then comes the "Eater". Before doing normal monster behavior, this guy is going to check for any nearby walls and eat them. Each wall grants half a health point (our drawHp method only draws whole points though).
+
+			We're introducing a replace() method on Tile. You can use this any time one tile type changes into another type. One thing that's not coded here is code to copy over monsters and items present on the old tile to the new tile. Keep that in mind for future additions.
+
+			We're adding a heal() method and a constant maxHp to put a ceiling on how much health monsters or the player can acquire.
+
+
+			-------------------------------------- monster.js
+			class Eater extends Monster{
+				constructor(tile){
+					super(tile, 1, 8);
+				}
+
+				doStuff(){
+					let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
+					if(neighbors.length){
+						neighbors[0].replace(Floor);
+						this.heal(0.5);
+					}else{
+						super.doStuff();
+					}
+				}
+			}
+			--------------------------------------
+
+
+			-------------------------------------- monster.js (add to Monster class)
+
+			heal(damage){
+				this.hp = Math.min(maxHp, this.hp+damage);
+			}
+			-------------------------------------- 
+			-------------------------------------- tile.js
+			replace(newTileType){
+				tiles[this.x][this.y] = new newTileType(this.x, this.y);
+				return tiles[this.x][this.y];
+			}
+			-------------------------------------- 
+
+			-------------------------------------- index.html 
+			<script src="js/util.js"></script>
+			<script src="js/spell.js"></script>
+
+			<script>
+				let maxHp = 6; 
+				
+				let tileSize = 64;
+				let numTiles = 11;
+			--------------------------------------
+
+
+			The last monster is the Jester and it requires only an overriden doStuff() method in order to move randomly:
+
+			-------------------------------------- monster.js 
+			class Jester extends Monster{
+				constructor(tile){
+					super(tile, 9, 2);
+				}
+
+				doStuff(){
+					let neighbors = this.tile.getAdjacentPassableNeighbors();
+					if(neighbors.length){
+						this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
+					}
+				}
+			}
+			--------------------------------------
+
+			In the next section we'll turn this thing into a proper game with a title screen, multiple levels, and victory and failure conditions.
+        -->
+	</div>
+
+	<script>
+		let content = {
+			DRAWHP1:
+			`
+draw(){
+    drawSprite(this.sprite, this.tile.x, this.tile.y);
+			`,
+			DRAWHP2:
+			`
+    this.drawHp();
+			`,
+			DRAWHP3:
+			`
+}
+
+			`,
+			DRAWHP4:
+			`
+drawHp(){
+    for(let i=0; i<this.hp; i++){
+        drawSprite(
+            9,
+            this.tile.x + (i%3)*(5/16),
+            this.tile.y - Math.floor(i/3)*(5/16)
+        );
+    }
+}		
+			`,
+            ATTACK1:
+            `
+tryMove(dx, dy){
+    let newTile = this.tile.getNeighbor(dx,dy);
+    if(newTile.passable){
+        if(!newTile.monster){
+            this.move(newTile);
+            `,
+            ATTACK2:
+            `
+        }else{
+            if(this.isPlayer != newTile.monster.isPlayer){
+                newTile.monster.hit(1);
+            }
+            `,
+            ATTACK3:
+            `
+        }
+        return true;
+    }
+}
+
+            `,
+            ATTACK4:
+            `
+    hit(damage){
+        this.hp -= damage;
+        if(this.hp <= 0){
+            this.die();
+        }
+    }
+
+    die(){
+        this.dead = true;
+        this.tile.monster = null;
+        this.sprite = 1;
+    }
+            `,
+            SNAKE:
+            `
+class Snake extends Monster{
+    constructor(tile){
+        super(tile, 5, 1);
+    }
+
+            `,
+            SNAKEADD:
+            `
+    doStuff(){
+        this.attackedThisTurn = false;
+        super.doStuff();
+
+        if(!this.attackedThisTurn){
+            super.doStuff();
+        }
+    }
+            `,
+            TANK:
+            `
+class Tank extends Monster{
+    constructor(tile){
+        super(tile, 6, 2);
+    }
+
+            `,
+            TANKADD:
+            `
+    update(){
+        let startedStunned = this.stunned;
+        super.update();
+        if(!startedStunned){
+            this.stunned = true;
+        }
+    }
+            `,
+            EATER:
+            `
+
+            `,
+            EATERADD:
+            `
+
+            `,
+            JESTER:
+            `
+
+            `,
+            JESTERADD:
+            `
+
+            `,
+            CLOSINGBRACE:
+            `
+}
+
+            `,
+            PREATTACKEDTHISTURN:
+            `
+    tryMove(dx, dy){
+        let newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
+            }else{
+                if(this.isPlayer != newTile.monster.isPlayer){       
+            `,
+            ATTACKEDTHISTURN:
+            `
+                    this.attackedThisTurn = true;
+            `,
+            POSTATTACKEDTHISTURN:
+            `
+                    newTile.monster.hit(1);
+                }
+            }
+            return true;
+        }
+    }
+            `,
+            STUNFLAG:
+            `
+                    newTile.monster.stunned = true;
+            `,
+            PREUPDATEDUPDATE:
+            `
+    update(){
+            `,
+            UPDATEDUPDATE:
+            `
+        if(this.stunned){
+            this.stunned = false;
+            return;
+        }
+            `,
+            POSTUPDATEDUPDATE:
+            `
+
+        this.doStuff();
+    }
+            `
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>
