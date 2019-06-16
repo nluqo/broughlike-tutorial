@@ -144,88 +144,53 @@
         monster stuns itself if it wasn't already
         <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>
         at the beginning of the turn. Effectively, this results in action only ever other turn.
+
+        <h2>Eater</h2>
+        Then comes the 
+        <div class="code-container-inline inline"><pre><code class="javascript">Eater</code></pre></div>.
+        Before doing normal monster behavior, this guy is going to check for any nearby walls and eat them! Each wall will grant half a health point (our 
+        <div class="code-container-inline inline"><pre><code class="javascript">drawHp</code></pre></div>
+        method only draws whole points though).
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentEATER" class="javascript"></code></pre>
+            <pre><code id="contentEATERADD" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+        First, we need to get all the nearby walls using 
+        <div class="code-container-inline inline"><pre><code class="javascript">getAdjacentNeighbors</code></pre></div>
+        and only include tiles that are not 
+        <div class="code-container-inline inline"><pre><code class="javascript">passable</code></pre></div>
+        (indicating a wall)
+        and are also 
+        <div class="code-container-inline inline"><pre><code class="javascript">inBounds</code></pre></div>
+        (so the outer wall doesn't get destroyed).
+        <br><br>
+        If walls are found, we're going to call two new methods. The 
+        <div class="code-container-inline inline"><pre><code class="javascript">replace</code></pre></div>
+        method is replacing a
+        <div class="code-container-inline inline"><pre><code class="javascript">Wall</code></pre></div>
+        tile with a 
+        <div class="code-container-inline inline"><pre><code class="javascript">Floor</code></pre></div> tile.
+        The 
+        <div class="code-container-inline inline"><pre><code class="javascript">heal</code></pre></div>
+        method adds half a hitpoint to the monster.  If no walls are found, we'll simply do the normal monster behavior.
+        <br><br>
+        Now let's implement those methods.
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREHEAL" class="javascript"></code></pre>
+            <pre><code id="contentHEAL" class="javascript add"></code></pre>
+        </div>
+        We're introducing a replace() method on Tile. You can use this any time one tile type changes into another type. One thing that's not coded here is code to copy over monsters and items present on the old tile to the new tile. Keep that in mind for future additions.
+        <br><br>
+        We're also adding a heal() method and a constant maxHp to put a ceiling on how much health monsters or the player can acquire.
+
+        <h2>Jester</h2>
         <!--
 
 
-			
-
-
-			-------------------------------------- monster.js
-			tryMove(dx, dy){
-				let newTile = this.tile.getNeighbor(dx,dy);
-				if(newTile.passable){
-					if(!newTile.monster){
-						this.move(newTile);
-					}else{
-						if(this.isPlayer != newTile.monster.isPlayer){
-							this.attackedThisTurn = true;
-							newTile.monster.stunned = true;							//ADD
-							newTile.monster.hit(1);
-						}
-					}
-					return true;
-				}
-			}
-			...
-
-			update(){
-				if(this.stunned){													//ADD
-					this.stunned = false;
-					return;
-				}
-				this.doStuff();
-			}
-
-			...
-
-			class Tank extends Monster{
-				constructor(tile){
-					super(tile, 3, 7);
-				}
-
-				update(){															//ADD
-					let startedStunned = this.stunned;
-					super.update();
-					if(!startedStunned){
-						this.stunned = true;
-					}
-				}
-			}
-			--------------------------------------
-
-
-			Then comes the "Eater". Before doing normal monster behavior, this guy is going to check for any nearby walls and eat them. Each wall grants half a health point (our drawHp method only draws whole points though).
-
-			We're introducing a replace() method on Tile. You can use this any time one tile type changes into another type. One thing that's not coded here is code to copy over monsters and items present on the old tile to the new tile. Keep that in mind for future additions.
-
-			We're adding a heal() method and a constant maxHp to put a ceiling on how much health monsters or the player can acquire.
-
-
-			-------------------------------------- monster.js
-			class Eater extends Monster{
-				constructor(tile){
-					super(tile, 1, 8);
-				}
-
-				doStuff(){
-					let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
-					if(neighbors.length){
-						neighbors[0].replace(Floor);
-						this.heal(0.5);
-					}else{
-						super.doStuff();
-					}
-				}
-			}
-			--------------------------------------
-
-
-			-------------------------------------- monster.js (add to Monster class)
-
-			heal(damage){
-				this.hp = Math.min(maxHp, this.hp+damage);
-			}
-			-------------------------------------- 
 			-------------------------------------- tile.js
 			replace(newTileType){
 				tiles[this.x][this.y] = new newTileType(this.x, this.y);
@@ -371,11 +336,23 @@ class Tank extends Monster{
             `,
             EATER:
             `
+class Eater extends Monster{
+    constructor(tile){
+        super(tile, 7, 1);
+    }
 
             `,
             EATERADD:
             `
-
+    doStuff(){
+        let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
+        if(neighbors.length){
+            neighbors[0].replace(Floor);
+            this.heal(0.5);
+        }else{
+            super.doStuff();
+        }
+    }
             `,
             JESTER:
             `
@@ -432,6 +409,22 @@ class Tank extends Monster{
             `
 
         this.doStuff();
+    }
+            `,
+            PREHEAL:
+            `
+class Monster{
+    constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+    }
+
+            `,
+            HEAL:
+            `
+    heal(damage){
+        this.hp = Math.min(maxHp, this.hp+damage);
     }
             `
 		};

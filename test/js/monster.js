@@ -6,6 +6,10 @@ class Monster{
 	}
 
     update(){
+      if(this.stunned){
+               this.stunned = false;
+               return;
+           }
            this.doStuff();
        }
    
@@ -44,6 +48,7 @@ class Monster{
            }else{
                if(this.isPlayer != newTile.monster.isPlayer){
                   this.attackedThisTurn = true;
+                  newTile.monster.stunned = true;
                    newTile.monster.hit(1);
                }
            }
@@ -113,6 +118,14 @@ class Snake extends Monster{
 class Tank extends Monster{
    constructor(tile){
        super(tile, 6, 2);
+   }
+   
+   update(){
+       let startedStunned = this.stunned;
+       super.update();
+       if(!startedStunned){
+           this.stunned = true;
+       }
    }
 }
 
