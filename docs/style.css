@@ -152,3 +152,13 @@ img{
 .noselect{
 	user-select: none;
 }
+
+#outer pre code.break{
+	color: #999;
+	background-color: #fff;
+	vertical-align: middle;
+	padding: 13px;
+	border-top: 1px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+	margin: 5px 0;
+}

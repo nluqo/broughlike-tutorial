@@ -206,7 +206,7 @@
 
         Check it out. We've got monsters on the map. They aren't doing much besides blocking our path. We'll need some monster AI to make this more interesting.
         <br><br>
-        I often use a pathfinding algorithm called <strong>A*</strong> to handle monster movement. But take a look at the <a href="https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode" target="_blank">pseudocode</a>. It's hard to get right, even if you've written it before.
+        I often use a pathfinding algorithm called <strong>A*</strong> to handle monster movement. But take a look at the <a href="https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode" target="_blank">pseudocode</a>. It's hard to get right, even if you've written it before. If you <em>did</em> want to use <strong>A*</strong>, I would strongly recommend a library like rot.js to handle it.
         <br><br>
         Instead we're going to take a shortcut and use "greedy" movement, which simply means trying to get closer on <em>every</em> turn even if it's not the ideal path in the long term. Monsters will try to move closer even when that gets them trapped. Trust me, this will still lead to interesting (but unique) gameplay.
         <div class="filename">monster.js</div>
@@ -247,9 +247,6 @@
         <div class="code-container-inline inline"><pre><code class="javascript">update</code></pre></div>
         if each monster is alive, and if not delete them with 
         <div class="code-container-inline inline"><pre><code class="javascript">splice</code></pre></div>.
-        <br><br>
-        Notice we never defined a 
-        <div class="code-container-inline inline"><pre><code class="javascript">dead</code></pre></div> property anywhere in the code. That's fine! JavaScript lets us do this because a) we don't have to define object properties before we attempt to read them and b) undefined or null properties are considered "falsy". Super dirty but useful.
         <br><br>
         The last piece of the puzzle is when to call 
         <div class="code-container-inline inline"><pre><code class="javascript">tick</code></pre></div>

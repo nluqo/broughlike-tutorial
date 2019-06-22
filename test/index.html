@@ -28,19 +28,29 @@
 
   let spritesheet = new Image();
   spritesheet.src = 'spritesheet.png';
+  spritesheet.onload = showTitle;
+                                
+       let gameState = "loading";  
+   
+       let startingHp = 3; 
+       let numLevels = 6;          
 
-   document.querySelector("html").onkeypress = function(e){
-    if(e.which==119) player.tryMove(0, -1);
-    if(e.which==115) player.tryMove(0, 1);
-    if(e.which==97) player.tryMove(-1, 0);
-    if(e.which==100) player.tryMove(1, 0);
+    document.querySelector("html").onkeypress = function(e){
+        if(gameState == "title"){                              
+            startGame();                
+        }else if(gameState == "dead"){                             
+            showTitle();                                        
+        }else if(gameState == "running"){             
+            if(e.which==119) player.tryMove(0, -1);
+            if(e.which==115) player.tryMove(0, 1);
+            if(e.which==97) player.tryMove(-1, 0);
+            if(e.which==100) player.tryMove(1, 0);
+        }
    };
 
    setInterval(draw, 15);
 
    setupCanvas();
 
-	generateLevel();
-
-  let player = new Player(randomPassableTile());
+	let player;
 </script>
