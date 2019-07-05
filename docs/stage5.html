@@ -121,260 +121,195 @@
             <pre><code id="contentSPAWN3" class="javascript add"></code></pre>
             <pre><code id="contentSPAWN4" class="javascript"></code></pre>
         </div>
-        <!--
-
-----------------------------------
-function tick(){
-    for(let k=monsters.length-1;k>=0;k--){
-        if(!monsters[k].dead){
-            monsters[k].update();
-        }else{
-            monsters.splice(k,1);
-        }
-    }
-
-    if(player.dead){
-        gameState = "dead";
-    }
-
-    spawnCounter-=2;                                                                //ADD
-    if(spawnCounter <= 0){                                                      //ADD       
-        spawnMonster();
-        spawnCounter = spawnRate;
-        spawnRate--;
-    }
-}
-
-...
-
-function startLevel(playerHp){
-    spawnRate = 22;                                                             //ADD
-    spawnCounter = spawnRate;                                                   //ADD
-
-    generateLevel();
-
-    player = new Player(randomPassableTile());
-    player.hp = playerHp;
-}
-----------------------------------
-
-We're using two new global variables here.
-
--spawnRate is how often monsters will get spawned
--spawnCounter counts down until the new spawn
-
-After every spawn, spawnRate is reduced so that monsters come out even faster until they're coming out every single turn. Tweaking spawnRate will have a massive impact on the game's design.
-
-One more rough edge to smooth out. Monsters can spawn right next to us and immediately start attacking. And it's also very weird to see monsters spawning in the middle of the map with no explanation.
-
-We can add a short delay, equivalent to Magic's "summoning sickness", and a little interim sprite to handle this.  It'll be useful when doing any sort of teleport spells too.
-
-TODO: ADD TICK() IN START LEVEL
-
-[DRAW TELEPORT SPRITE]
-
----------------------------------- monster.js
-class Monster{
-    constructor(tile, sprite, hp){
-        this.move(tile);
-        this.sprite = sprite;
-        this.hp = hp;
-        this.teleportCounter = 2;                                               //ADD
-    }
-
-    draw(){
-        if(this.teleportCounter > 0){                                           //ADD
-            drawSprite(11, this.tile.x, this.tile.y);                           //ADD
-        }else{                                                                  //ADD
-            drawSprite(this.sprite, this.tile.x, this.tile.y);
-            this.drawHp();
-        }                                                                       //ADD
-    }
 
-...
-
-    update(){
-        this.teleportCounter--;                                                 //ADD
-        if(this.teleportCounter > 0 || this.stunned){                           //MODIFY
-            this.stunned = false;
-            return;
-        }
-        this.doStuff();
-    }
-
-...
-
-class Player extends Monster{
-    constructor(tile){
-        super(tile, 0, 3);
-        this.isPlayer = true;
-        this.teleportCounter = 0;                                               //ADD
-    }
-----------------------------------
-
-This counter pattern should be pretty familiar since we just looked at spawnCounter. You can do a hell of a lot of work with only boolean flags for statuses and integer counters for longer lasting effects.
-
-The monsters are teleporting in and spawning nicely... eventually leading to an unwillable scenario. Let's give the player an exit from this situation. Literally an Exit tile.
-
----------------------------------- tile.js
-class Floor extends Tile{
-    constructor(x,y){
-        super(x,y, 2, true);
-    };
-
-    stepOn(monster){                                                            //ADD
-        //TODO: complete
-    }
-}
-
-...
-
-
-class Exit extends Tile{
-    constructor(x, y){
-        super(x, y, 4, true);
-    }
-
-    stepOn(monster){
-        if(monster.isPlayer){
-            if(level == numLevels){
-                showTitle();
-            }else{
-                level++;
-                startLevel(Math.min(maxHp, player.hp+1));
-            }
-        }
-    }
-}
-----------------------------------
-
-So this is a pretty basic tile with the addition of a stepOn function. You can use such a function to trigger some event (like traps) every time a monster steps on a tile. Notice that we need an empty stepOn() method for Floor too because monsters will be stepping on them. We'll never need it for Walls because monsters don't step on those tiles. And unlike in other languages we don't need it on the base object in order to call it on the subclasses.
-
-If we were already on the last level, we jump to the title screen. Otherwise, we start a new level with 1 extra HP.
-
----------------------------------- monster.js
-move(tile){
-    if(this.tile){
-        this.tile.monster = null;
-    }
-    this.tile = tile;
-    tile.monster = this;
-    tile.stepOn(this);                                                      //ADD
-}
-----------------------------------
-
-
----------------------------------- game.js
-function startLevel(playerHp){
-    spawnRate = 10;
-    spawnCounter = spawnRate;
-
-    generateLevel();
-
-    player = new Player(randomPassableTile());
-    player.hp = playerHp;
-
-    randomPassableTile().replace(Exit);                                     //ADD
-}
-----------------------------------
-
-With these small additions, the game has some real structure to it.
-
-
-The title screen is seriously lacking though. I don't want to do anything too crazy for the title screen, but at the very least it needs some text.
-
-If you're trying to draw UI elements for a browser game, I would typically recommend trying it with HTML. You've got a lot of functionality with HTML & CSS, built up over decades. But for a few simple lines of text, the canvas will do.
-
-Drawing text on the canvas is not much different from drawing images. The important bit here is at the end: ctx.fillText. We pass a string and X and Y coordinates. 
-
-
----------------------------------- game.js
-function drawText(text, size, centered, textY, color){
-    ctx.fillStyle = color;
-    ctx.font = size+"px monospace";
-    let textX;
-    if(centered){
-        textX = (canvas.width-ctx.measureText(text).width)/2;
-    }else{
-        textX = canvas.width-uiWidth*tileSize+25;
-    }
-
-    ctx.fillText(text, textX, textY);
-}
----------------------------------- 
-
-The first two lines set the font color and size. We're going to leave the Y position up to the caller, but to make things easier this function will handle X. We're going to draw text in two places basically: justified centered on the title screen and on the far right during play. The *centered* variable lets us toggle between these two.
-
-So what does this line mean exactly? 
-
-textX = (canvas.width-ctx.measureText(text).width)/2;
-
-[diagram of centering]
-
-When we want to center any element horizontally, whether on the canvas or in HTML, the calculation is the same. Since the coordinates we specify are the top left corner of the element, we can't simply calculate the center of the screen. We start in the center and need to offset the element by half it's width. So that's what we end up with: half the canvas width minus half the text width.
-
-This is a good example of where HTML & CSS would be a lot easier. For one there are many easy ways to center things in CSS and for two getting the width or height of an HTML element is trivial. None of this measureText ugliness. What's worse is there is no corresponding way to measure text *height*!
-
-Anyway, enough ranting... let's draw some text.
-
-
----------------------------------- game.js
-function draw(){
-    if(gameState == "running" || gameState == "dead"){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-
-        for(let i=0;i<numTiles;i++){
-            for(let j=0;j<numTiles;j++){
-                tiles[i][j].draw();
-            }
-        }
-        
-        for(let k=monsters.length-1;k>=0;k--){
-            monsters[k].draw();
-        }
-        player.draw();
-
-        drawText("Level: "+level, 30, false, 40, "violet");                 //ADD
-    }
-}
-
-...
-
-function showTitle(){
-    ctx.fillStyle = 'rgba(0,0,0,.75)';
-    ctx.fillRect(0,0,canvas.width, canvas.height);
-
-    drawText("SUPER", 40, true, canvas.height/2 - 110, "white");            //ADD
-    drawText("BROUGH BROS.", 70, true, canvas.height/2 - 50, "white");      //ADD
-
-    gameState = "title";
-}
----------------------------------- 
-
-To review the arguments to our drawText function: a string, a font size, whether the text is centered, the Y position, and the color. Whew! That's a mouthful, but it's preventing us from duplicating a lot of code.
-
-We're drawing the level number on the UI during play and drawing the name of the game on the title screen. I chose a silly name. I'm sure you can do better.
-
-At this point it becomes apparent our light green background isn't working out. Let's change it to something dark.
-
----------------------------------- index.html
-<style>
-    canvas{
-        outline: 1px solid white;
-    }
-
-    body{
-        background-color: #251323;                                          //UPDATE
-        text-align: center;
-        margin: 50px;
-    }
-</style> 
-----------------------------------
-
-Looking good. At this point, the game can be considered a fully playable and complete game. It's just not very interesting yet. We'll get there.
-
-In the next section we'll add treasure and score mechanics.
-        -->
+        We're using two new global variables.
+
+        <ul>
+            <li>
+                <div class="code-container-inline inline"><pre><code class="javascript">spawnCounter</code></pre></div>
+                counts down until each spawn and then resets
+            </li>
+            <li>
+                <div class="code-container-inline inline"><pre><code class="javascript">spawnRate</code></pre></div>
+                is how often monsters will get spawned and provides the initial value for <div class="code-container-inline inline"><pre><code class="javascript">spawnCounter</code></pre></div> every time it is reset
+            </li>
+        </ul>
+        After every spawn,
+        <div class="code-container-inline inline"><pre><code class="javascript">spawnRate</code></pre></div>
+        is decremented so that monsters come out even faster.
+        <ul>
+            <ol>After the first 15 turns, a new monster gets spawned</ol>
+            <ol>14 turns after that, another monster spawns</ol>
+            <ol>13 turns after that, another monster spawns</ol>
+            <ol>...</ol>
+            <ol>And so on until monsters spawn every turn</ol>
+        </ul>
+        Tweaking the initial value of
+        <div class="code-container-inline inline"><pre><code class="javascript">spawnRate</code></pre></div>
+        will have a massive impact on the game's design (try a value of 1 for some real fun).
+        <br><br>
+        Try that out and see how you like the spawn behavior.
+        <h2>Teleport counter</h2>
+        One more rough edge to smooth out. Monsters can spawn right next to us and immediately start attacking. It's also very weird to see monsters spawning in the middle of the map with no explanation.
+        <br><br>
+        One convenient explanation is that these monsters are being "teleported" into the map. While each monster is teleporting, which will take one extra turn, they will be unable to do anything. Think of this as equivalent to Magic's "summoning sickness".
+        <br><br>
+        To visually demonstrate this, we need a teleporting sprite. Let's draw that before getting to the code.
+        <h2>Drawing the teleport sprite</h2>  
+        <div class="drawing-section">
+            There's not much to this one. We draw a spiral, add swirly limbs, and outline it.
+            <img src="art/teleport.png">
+         </div>
+
+         To integrate this teleporting thing, we'll use a counter just like we did with 
+         <div class="code-container-inline inline"><pre><code class="javascript">spawnCounter</code></pre></div>. 
+         This should look familiar. You can do a <em>hell of a lot of work</em> with only boolean flags for statuses and integer counters for longer lasting effects.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+
+            <pre><code id="contentTELEPORT1" class="javascript"></code></pre>
+            <pre><code id="contentTELEPORT2" class="javascript add"></code></pre>
+            <pre><code id="contentTELEPORT3" class="javascript"></code></pre>
+            <pre><code id="contentTELEPORT4" class="javascript add"></code></pre>
+            <pre><code id="contentTELEPORT5" class="javascript remove"></code></pre>
+            <pre><code id="contentTELEPORT6" class="javascript add"></code></pre>
+            <pre><code id="contentTELEPORT7" class="javascript"></code></pre>
+
+            <pre><code class="break">...</code></pre>
+
+            <pre><code id="contentTELEPORT8" class="javascript"></code></pre>
+            <pre><code id="contentTELEPORT9" class="javascript add"></code></pre>
+            <pre><code id="contentTELEPORT10" class="javascript"></code></pre>
+            <pre><code id="contentTELEPORT11" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+
+            <pre><code class="break">...</code></pre>
+
+            <pre><code id="contentTELEPORT12" class="javascript"></code></pre>
+            <pre><code id="contentTELEPORT13" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+        The monsters are teleporting in and spawning nicely... eventually leading to an unwillable scenario. Let's give the player an <em>exit</em> from this situation.
+        <h2>Drawing the exit sprite</h2>  
+        <div class="drawing-section">
+            I tried drawing something resembling a portal.
+            <img src="art/exit.png">
+         </div>
+
+        Our 
+        <div class="code-container-inline inline"><pre><code class="javascript">Exit</code></pre></div>
+        tile is a pretty basic object, but it does need to do something (i.e. go to the next level) whenever the player moves onto it. It's within the monster code that we determine when we're stepping on something, but after that point it's best to delegate to the tiles themselves. Each tile will know exactly what to do when stepped on.
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+
+            <pre><code id="contentSTEPON1" class="javascript"></code></pre>
+            <pre><code id="contentSTEPON2" class="javascript add"></code></pre>
+            <pre><code id="contentSTEPON3" class="javascript"></code></pre>
+            <pre><code id="contentEXIT" class="javascript add"></code></pre>
+        </div>
+
+        Notice that we need an empty 
+        <div class="code-container-inline inline"><pre><code class="javascript">stepOn</code></pre></div>
+        method for 
+        <div class="code-container-inline inline"><pre><code class="javascript">Floor</code></pre></div> too because monsters will be stepping on them as well. It won't do anything for now but it's nice to leave a little reminder comment to finish up the behavior later. We'll never need this method for a 
+        <div class="code-container-inline inline"><pre><code class="javascript">Wall</code></pre></div>
+        because monsters don't step on those. And unlike in other languages we don't need this method on the base object in order to call it on the subclasses.
+        <br><br>
+        Now what happens when the player steps on the
+        <div class="code-container-inline inline"><pre><code class="javascript">Exit</code></pre></div>? If we were already on the last level, we jump to the title screen. Otherwise, we start a new level with 1 extra HP.
+        <br><br>
+        Two more pieces to tie it all together: triggering
+        <div class="code-container-inline inline"><pre><code class="javascript">stepOn</code></pre></div>
+        and creating the
+        <div class="code-container-inline inline"><pre><code class="javascript">Exit</code></pre></div>
+        tile.
+
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTERSTEPON1" class="javascript"></code></pre>
+            <pre><code id="contentMONSTERSTEPON2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+        </div>
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentREPLACEEXIT1" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEEXIT2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+        With these small additions, the game has some real structure to it.
+        <h2>Title time</h2>
+        The title screen is seriously lacking though. I don't want to do anything too crazy for the title screen, but at the very least it needs some text.
+        <br><br>
+        If you're trying to draw UI elements for a browser game, I would typically recommend trying it with HTML. You've got a lot of functionality out of the box with HTML & CSS, built up over decades. But for a few simple lines of text, the canvas will do just fine.
+        <br><br>
+        Drawing text on the canvas is not much different from drawing images. The important bit here is at the end: 
+        <div class="code-container-inline inline"><pre><code class="javascript">ctx.fillText</code></pre></div>.
+        All we need to pass is what text to draw and where.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWTEXT" class="javascript add"></code></pre>
+        </div>
+
+        The first two lines of our function set the font color and size. The string
+        <div class="code-container-inline inline"><pre><code class="javascript">"px monospace"</code></pre></div>
+        might look a little cryptic. We're actually writing a bit of CSS : we specify a font size in "px" units (pixels) and specify the type of font we want, which is "monospace".
+        <br><br>
+        We're going to leave the Y position up to the caller, but to make things easier this function will handle X. We're going to draw text in two places basically: justified centered on the title screen and on the far right during play. The 
+        <div class="code-container-inline inline"><pre><code class="javascript">centered</code></pre></div>
+         variable lets us toggle between these two.
+        <br><br>
+        So what does this line mean exactly? 
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">textX = (canvas.width-ctx.measureText(text).width)/2;</code></pre></div>
+        <br><br>
+        When you want to center <em>any</em> element, whether on the canvas or in HTML, the calculation is the same. For X: half the container width minus half the content width. For Y: half the container height minus half the content height. The reason is obvious when you see it:
+        <br><br>
+
+        [diagram of centering]
+        <br><br>
+        This is a good example of where HTML & CSS would be a lot easier to use! For one there are many easy ways to center things in CSS (there weren't for about 20 years but now there certainly are). And for two getting the width or height of an HTML element is very easy. None of this
+        <div class="code-container-inline inline"><pre><code class="javascript">measureText</code></pre></div>
+        nonsense. Did you know there isn't even a way to measure the height? Ugh!
+        <br><br>
+        Anyway, enough ranting... let's draw some text.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWSOMETEXT1" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSOMETEXT2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+
+            <pre><code class="break">...</code></pre>
+
+            <pre><code id="contentDRAWSOMETEXT3" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSOMETEXT4" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+
+        To review the arguments to our 
+        <div class="code-container-inline inline"><pre><code class="javascript">drawText</code></pre></div>
+         function
+        <ul>
+            <li>some text</li>
+            <li>a font size</li>
+            <li>whether the text is centered</li>
+            <li>the Y position</li>
+            <li>the color</li>
+        </ul>
+         Whew! That's a mouthful, but trust me when I say it's preventing us from duplicating a lot of code.
+        <br><br>
+        We're drawing the level number on the UI during play and drawing the name of the game on the title screen. I chose a silly name. I'm sure you can do better.
+        <br><br>
+        Try it out. I think it's looking good. At this point, the game can be considered a fully playable and complete game. It's just not very interesting yet. We'll get there.
+        <br><br>
+        In the next section we'll be adding treasure and score mechanics.
 	</div>
 
 	<script>
@@ -480,6 +415,10 @@ function draw(){
             `
 }
             `,
+            CLOSINGBRACEINDENT1:
+            `
+    }
+            `,
             NEWLINE:
             `
 
@@ -527,7 +466,7 @@ function startLevel(playerHp){
             `,
             SPAWN1:
             `
-    spawnCounter-=2;
+    spawnCounter--;
     if(spawnCounter <= 0){  
         spawnMonster();
         spawnCounter = spawnRate;
@@ -536,12 +475,11 @@ function startLevel(playerHp){
             `,
             SPAWN2:
             `
-
 function startLevel(playerHp){ 
             `,
             SPAWN3:
             `
-    spawnRate = 22;              
+    spawnRate = 15;              
     spawnCounter = spawnRate;                      
             `,
             SPAWN4:
@@ -552,11 +490,206 @@ function startLevel(playerHp){
     player = new Player(randomPassableTile());
     player.hp = playerHp;
 }
+            `,
+            TELEPORT1:
             `
+class Monster{
+    constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+            `,
+            TELEPORT2:
+            `
+        this.teleportCounter = 1;
+            `,
+            TELEPORT3:
+            `
+    }                                                                           
+
+    heal(damage){
+        this.hp = Math.min(maxHp, this.hp+damage);
+    }
+
+    update(){
+            `,
+            TELEPORT4:
+            `
+        this.teleportCounter--;
+            `,
+            TELEPORT5:
+            `
+        if(this.stunned){   
+            `,
+            TELEPORT6:
+            `
+        if(this.stunned || this.teleportCounter > 0){                       
+                `,
+                TELEPORT7:
+                `
+            this.stunned = false;                                               
+            return;
+        }
+        this.doStuff();
+    }
+
+            `,
+            TELEPORT8:
+            `
+    draw(){
+            `,
+            TELEPORT9:
+            `
+        if(this.teleportCounter > 0){                                        
+            drawSprite(10, this.tile.x, this.tile.y);                     
+        }else{        
+            `,
+            TELEPORT10:
+            `
+            drawSprite(this.sprite, this.tile.x, this.tile.y);               
+            this.drawHp();
+            `,
+            TELEPORT11:
+            `
+        }
+            `,
+            TELEPORT12:
+            `
+class Player extends Monster{                                               
+    constructor(tile){
+        super(tile, 0, 3);
+        this.isPlayer = true;
+            `,
+            TELEPORT13:
+            `
+        this.teleportCounter = 0;
+            `,
+            STEPON1:
+            `
+class Floor extends Tile{
+    constructor(x,y){
+        super(x,y, 2, true);
+    };
+
+            `,
+            STEPON2:
+            `
+    stepOn(monster){                                                           
+        //TODO: complete
+    }
+            `,
+            STEPON3:
+            `
+}
+
+class Wall extends Tile{
+   constructor(x, y){
+       super(x, y, 3, false);
+   }
+}
+
+            `,
+            EXIT:
+            `
+class Exit extends Tile{
+    constructor(x, y){
+        super(x, y, 11, true);
+    }
+
+    stepOn(monster){
+        if(monster.isPlayer){
+            if(level == numLevels){
+                showTitle();
+            }else{
+                level++;
+                startLevel(Math.min(maxHp, player.hp+1));
+            }
+        }
+    }
+}
+            `,
+            MONSTERSTEPON1:
+            `
+    move(tile){
+        if(this.tile){
+        this.tile.monster = null;
+        }
+        this.tile = tile;
+        tile.monster = this;                                              
+            `,
+            MONSTERSTEPON2:
+            `
+        tile.stepOn(this);       
+            `,
+            REPLACEEXIT1:
+            `
+function startLevel(playerHp){     
+    spawnRate = 15;              
+    spawnCounter = spawnRate;      
+
+    generateLevel();
+
+    player = new Player(randomPassableTile());
+    player.hp = playerHp;
+
+            `,
+            REPLACEEXIT2:
+            `
+    randomPassableTile().replace(Exit);  
+            `,
+            DRAWTEXT:
+            `
+function drawText(text, size, centered, textY, color){
+    ctx.fillStyle = color;
+    ctx.font = size + "px monospace";
+    let textX;
+    if(centered){
+        textX = (canvas.width-ctx.measureText(text).width)/2;
+    }else{
+        textX = canvas.width-uiWidth*tileSize+25;
+    }
+
+    ctx.fillText(text, textX, textY);
+}
+            `,
+            DRAWSOMETEXT1:
+            `
+function draw(){
+    if(gameState == "running" || gameState == "dead"){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        for(let i=0;i<numTiles;i++){
+            for(let j=0;j<numTiles;j++){
+                getTile(i,j).draw();
+            }
+        }
 
 
-            // should startGame have tick() before gameState = "running";
+        for(let i=0;i<monsters.length;i++){
+            monsters[i].draw();
+        }
 
+        player.draw();
+
+            `,
+            DRAWSOMETEXT2:
+            `
+        drawText("Level: "+level, 30, false, 40, "violet");
+            `,
+            DRAWSOMETEXT3:
+            `
+function showTitle(){                                          
+    ctx.fillStyle = 'rgba(0,0,0,.75)';
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    gameState = "title";
+
+            `,
+            DRAWSOMETEXT4:
+            `
+    drawText("SUPER", 40, true, canvas.height/2 - 110, "white");
+    drawText("BROUGH BROS.", 70, true, canvas.height/2 - 50, "white"); 
+            `
 		};
 	</script>
 

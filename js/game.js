@@ -200,3 +200,4 @@ function playSound(soundName){
 	sounds[soundName].currentTime = 0;	
 	sounds[soundName].play();
 }
+

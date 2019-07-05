@@ -3,35 +3,41 @@ class Monster{
        this.move(tile);
        this.sprite = sprite;
        this.hp = hp;
+       this.teleportCounter = 1;
 	}
 
   heal(damage){
        this.hp = Math.min(maxHp, this.hp+damage);
    }
 
-    update(){
-      if(this.stunned){
-               this.stunned = false;
-               return;
-           }
-           this.doStuff();
+  update(){
+    this.teleportCounter--;
+    if(this.stunned || this.teleportCounter > 0){       
+           this.stunned = false;
+           return;
        }
-   
-       doStuff(){
-          let neighbors = this.tile.getAdjacentPassableNeighbors();
-          
-          neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
-   
-          if(neighbors.length){
-              neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
-              let newTile = neighbors[0];
-              this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
-          }
+       this.doStuff();
+    }
+
+    doStuff(){
+      let neighbors = this.tile.getAdjacentPassableNeighbors();
+      
+      neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
+
+      if(neighbors.length){
+          neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+          let newTile = neighbors[0];
+          this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
       }
+    }
 
 	draw(){
-       drawSprite(this.sprite, this.tile.x, this.tile.y);
+    if(this.teleportCounter > 0){                                        
+      drawSprite(10, this.tile.x, this.tile.y);                     
+    }else{      
+      drawSprite(this.sprite, this.tile.x, this.tile.y);
       this.drawHp();
+    }
 	}
 
   drawHp(){
@@ -79,6 +85,7 @@ class Monster{
        }
        this.tile = tile;
        tile.monster = this;
+       tile.stepOn(this);     
    }
 
 }
@@ -89,6 +96,7 @@ class Player extends Monster{
    constructor(tile){
        super(tile, 0, 3);
        this.isPlayer = true;
+       this.teleportCounter = 0;
    }
    
   tryMove(dx, dy){
