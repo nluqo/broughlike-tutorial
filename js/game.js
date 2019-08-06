@@ -201,3 +201,28 @@ function playSound(soundName){
 	sounds[soundName].play();
 }
 
+function getScores(){
+   if(localStorage["scores"]){
+       return JSON.parse(localStorage["scores"]);
+   }else{
+       return [];
+   }
+}
+
+function addScore(score, won){
+   let scores = getScores();
+   let scoreObject = {score: score, run: 1, totalScore: score, active: won};
+   let lastScore = scores.pop();
+
+   if(lastScore){
+       if(lastScore.active){
+           scoreObject.run = lastScore.run+1;
+           scoreObject.totalScore += lastScore.totalScore;
+       }else{
+           scores.push(lastScore);
+       }
+   }
+   scores.push(scoreObject);
+
+   localStorage["scores"] = JSON.stringify(scores);
+}

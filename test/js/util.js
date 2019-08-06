@@ -21,3 +21,15 @@ function shuffle(arr){
      }
      return arr;
  }
+
+function rightPad(textArray){
+     let finalText = "";
+     textArray.forEach(text => {
+         text+="";
+         for(let i=text.length;i<10;i++){
+             text+=" ";
+         }
+         finalText += text;
+     });
+     return finalText;
+ }

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 0</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Treasure & Score</h1>
+        To give our game some replayability, we'll add a high score mechanic. The player will pick up a treasure to gain a point, but doing so will spawn another monster. Each level will have 3 treasures.
+        <div class="code-container-inline inline"><pre><code class="javascript">score</code></pre></div>
+        that resets to 
+        <div class="code-container-inline inline"><pre><code class="javascript">0</code></pre></div>
+        before every game.
+
+        <h2>Drawing the treasure sprite</h2>  
+        <div class="drawing-section">
+            You have plenty of options for representing treasure. Gems, jewelry, piles of gold, treasure chests, whatever.
+            <br>
+            For gold, you typically want to use a yellowish-orange base with very high contrast. For gems, pick bright colors and angular highlights/shadows.
+            <img src="art/treasure.png">
+         </div>
+        <h2>Generating treasure</h2>
+        To achieve our treasure mechanic, we need very little: mainly a boolean flag to each tile denoting it has treasure on it. If a tile has treasure, the treasure sprite will be drawn on top.
+
+		<div class="filename">map.js</div>
+        <div class="code-container">
+			<pre><code id="contentGENERATETREASURE1" class="javascript"></code></pre>
+            <pre><code id="contentGENERATETREASURE2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWTREASURE0" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentDRAWTREASURE1" class="javascript"></code></pre>
+            <pre><code id="contentDRAWTREASURE2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+        With that, our treasure is in the game and being drawn. You can test it out yourself to see.
+        <h2>Keeping score</h2>
+        Let's make the treasure meaningful. We need to initialize our
+        <div class="code-container-inline inline"><pre><code class="javascript">score</code></pre></div>
+        variable every time we start a new game. Then when a treasure gets picked up (by the player stepping on a tile that has one), the
+        <div class="code-container-inline inline"><pre><code class="javascript">score</code></pre></div> 
+        is increased, the
+        <div class="code-container-inline inline"><pre><code class="javascript">treasure</code></pre></div>
+        flag is reset which effectively deletes the treasure, and we spawn a monster.
+
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentSCORE1" class="javascript"></code></pre>
+            <pre><code id="contentSCORE2" class="javascript add"></code></pre>
+            <pre><code id="contentSCORE3" class="javascript"></code></pre>
+        </div>
+
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWTREASURE3" class="javascript"></code></pre>
+            <pre><code id="contentDRAWTREASURE4" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+        </div>
+
+        And now that we wrote our 
+        <div class="code-container-inline inline"><pre><code class="javascript">drawText</code></pre></div>
+        function last time, showing our current score is very easy. The calls to draw the current level and current score only differ by text and Y position, which we're manually hardcoding.
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWSCORE1" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSCORE2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+        <h2>High scores</h2>
+        If we have a score, we certainly need a high score board. The following additions add a score array to a browser storage mechanism called
+        <div class="code-container-inline inline"><pre><code class="javascript">localStorage</code></pre></div>,
+        which we'll then retrieve and display on the title screen. The cool thing is, despite being super simple to use (i.e. a dumping ground where we can throw any string variables we want),
+        <div class="code-container-inline inline"><pre><code class="javascript">localStorage</code></pre></div>
+        will preserve our score data across page refreshes and browser launches.
+        <br><br>
+        Since everything you put in 
+        <div class="code-container-inline inline"><pre><code class="javascript">localStorage</code></pre></div>
+        needs to be a string and we would prefer to put objects in there, we're converting back and forth from <a href="https://www.json.org/" target="_blank">JSON</a>. If you don't know JSON, not to worry! It's a data format that looks much like JavaScript and all you need to utilize it is two built in functions.
+        <br><br>
+        First let's try to grab the scores, whether there's some there or not.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentGETSCORES1" class="javascript add"></code></pre>
+        </div>
+        If we've not yet saved anything to localStorage, we simply return an empty array. But if we have, we take what's there, 
+        <div class="code-container-inline inline"><pre><code class="javascript">parse</code></pre></div>
+         it as JSON, and return the result.
+        <br><br>
+        Now let's write the function to add a score.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentADDSCORES1" class="javascript add"></code></pre>
+        </div>
+
+        In this game you'll be able to continue a high score if you won the last game. This lets you attempt win streaks, a common thing to find in broughlikes.
+        <br><br>Our <div class="code-container-inline inline"><pre><code class="javascript">addScore</code></pre></div> function takes two variables: a numeric score and a flag telling us if we won the game or died.
+        <br><br>
+        Here's the breakdown of what we're doing:
+        <ol>
+            <li>retrieving our scores</li>
+            <li>creating a new <div class="code-container-inline inline"><pre><code class="javascript">scoreObject</code></pre></div> to be added onto the list later</li>
+            <li>doing a <div class="code-container-inline inline"><pre><code class="javascript">pop</code></pre></div> to get the <div class="code-container-inline inline"><pre><code class="javascript">lastScore</code></pre></div></li>
+            <li>if that score is active, we'll add our current run score to it. otherwise just put it back with <div class="code-container-inline inline"><pre><code class="javascript">push</code></pre></div></li>
+            <li>put our new score back on the list with <div class="code-container-inline inline"><pre><code class="javascript">push</code></pre></div></li>
+            <li><div class="code-container-inline inline"><pre><code class="javascript">stringify</code></pre></div> all our scores and put them back into <div class="code-container-inline inline"><pre><code class="javascript">localStorage</code></pre></div>
+        </ol>
+        We'll call this function in two cases: losing and winning.
+
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentCALLADDSCORE1" class="javascript"></code></pre>
+            <pre><code id="contentCALLADDSCORE2" class="javascript add"></code></pre>
+            <pre><code id="contentCALLADDSCORE3" class="javascript"></code></pre>
+        </div>
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentCALLADDSCORE4" class="javascript"></code></pre>
+            <pre><code id="contentCALLADDSCORE5" class="javascript add"></code></pre>
+            <pre><code id="contentCALLADDSCORE6" class="javascript"></code></pre>
+        </div>
+
+        Our high scores are now quietly sitting in <div class="code-container-inline inline"><pre><code class="javascript">localStorage</code></pre></div>. You can check for yourself by simply typing "localStorage" into the console or taking a peek at the Application tab in the dev tools.
+        <br><br>
+        Let's display them.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWSCORES1" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSCORES2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentDRAWSCORES3" class="javascript add"></code></pre>
+        </div>
+
+        Don't panic. You could draw the scores in MUCH less code if you prefer, but we're taking our time to carefully sort and align the scores here. And it's also artificially long because we've split drawText arguments onto multiple lines for clarity.
+        <br><br>
+        Let me break it down:
+        <ul>
+            <li>We get the scores and then only continue if we have some</li>
+            <li>We draw a header row (RUN SCORE TOTAL) in the very middle of the canvas. There's a new utility method <div class="code-container-inline inline"><pre><code class="javascript">rightPad</code></pre></div> which we'll cover in a moment</li>
+            <li>Next we take the most recent score off the end, sort the scores in descending order, and put that most recent score back at the beginning. This way you always see the last score at the top and in a different color... accomplished a few lines down by <div class="code-container-inline inline"><pre><code class="javascript">i == 0 ? "aqua" : "violet"</code></pre></div>.</li>
+            <li>We loop over at most 10 scores and draw each one slightly lower on the screen with <div class="code-container-inline inline"><pre><code class="javascript">canvas.height/2 + 24 + i*24</code></pre></div></li>
+        </ul>
+        And what about <div class="code-container-inline inline"><pre><code class="javascript">rightPad</code></pre></div>? We're adding this so the scores are spaced out in a table format.
+
+        <div class="filename">util.js</div>
+        <div class="code-container">
+            <pre><code id="contentRIGHTPAD" class="javascript add"></code></pre>
+        </div>
+
+        We iterate over an array of strings representing a row of data. We pad out each string with spaces until it is 10 characters long and add it to the last string. We return the combined string, which should be a perfectly spaced out row of score data.
+        <br><br>
+        The next section adds some nifty animation and screenshake.
+	</div>
+
+	<script>
+		let content = {
+            CLOSINGBRACE:
+            `
+}
+            `,
+            CLOSINGBRACEINDENT1:
+            `
+    }
+            `,
+            GENERATETREASURE1:
+            `
+function generateLevel(){
+    tryTo('generate map', function(){
+        return generateTiles() == randomPassableTile().getConnectedTiles().length;
+    });
+
+    generateMonsters();
+                                           
+            `,
+            GENERATETREASURE2:
+            `
+    for(let i=0;i<3;i++){                                         
+        randomPassableTile().treasure = true;                            
+    }
+            `,
+            DRAWTREASURE0:
+            `
+class Tile{
+    constructor(x, y, sprite, passable){
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.passable = passable;
+    }
+
+            `,
+            DRAWTREASURE1:
+            `
+    draw(){                                                          
+        drawSprite(this.sprite, this.x, this.y);
+
+            `,
+            DRAWTREASURE2:
+            `
+        if(this.treasure){                      
+            drawSprite(12, this.x, this.y);                                             
+        }   
+            `,
+            DRAWTREASURE3:
+            `
+class Floor extends Tile{
+    constructor(x,y){
+        super(x,y, 2, true);
+    };
+
+    stepOn(monster){
+            `,
+            DRAWTREASURE4:
+            `
+        if(monster.isPlayer && this.treasure){   
+            score++;                        
+            this.treasure = false;
+            spawnMonster();
+        }
+            `,
+            SCORE1:
+            `
+function startGame(){                                           
+    level = 1;
+            `,
+            SCORE2:
+            `
+    score = 0;     
+            `,
+            SCORE3:
+            `
+
+    startLevel(startingHp);
+
+    gameState = "running";
+}
+            `,
+            DRAWSCORE1:
+            `
+function draw(){
+    if(gameState == "running" || gameState == "dead"){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        for(let i=0;i<numTiles;i++){
+            for(let j=0;j<numTiles;j++){
+                getTile(i,j).draw();
+            }
+        }
+
+
+        for(let i=0;i<monsters.length;i++){
+            monsters[i].draw();
+        }
+
+        player.draw();
+
+        drawText("Level: "+level, 30, false, 40, "violet");
+            `,
+            DRAWSCORE2:
+            `
+        drawText("Score: "+score, 30, false, 70, "violet");
+            `,
+            GETSCORES1:
+            `
+function getScores(){
+    if(localStorage["scores"]){
+        return JSON.parse(localStorage["scores"]);
+    }else{
+        return [];
+    }
+}
+            `,
+            ADDSCORES1:
+            `
+function addScore(score, won){
+    let scores = getScores();
+    let scoreObject = {score: score, run: 1, totalScore: score, active: won};
+    let lastScore = scores.pop();
+
+    if(lastScore){
+        if(lastScore.active){
+            scoreObject.run = lastScore.run+1;
+            scoreObject.totalScore += lastScore.totalScore;
+        }else{
+            scores.push(lastScore);
+        }
+    }
+    scores.push(scoreObject);
+
+    localStorage["scores"] = JSON.stringify(scores);
+}
+            `,
+            CALLADDSCORE1:
+            `
+function tick(){
+    for(let k=monsters.length-1;k>=0;k--){
+        if(!monsters[k].dead){
+            monsters[k].update();
+        }else{
+            monsters.splice(k,1);
+        }
+    }
+
+    if(player.dead){    
+            `,
+            CALLADDSCORE2:
+            `
+        addScore(score, false);
+            `,
+            CALLADDSCORE3:
+            `
+        gameState = "dead";
+    }
+
+    spawnCounter--;                           
+    if(spawnCounter <= 0){                     
+        spawnMonster();
+        spawnCounter = spawnRate;
+        spawnRate--;
+    }
+}
+            `,
+            CALLADDSCORE4:
+            `
+class Exit extends Tile{
+    constructor(x, y){
+        super(x, y, 11, true);
+    }
+
+    stepOn(monster){
+        if(monster.isPlayer){
+            if(level == numLevels){
+            `,
+            CALLADDSCORE5:
+            `
+                addScore(score, true); 
+            `,
+            CALLADDSCORE6:
+            `
+                showTitle();
+            }else{
+                level++;
+                startLevel(Math.min(maxHp, player.hp+1));
+            }
+        }
+    }
+}
+            `,
+            DRAWSCORES1:
+            `
+function showTitle(){                                          
+    ctx.fillStyle = 'rgba(0,0,0,.75)';
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    gameState = "title";
+
+    drawText("SUPER", 40, true, canvas.height/2 - 110, "white");
+    drawText("BROUGH BROS.", 70, true, canvas.height/2 - 50, "white"); 
+
+            `,
+            DRAWSCORES2:
+            `
+    drawScores();  
+            `,
+            DRAWSCORES3:
+            `
+function drawScores(){
+    let scores = getScores();
+    if(scores.length){
+        drawText(
+            rightPad(["RUN","SCORE","TOTAL"]),
+            18,
+            true,
+            canvas.height/2,
+            "white"
+        );
+
+        let newestScore = scores.pop();
+        scores.sort(function(a,b){
+            return b.totalScore - a.totalScore;
+        });
+        scores.unshift(newestScore);
+
+        for(let i=0;i<Math.min(10,scores.length);i++){
+            let scoreText = rightPad([scores[i].run, scores[i].score, scores[i].totalScore]);
+            drawText(
+                scoreText,
+                18,
+                true,
+                canvas.height/2 + 24+i*24,
+                i == 0 ? "aqua" : "violet"
+            );
+        }
+    }
+}
+            `,
+            RIGHTPAD:
+            `
+function rightPad(textArray){
+    let finalText = "";
+    textArray.forEach(text => {
+        text+="";
+        for(let i=text.length;i<10;i++){
+            text+=" ";
+        }
+        finalText += text;
+    });
+    return finalText;
+}
+            `
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>
