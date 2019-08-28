@@ -63,9 +63,10 @@ class Tile{
 
    stepOn(monster){        
       if(monster.isPlayer && this.treasure){   
-         score++;                        
-         this.treasure = false;
-         spawnMonster();
+        score++;             
+        playSound("treasure");           
+        this.treasure = false;
+        spawnMonster();
      }
    }
 
@@ -84,13 +85,14 @@ class Exit extends Tile{
 
    stepOn(monster){
        if(monster.isPlayer){
-           if(level == numLevels){
-                addScore(score, true);
-               showTitle();
-           }else{
-               level++;
-               startLevel(Math.min(maxHp, player.hp+1));
-           }
+          playSound("newLevel"); 
+          if(level == numLevels){
+              addScore(score, true);
+             showTitle();
+          }else{
+             level++;
+             startLevel(Math.min(maxHp, player.hp+1));
+          }
        }
    }
 }

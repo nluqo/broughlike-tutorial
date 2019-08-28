@@ -35,6 +35,10 @@
        let startingHp = 3; 
        let numLevels = 6;          
 
+       let shakeAmount = 0;       
+       let shakeX = 0;                 
+       let shakeY = 0;       
+
     document.querySelector("html").onkeypress = function(e){
         if(gameState == "title"){                              
             startGame();                
@@ -53,4 +57,6 @@
    setupCanvas();
 
 	let player;
+
+    initSounds(); 
 </script>

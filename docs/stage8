@@ -16,7 +16,7 @@ spells = {
 
 We're going to store our spells in an object literal called, unsurprisingly, "spells".
 
-WOOP warps the player to a random passable tile. Notice the function operates on the player object. All of our spells will be player-cast, but it's not hard at all to have monster-castable spells by passing in a "caster" monster and apply everything to that.
+WOOP warps the player to a random passable tile. Notice the function operates on the player object. All of our spells will be player-cast, but it's not hard at all to have spells castable by either players or monsters by passing in a "caster" entity and applying everything to that.
 
 We're going to let the player select spells with the number keys 1-9.
 
