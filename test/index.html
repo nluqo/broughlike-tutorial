@@ -49,6 +49,9 @@
             if(e.which==115) player.tryMove(0, 1);
             if(e.which==97) player.tryMove(-1, 0);
             if(e.which==100) player.tryMove(1, 0);
+   
+
+            if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);
         }
    };
 

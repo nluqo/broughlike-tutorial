@@ -35,10 +35,10 @@ There's our player character! But the player doesn't move. Replace the fillRect 
 	x = y = 0;																//EVERYTHING ADDED EXCEPT </script>
 
 	document.querySelector("html").onkeypress = function(e){
-	    if(e.which==119) y--;
-	    if(e.which==115) y++;
-	    if(e.which==97) x--;
-	    if(e.which==100) x++;
+	    if(e.key=="w") y--;
+	    if(e.key=="s") y++;
+	    if(e.key=="a") x--;
+	    if(e.key=="d") x++;
 	};
 
 	function draw(){

@@ -45,7 +45,7 @@
         <br><br>
         Then the 
         <div class="code-container-inline inline"><pre><code class="javascript inline">onkeypress</code></pre></div>
-        will fire whenever the user presses a key. 119? 115? 97? 100? Huh? These cryptic numbers are simply identifiers for certain keys (lowercase "wasd" controls as it were). We'll move the player horizontally or vertically by changing 
+        event will fire whenever the user presses a key (specifically lowercase "wasd" keys). We'll move the player horizontally or vertically by changing 
         <div class="code-container-inline inline"><pre><code class="javascript inline">x</code></pre></div>
         or
         <div class="code-container-inline inline"><pre><code class="javascript inline">y</code></pre></div>
@@ -315,10 +315,10 @@
     let x = y = 0;
 
     document.querySelector("html").onkeypress = function(e){
-        if(e.which==119) y--;       //W
-        if(e.which==115) y++;       //S
-        if(e.which== 97) x--;       //A
-        if(e.which==100) x++;       //D
+        if(e.key=="w") y--;
+        if(e.key=="s") y++;
+        if(e.key=="a") x--;
+        if(e.key=="d") x++;
     };
 
     function draw(){
@@ -383,10 +383,10 @@ game = {
     let x = y = 0;
 
     document.querySelector("html").onkeypress = function(e){
-        if(e.which==119) y--;
-        if(e.which==115) y++;
-        if(e.which==97) x--;
-        if(e.which==100) x++;
+        if(e.key=="w") y--;
+        if(e.key=="s") y++;
+        if(e.key=="a") x--;
+        if(e.key=="d") x++;
     };
 
     function draw(){

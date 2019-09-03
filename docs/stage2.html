@@ -403,10 +403,10 @@ let spritesheet = new Image();
   spritesheet.src = 'spritesheet.png';
 
    document.querySelector("html").onkeypress = function(e){
-       if(e.which==119) y--;       //W
-       if(e.which==115) y++;       //S
-       if(e.which== 97) x--;       //A
-       if(e.which==100) x++;       //D
+       if(e.key=="w") y--;
+       if(e.key=="s") y++;
+       if(e.key=="a") x--;
+       if(e.key=="d") x++;
    };
 
    setInterval(draw, 15);

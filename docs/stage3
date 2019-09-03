@@ -77,17 +77,17 @@ let player = new Player(randomPassableTile());
 
 -------------------------------------- index.html (DELETE AND REPLACE)
 document.querySelector("html").onkeypress = function(e){
-    if(e.which==119) y--;
-    if(e.which==115) y++;
-    if(e.which==97) x--;
-    if(e.which==100) x++;
+    if(e.key=="w") y--;
+    if(e.key=="s") y++;
+    if(e.key=="a") x--;
+    if(e.key=="d") x++;
 };
 -------------------------------------- 
 document.querySelector("html").onkeypress = function(e){
-    if(e.which==119) player.tryMove(0, -1);
-    if(e.which==115) player.tryMove(0, 1);
-    if(e.which==97) player.tryMove(-1, 0);
-    if(e.which==100) player.tryMove(1, 0);
+    if(e.key=="w") player.tryMove(0, -1);
+    if(e.key=="s") player.tryMove(0, 1);
+    if(e.key=="a") player.tryMove(-1, 0);
+    if(e.key=="d") player.tryMove(1, 0);
 };
 -------------------------------------- 
 

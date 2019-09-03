@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 8</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Stage 8 - Spells</h1>
+
+		If you try playing the game a bunch you might notice it's weighted a bit in the monster's favor. The player bump attack is limiting and not especially exciting. In my opinion, what really makes a broughlike special is your abilities or spells. You can see this especially in 868-HACK and Cinco Paus. Proper use of spells is what adds most of the depth and personality.
+		<br><br>
+		There's 15 spells in this section to demonstrate the diversity of what can be done with very little code. What I want to stress is: it's your game now. Do all 15 if you want, or pick and choose a few, or go off and implement something completely different. It's up to you.
+		<br><br>
+		First, let's write a single spell to give you an idea of what that looks like. Then we'll knock out the framework for casting spells and lastly I'll show you the rest of the 15 spells one by one.
+
+
+		<div class="filename">spell.js</div>
+        <div class="code-container">
+            <pre><code id="contentWOOP" class="javascript add"></code></pre>
+        </div>
+
+
+
+		We're going to store our spells in an object literal called, unsurprisingly, 
+        <div class="code-container-inline inline"><pre><code class="javascript">spells</code></pre></div>.
+		<br><br>
+		<div class="code-container-inline inline"><pre><code class="javascript">WOOP</code></pre></div>
+        warps the player to a random passable tile. This 
+        <div class="code-container-inline inline"><pre><code class="javascript">WOOP</code></pre></div>
+        function has a one line body. Pretty simple huh?
+        <br><br>
+        Notice the function operates on the 
+        <div class="code-container-inline inline"><pre><code class="javascript">player</code></pre></div>
+        object. All of our spells will be player-cast, but it's not hard at all to have spells castable by either players or monsters by passing in a "caster" entity and applying everything to that. I'll leave that as an exercise for the reader.
+		<br><br>
+		We're going to let the player select spells with the number keys 1-9.
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentKEYPRESS1" class="javascript"></code></pre>
+            <pre><code id="contentKEYPRESS2" class="javascript add"></code></pre>
+            <pre><code id="contentKEYPRESS3" class="javascript"></code></pre>
+        </div>
+
+        Here's an interesting example of JavaScript's type coercion. The value
+        <div class="code-container-inline inline"><pre><code class="javascript">e.key</code></pre></div>
+        will come in as a string like "2".
+        <br><br>
+        Is the string "2" greater than or equal to 1? Strictly speaking, that doesn't make any sense, but JavaScript will try to make it work anyway. Your "2" will be coerced into the number 2 and then you <em>can</em> try comparing it with 1.
+        <br><br>
+        So if the pressed key is 1-9, we're passing that key number minus 1 (type coercion comes into play yet again) to a new function called
+        <div class="code-container-inline inline"><pre><code class="javascript">castSpell</code></pre></div>
+        . That number will represent an index into our array of spells. We're subtracting 1 because array indices start at 0 instead of 1.
+        <h2>Spell framework</h2>
+        Now we'll add the code to load the player spells, add a new spell, and cast them. The player will initially start out with a single spell and will gain additional spell slots through acquiring treasure.
+        <br><br>
+
+        First let's initialize
+        <div class="code-container-inline inline"><pre><code class="javascript">numSpells</code></pre></div>
+        so that the player starts out with a single spell.
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWSPELLS1" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSPELLS2" class="javascript add"></code></pre>
+            <pre><code id="contentDRAWSPELLS3" class="javascript"></code></pre>
+        </div>
+
+        Then the bulk of the code to handle adding/casting spells:
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentSPELLSHUFFLE1" class="javascript"></code></pre>
+            <pre><code id="contentSPELLSHUFFLE2" class="javascript add"></code></pre>
+            <pre><code id="contentSPELLSHUFFLE3" class="javascript"></code></pre>
+            <pre><code id="contentSPELLSHUFFLE4" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+        It's sometimes confusing to see different variables with the same name, so let's make sure we understand the difference. The global object 
+        <div class="code-container-inline inline"><pre><code class="javascript">spells</code></pre></div>
+        holds the spell functions. The player 
+        spells
+        (shown above as 
+        <div class="code-container-inline inline"><pre><code class="javascript">this.spells</code></pre></div>)
+        is an array of spell <em>names</em>, which we can use to index into the global object. It's an inventory of sorts.
+        <br><br>
+        The new line in our player constructor does quite a bit...
+        <ul>
+            <li>
+                gets all the spell names
+            </li>
+            <li>
+                shuffles them
+            </li>
+            <li>
+                grabs some number of spells from that shuffled list using
+                <div class="code-container-inline inline"><pre><code class="javascript">splice</code></pre></div>
+            </li>
+            <li>
+                assigns them to
+                <div class="code-container-inline inline"><pre><code class="javascript">this.spells</code></pre></div>
+            </li>
+        </ul>
+        The method
+        <div class="code-container-inline inline"><pre><code class="javascript">addSpells</code></pre></div>
+        looks similar, but it only grabs one random spell and then adds it to the player spells array.
+        <br><br>
+        The method
+        <div class="code-container-inline inline"><pre><code class="javascript">castSpell</code></pre></div>
+        takes an index (remember the player pressing 1-9 earlier?) and tries to find that index in the player spells array. It may not exist, which is OK! That's why we do a check on the result.
+        <br><br>
+        If found, we
+        <div class="code-container-inline inline"><pre><code class="javascript">delete</code></pre></div>
+        the element and leave an empty array slot. We call the spell function, play our spell sound, and do a 
+        <div class="code-container-inline inline"><pre><code class="javascript">tick</code></pre></div>.
+        You could also skip the tick if you don't want monsters to act after a spell is cast.
+
+
+        <h2>Drawing spells</h2>
+        Now let's draw our spell list on the sidebar:
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentDRAWSPELLS4" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentDRAWSPELLS5" class="javascript"></code></pre>
+            <pre><code id="contentDRAWSPELLS6" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+            <pre><code id="contentCLOSINGBRACE" class="javascript"></code></pre>
+        </div>
+
+
+        If your recall the way we used
+        <div class="code-container-inline inline"><pre><code class="javascript">drawText</code></pre></div>
+        before, this should be pretty straightforward... with the exception of the expression:
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">(i+1) + ") " + (player.spells[i] || "")</code></pre></div>
+        <br><br>
+        We're adding 1 back to our spell index to make it like normal human counting, adding a parentheses and space, and then adding the spell name.
+        <br><br>
+        If the spell has been deleted, we want to handle that with the "OR" operator
+        <div class="code-container-inline inline"><pre><code class="javascript">||</code></pre></div>
+        and instead simply add an empty string. You don't need to know all the details of how
+        <div class="code-container-inline inline"><pre><code class="javascript">||</code></pre></div>
+        works here (some more type coercion is involved), but I will say it's kind of like the English word "or". Do the first thing <em>or</em>, if that doesn't work, do the second thing.
+        The result with our first spell should be: 
+        <br><br>
+        <img src="screens/woop.png">
+
+        TEST IT OUT
+
+
+        <h2>Gaining new spells</h2>
+        Let's connect spells to treasure.
+
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentNEWSPELLS1" class="javascript"></code></pre>
+            <pre><code id="contentNEWSPELLS2" class="javascript add"></code></pre>
+            <pre><code id="contentNEWSPELLS3" class="javascript"></code></pre>
+        </div>
+
+
+        Every 3 treasures acquired results in a new spell all the way up to 9 slots.
+        <br><br>
+        So that's the framework in a nutshell. Let's try it out.
+        <br><br>
+        The only thing that doesn't work right now is you don't get to keep extra spells between levels, since there is only one spell.
+        <br><br>
+        We'll fix that soon enough.
+
+        <h2>Spell 2: QUAKE</h2>
+
+        For this spell only, I'll show the surrounding code. But all the spell functions will be added as properties of the spells object in the same way: add a comma after the last function, break to a new line, then add the new function.
+
+		<!--
+
+
+		---------------------------------- spell.js
+		spells = {
+			WOOP: function(){
+				player.move(randomPassableTile());
+			},
+			QUAKE: function(){																						//ADD
+				for(let i=0;i<numTiles;i++){
+			    	for(let j=0;j<numTiles;j++){
+			    		let tile = getTile(i,j);
+			    		if(tile.monster){
+			    			let numWalls = 4-tile.getAdjacentPassableNeighbors().length;
+			    			tile.monster.hit(numWalls*2);
+			    		}
+				    }
+			    }
+			    shakeAmount = 20;
+			}
+		};
+		----------------------------------
+
+		QUAKE iterates over each tile and, if a monster is present, deals it 2 damage for each adjacent wall. We're reusing the screenshake and it's way more satisfying here.
+
+		One note on testing. You might want to set "numSpells" initially to 9 while testing so you have easier access to the available spells on the first level.
+
+
+
+		Spell 3: MAELSTROM
+
+		---------------------------------- spell.js
+		MAELSTROM: function(){
+			for(let i=0;i<monsters.length;i++){
+				monsters[i].move(randomPassableTile());
+				monsters[i].teleportCounter = 2;
+			}
+		}
+		----------------------------------
+
+		MAELSTROM iterates over all monsters and teleports them to a random tile just like WOOP did for the player. Then it sets the monster teleport counter, so we get the same behavior as when monsters spawn in the first time.
+
+
+		Spell 4: MULLIGAN
+
+		---------------------------------- spell.js
+		MULLIGAN: function(){
+			startLevel(player.hp, player.spells);
+		}
+		----------------------------------
+
+		---------------------------------- game.js
+		function startLevel(playerHp, playerSpells){												//MODIFY
+			spawnRate = 22;
+			spawnCounter = spawnRate;
+
+			generateLevel();
+
+			player = new Player(randomPassableTile());
+			player.hp = playerHp;
+			if(playerSpells){																		//ADD
+				player.spells = playerSpells;														//ADD
+			}																						//ADD
+
+			randomPassableTile().replace(Exit);
+		}
+		----------------------------------
+
+		MULLIGAN resets the level without increasing the level count or resetting the player's spells. This is the first of many spells that can be used to farm treasure.
+
+
+		Spell 5: 
+
+		---------------------------------- spell.js
+		AURA: function(){
+			player.tile.getAdjacentNeighbors().forEach(function(t){
+				t.setEffect(15);
+				if(t.monster){
+					t.monster.heal(1);
+				}
+			});
+			player.tile.setEffect(15);
+			player.heal(1);
+		}
+		----------------------------------
+
+		AURA heals both the player and any adjacent monsters. It also uses a new tile method "setEffect" which will add a short lived sprite to that tile.
+
+		[draw effects]
+
+		---------------------------------- tile.js
+		class Tile{
+			constructor(x, y, sprite, passable){
+				this.x = x;
+				this.y = y;
+				this.sprite = sprite;
+				this.passable = passable;
+			}
+
+			draw(){
+				drawSprite(this.sprite, this.x, this.y);
+
+				if(this.treasure){	
+					drawSprite(12, this.x, this.y);			
+				}
+
+				if(this.effectCounter){												//ADD
+					this.effectCounter--;
+					ctx.globalAlpha = this.effectCounter/30;
+					drawSprite(this.effect, this.x, this.y);
+					ctx.globalAlpha = 1;
+				}
+			}
+
+			setEffect(effectSprite){												//ADD
+				this.effect = effectSprite;
+				this.effectCounter = 30;
+			}
+		----------------------------------
+
+		In setEffect, we simply assign the property effect to the passed in sprite index effectSprite. And we set effectCounter to 30, which determines the length of the effect.
+
+		As long as effectCounter is greater than 0, we decrement its value, and then draw the effect sprite. Now here's something we haven't seen before: ctx.globalAlpha. This lets us control the transparency of all sprites drawn. A value of 1 means fully opaque and 0 means fully transparent. By setting it to "this.effectCounter/30" we ensure that the effect fades out. We reset globalAlpha to 1 at the end to avoid affecting any other sprites.
+
+
+
+		Spell 6: 
+
+		---------------------------------- spell.js
+		DASH: function(){
+			let newTile = player.tile;
+			while(true){
+				let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
+				if(testTile.passable && !testTile.monster){
+					newTile = testTile;
+				}else{
+					break;
+				}
+			}
+			if(player.tile != newTile){
+				player.move(newTile);
+				newTile.getAdjacentNeighbors().forEach(t => {
+					if(t.monster){
+						t.setEffect(16);
+						t.monster.stunned = true;
+						t.monster.hit(1);
+					}
+				});
+			}
+		}
+		----------------------------------
+
+		DASH moves the player in the direction of their last move or attack until they are blocked by a wall or monster. If the player was able to move, adjacent monsters are damaged, they are stunned, and an effect is drawn.
+
+		We're using getNeighbor to move in the lastMove direction (defined below) one tile at a time a while loop. It's a common approach to use while(true) until you meet some condition and then break out of the loop. We'll use it again later. Just be careful when writing such a loop as you can easily end up in an infinte loop and crash your browser!
+
+		---------------------------------- monster.js
+		class Monster{
+			constructor(tile, sprite, hp){
+				this.move(tile);
+				this.sprite = sprite;
+				this.hp = hp;
+				this.teleportCounter = 2;
+				this.offsetX = 0;
+				this.offsetY = 0;
+				this.lastMove = [-1,0];														//ADD
+			}
+
+			...
+
+			tryMove(dx, dy){
+				let newTile = this.tile.getNeighbor(dx,dy);
+				if(newTile.passable){
+					this.lastMove = [dx,dy];												//ADD
+
+					...
+			}
+		---------------------------------- 
+
+
+
+		Spell 7: DIG
+
+		---------------------------------- spell.js
+		DIG: function(){
+			for(let i=1;i<numTiles-1;i++){
+		    	for(let j=1;j<numTiles-1;j++){
+		    		let tile = getTile(i,j);
+		    		if(!tile.passable){
+		    			tile.replace(Floor);
+		    		}
+			    }
+		    }
+			player.tile.setEffect(15);
+			player.heal(2);
+		}
+		----------------------------------
+
+		DIG replaces all walls (not including the outer wall) with floors. The player is healed for 2 health and an effect is drawn on the player tile.
+
+		Spell 8: KINGMAKER
+
+		---------------------------------- spell.js
+		KINGMAKER: function(){
+			for(let i=0;i<monsters.length;i++){
+				monsters[i].heal(1);
+				monsters[i].tile.treasure = true;
+			}
+		}
+		----------------------------------
+
+		KINGMAKER heals all monsters and generates a treasure on their tile.
+
+		Spell 9: ALCHEMY
+
+		---------------------------------- spell.js
+		ALCHEMY: function(){
+			player.tile.getAdjacentNeighbors().forEach(function(t){
+				if(!t.passable && inBounds(t.x, t.y)){
+					t.replace(Floor).treasure = true;
+				}
+			});
+		}
+		----------------------------------
+
+		ALCHEMY turns all adjacent walls that are not part of the outer wall into floors with a teasure.
+
+		Spell 10: POWER
+
+		---------------------------------- spell.js
+		POWER: function(){
+			player.bonusAttack=5;
+		}
+		----------------------------------
+
+		---------------------------------- monster.js
+		class Monster{
+			constructor(tile, sprite, hp){
+				this.move(tile);
+				this.sprite = sprite;
+				this.hp = hp;
+				this.teleportCounter = 2;
+				this.offsetX = 0;
+				this.offsetY = 0;
+				this.lastMove = [-1,0];
+				this.bonusAttack = 0;														//ADD
+			}
+
+		...
+
+			tryMove(dx, dy){
+				let newTile = this.tile.getNeighbor(dx,dy);
+				if(newTile.passable){
+					this.lastMove = [dx,dy];
+					if(!newTile.monster){
+						this.move(newTile);
+					}else{
+						if(this.isPlayer != newTile.monster.isPlayer){
+							this.attackedThisTurn = true;
+							newTile.monster.stunned = true;
+							newTile.monster.hit(1 + this.bonusAttack);						//MODIFY
+							this.bonusAttack = 0;											//ADD
+
+							shakeAmount = 5;
+
+							this.offsetX = (newTile.x - this.tile.x)/2;
+							this.offsetY = (newTile.y - this.tile.y)/2;
+						}
+					}
+					return true;
+				}
+			}
+		----------------------------------
+
+		POWER makes the next player attack do 6 damage by using a new variable called bonusAttack.
+
+
+		Spell 11: BUBBLE
+
+		---------------------------------- spell.js
+		BUBBLE: function(){
+			for(let i=player.spells.length-1;i>0;i--){
+				if(!playayer.spells[i]){
+					player.spells[i] = player.spells[i-1];
+				}
+			}
+		}
+		----------------------------------
+
+		BUBBLE duplicates spells. It iterates over the player spells in reverse and copies a spell from the previous element if the current element is empty.
+
+
+		Spell 12: BRAVERY
+
+		---------------------------------- spell.js
+		BRAVERY: function(){
+			player.shield = 2;
+			for(let i=0;i<monsters.length;i++){
+				monsters[i].stunned = true;
+			}
+		}
+		----------------------------------
+
+		---------------------------------- monster.js
+		hit(damage){
+			if(this.shield>0){											//ADD
+				return;													//ADD
+			}
+
+			...
+		}
+
+		...
+
+		class Player extends Monster{
+			...
+
+			update(){																//ADD
+				this.shield--;														//ADD
+			}
+		}
+		----------------------------------
+
+		---------------------------------- game.js
+
+		function tick(){
+			for(let k=monsters.length-1;k>=0;k--){
+				if(!monsters[k].dead){
+					monsters[k].update();
+				}else{
+					monsters.splice(k,1);
+				}
+			}
+			player.update();														//ADD
+
+			...
+		----------------------------------
+
+		BRAVERY gives the player a free turn by iterating over all monsters and stunning them. It also add a new property to player called shield, which will prevent any damage until the turn after next.
+
+		To support the shield property, we need to do three things: return out of the Monster hit() method if the shield is greater than 0, decrement the shield in a new player update() method, and call player.update from tick. The reason we have two distinct version of update is that player will never need the AI behavior in doStuff.
+
+
+
+		The next three spells use a function that we'll add to the end of the spell file called boltTravel.
+
+		---------------------------------- spell.js
+
+		spells = {
+			...
+		};
+
+		function boltTravel(direction, effect, damage){
+			let newTile = player.tile;
+			while(true){
+				let testTile = newTile.getNeighbor(direction[0], direction[1]);
+				if(testTile.passable){
+					newTile = testTile;
+					if(newTile.monster){
+						newTile.monster.hit(damage);
+					}
+					newTile.setEffect(effect);
+				}else{
+					break;
+				}
+			}
+		}
+		---------------------------------- 
+
+		This function is sort of like DASH earlier. We pass in a specified direction, an effect sprite, and some damage number. Starting from the player tile, we move in that direction until we hit a wall. We draw an effect for each tile passed through and for each monster, we damage it.
+
+		We can do a lot with boltTravel.
+
+
+		Spell 13: BOLT
+
+		---------------------------------- spell.js
+		BOLT: function(){
+			boltTravel(player.lastMove, 13 + Math.abs(player.lastMove[1]), 4);
+		}
+		----------------------------------
+
+		First, a simple test of our spell with the aptly named BOLT. Like DASH earlier, this spell operates in the direction of the player's last move. It's somewhat hard to pull off, so we make it do 4 damage!
+
+		The effect expression might look a little bit weird, but all we're trying to accomplish is to return either 13 or 14 (13 is the location of our horizontal bolt sprite, 14 holds the vertical version). A horizontal last move will have 0 in player.lastMove[1], but a vertical move will have either -1 or +1.
+
+
+		Spell 14: CROSS
+
+		---------------------------------- spell.js
+		CROSS: function(){
+			let directions = [
+				[0, -1],
+				[0, 1],
+				[-1, 0],
+				[1, 0]
+			];
+			for(let k=0;k<directions.length;k++){
+				boltTravel(directions[k], 13 + Math.abs(directions[k][1]), 2);
+			}
+		}
+		----------------------------------
+
+		CROSS calls boltTravel in the 4 cardinal directions. We define these directions in an array literal and iterate over it. We deal 2 damage and we use the same trick as last time to distinguish between horizontal and vertical bolts.
+
+
+		Spell 15: EX
+
+		---------------------------------- spell.js
+		EX: function(){
+			let directions = [
+				[-1, -1],
+				[-1, 1],
+				[1, -1],
+				[1, 1]
+			];
+			for(let k=0;k<directions.length;k++){
+				boltTravel(directions[k], 16, 3);
+			}
+		}
+		----------------------------------
+
+		EX is pretty much the same as CROSS, but in diagonal directions. We deal 3 damage and pass a single sprite that works for any direction.
+
+
+		And with that, our spells are done. The whole thing is done. You've made a complete game in less than a thousand lines of code with no frameworks. Great job!
+
+		-->
+	</div>
+
+	<script>
+		let content = {	
+			WOOP: `
+spells = {
+    WOOP: function(){
+        player.move(randomPassableTile());
+    }
+};
+			`,
+            KEYPRESS1: `
+    document.querySelector("html").onkeypress = function(e){
+        if(gameState == "title"){                              
+            startGame();                
+        }else if(gameState == "dead"){                             
+            showTitle();                                        
+        }else if(gameState == "running"){             
+            if(e.key=="w") player.tryMove(0, -1);
+            if(e.key=="s") player.tryMove(0, 1);
+            if(e.key=="a") player.tryMove(-1, 0);
+            if(e.key=="d") player.tryMove(1, 0);
+
+            `,
+            KEYPRESS2: `
+            if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);
+            `,
+            KEYPRESS3: `
+        };
+    };
+            `,
+            CLOSINGBRACEINDENT1: `
+    }
+            `,
+            CLOSINGBRACE: `
+}
+            `,
+            NEWLINE: `
+
+            `,
+            SPELLSHUFFLE1: `
+
+class Player extends Monster{
+    constructor(tile){
+        super(tile, 0, 3);
+        this.isPlayer = true;
+        this.teleportCounter = 0;
+            `,
+            SPELLSHUFFLE2: `
+        this.spells = shuffle(Object.keys(spells)).splice(0,numSpells);
+            `,
+            SPELLSHUFFLE3: `
+    }
+
+    tryMove(dx, dy){
+        if(super.tryMove(dx,dy)){
+            tick();
+        }
+    }
+
+            `,
+            SPELLSHUFFLE4: `
+    addSpell(){                                                       
+        let newSpell = shuffle(Object.keys(spells))[0];
+        this.spells.push(newSpell);
+    }
+
+    castSpell(index){                                                   
+        let spellName = this.spells[index];
+        if(spellName){
+            delete this.spells[index];
+            spells[spellName]();
+            playSound("spell");
+            tick();
+        }
+    }
+            `,
+            DRAWSPELLS1: `
+function startGame(){                                           
+    level = 1;
+    score = 0;
+            `,
+            DRAWSPELLS2: `
+    numSpells = 1;
+            `,
+            DRAWSPELLS3: `
+    startLevel(startingHp);
+
+    gameState = "running";
+}
+            `,
+            DRAWSPELLS4: `
+function draw(){
+    if(gameState == "running" || gameState == "dead"){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+            `,  
+            DRAWSPELLS5: `
+
+        drawText("Level: "+level, 30, false, 40, "violet");
+        drawText("Score: "+score, 30, false, 70, "violet");
+
+            `,
+            DRAWSPELLS6: `
+        for(let i=0; i<player.spells.length; i++){
+            let spellText = (i+1) + ") " + (player.spells[i] || "");                        
+            drawText(spellText, 20, false, 110+i*40, "aqua");        
+        }
+            `,
+            NEWSPELLS1: `
+class Floor extends Tile{
+    constructor(x,y){
+        super(x, y, 2, true);
+    };
+
+    stepOn(monster){        
+        if(monster.isPlayer && this.treasure){   
+            score++;          
+            `,
+            NEWSPELLS2: `
+            if(score % 3 == 0 && numSpells < 9){                         
+                numSpells++;                
+                player.addSpell();            
+            }      
+            `,
+            NEWSPELLS3: `
+            playSound("treasure");           
+            this.treasure = false;
+            spawnMonster();
+        }
+    }
+}
+            `
+   
+            
+                                     
+
+        };
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>

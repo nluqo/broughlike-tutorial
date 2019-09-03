@@ -15,16 +15,16 @@ hljs.initHighlightingOnLoad();
 
 document.querySelectorAll("pre code").forEach(n => {
 	let lines = n.innerHTML.split("\n");
-	let prefixChar = ' '
+	let prefixChar = ''
 	prefixChar += '<span class="diff">';
 	if(n.classList.contains('add')){
-		prefixChar += '<span class="noselect">+</span>';
+		prefixChar += '<span class="noselect">&nbsp;+&nbsp;</span>';
 	}else if(n.classList.contains('remove')){
-		prefixChar += '<span class="noselect">-</span>';
+		prefixChar += '<span class="noselect">&nbsp;-&nbsp;&nbsp;</span>';
 	}else{
-		prefixChar += '<span class="noselect"> </span>';
+		prefixChar += '<span class="noselect">&nbsp;&nbsp;&nbsp;</span>';
 	}
-	prefixChar += '  </span>';
+	prefixChar += '</span>';
 	if(lines.length){
 		let lineHtml = lines[0];
 		//ignore first and last lines

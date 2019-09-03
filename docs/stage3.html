@@ -338,17 +338,17 @@ class Player extends Monster{
         `,
         REPLACEX4:
         `
-        if(e.which==119) y--;       //W
-        if(e.which==115) y++;       //S
-        if(e.which== 97) x--;       //A
-        if(e.which==100) x++;       //D
+        if(e.key=="w") y--;
+        if(e.key=="s") y++;
+        if(e.key=="a") x--;
+        if(e.key=="d") x++;
         `,
         REPLACEX5:
         `
-        if(e.which==119) player.tryMove(0, -1);
-        if(e.which==115) player.tryMove(0, 1);
-        if(e.which==97) player.tryMove(-1, 0);
-        if(e.which==100) player.tryMove(1, 0);
+        if(e.key=="w") player.tryMove(0, -1);
+        if(e.key=="s") player.tryMove(0, 1);
+        if(e.key=="a") player.tryMove(-1, 0);
+        if(e.key=="d") player.tryMove(1, 0);
         `,
         REPLACEX6:
         `
