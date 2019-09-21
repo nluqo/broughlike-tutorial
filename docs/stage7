@@ -78,7 +78,7 @@ With that, basic animation between tiles is in place. With just two extra lines 
 
 ---------------------------------- monster.js
 	tryMove(dx, dy){
-		const newTile = this.tile.getNeighbor(dx,dy);
+		let newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
 			if(!newTile.monster){
 				this.move(newTile);
@@ -112,13 +112,13 @@ We'll start out declaring a shakeAmount variable for the magnitude of the shake 
 
 ---------------------------------- index.html
 <script>
-	const maxHp = 6; 
-	const startingHp = 3;
-	const numLevels = 6;
+	let maxHp = 6; 
+	let startingHp = 3;
+	let numLevels = 6;
 
-	const tileSize = 64;
-	const numTiles = 11;
-	const uiWidth = 4;
+	let tileSize = 64;
+	let numTiles = 11;
+	let uiWidth = 4;
 
 	let level = 1;
 	let gameState = "loading";
@@ -135,7 +135,7 @@ After each monster hit, we add some shake.
 
 ---------------------------------- monster.js
 tryMove(dx, dy){
-	const newTile = this.tile.getNeighbor(dx,dy);
+	let newTile = this.tile.getNeighbor(dx,dy);
 	if(newTile.passable){
 		if(!newTile.monster){
 			this.move(newTile);

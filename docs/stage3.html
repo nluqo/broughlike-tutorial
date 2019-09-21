@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 3</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Monsters</h1>
+		In this section, we're going to make a 
+        <div class="code-container-inline inline"><pre><code class="javascript">Monster</code></pre></div>
+         class just like we did with the 
+         <div class="code-container-inline inline"><pre><code class="javascript">Tile</code></pre></div>
+          class.
+		<br><br>
+		Earlier, we used just two variables (
+        <div class="code-container-inline inline"><pre><code class="javascript">x</code></pre></div>
+         & 
+         <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>) to represent position, but 
+         <div class="code-container-inline inline"><pre><code class="javascript">Tile</code></pre></div>
+          already has that. So when we want to move a monster around, we'll simply pass it a tile.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container margin-bottom">
+            <pre><code id="contentMONSTER" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript add"></code></pre>
+        </div>
+        Each monster
+        has its own 
+        <div class="code-container-inline inline"><pre><code class="javascript">sprite</code></pre></div>
+        and starting
+        <div class="code-container-inline inline"><pre><code class="javascript">hp</code></pre></div>. In addition, the monster will immediately move to its starting
+        <div class="code-container-inline inline"><pre><code class="javascript">tile</code></pre></div>.
+        <br><br>
+        OK, let's start working on that movement code. Before moving we first check a 
+        <div class="code-container-inline inline"><pre><code class="javascript">tryMove</code></pre></div>
+        function. Why is this needed?
+        <br><br>
+        Because in a broughlike the player and other monsters may often "try" to move into tiles where they can't fit! This might mean bouncing off a wall or it might turn into bump combat, a staple of classic roguelikes.
+
+        
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTER" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentMOVE" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
+        </div>
+        For now, we'll check the neighboring tile (the one we're trying to move into) and only allow a 
+        <div class="code-container-inline inline"><pre><code class="javascript">move</code></pre></div>
+        if the tile is passable and has no monster in it. We'll 
+        <div class="code-container-inline inline"><pre><code class="javascript">return true;</code></pre></div> 
+        to indicate the move was successful - either we could move or attack (we'll do that part later).
+        <br><br>
+        All the
+        <div class="code-container-inline inline"><pre><code class="javascript">move</code></pre></div>
+        method has to do is update a bunch of references: which
+        <div class="code-container-inline inline"><pre><code class="javascript">monster</code></pre></div>
+        is on which
+        <div class="code-container-inline inline"><pre><code class="javascript">tile</code></pre></div>
+        and which
+        <div class="code-container-inline inline"><pre><code class="javascript">tile</code></pre></div>
+        is holding which 
+        <div class="code-container-inline inline"><pre><code class="javascript">monster</code></pre></div>.
+        <br><br>
+
+        OK then. Which monster are we going to make first? The player!
+        <br><br>
+        <em>"Beware that, when fighting monsters, you yourself do not become a monster... "</em> -Nietzsche
+        <br><br>
+        When I first started writing roguelikes I naturally coded the player as a separate thing from the monsters. It seemed counterintuitive to make them the same kind of thing, but actually they share so much behavior. And also it's a common roguelike mechanic that monsters and players behave in <a href="http://www.roguebasin.com/index.php?title=Berlin_Interpretation#Monsters_are_similar_to_players" target="_blank">similar ways</a>.
+        
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentMONSTER" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentMOVE" class="javascript"></code></pre>
+            <pre><code id="contentCLOSEBRACE" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentPLAYER" class="javascript add"></code></pre>
+        </div>
+
+        This should look similar to how we implemented our 
+        <div class="code-container-inline inline"><pre><code class="javascript">Floor</code></pre></div>
+        and
+        <div class="code-container-inline inline"><pre><code class="javascript">Wall</code></pre></div> classes. We're passing a tile that we live on, a sprite index of 
+        <div class="code-container-inline inline"><pre><code class="javascript">0</code></pre></div>,
+        and a maximum HP of 
+        <div class="code-container-inline inline"><pre><code class="javascript">3</code></pre></div>.
+        <br><br>
+        I'm setting an extra flag called 
+        <div class="code-container-inline inline"><pre><code class="javascript">isPlayer</code></pre></div>.
+        Some people might say this is a little kludgy, but I find this kind of flag very easy to use.
+        <br><br>
+        Ok, now let's put that player class to use and rip out all our
+        <div class="code-container-inline inline"><pre><code class="javascript">x</code></pre></div>
+         & 
+         <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>
+        references.
+
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentREPLACEX1" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX2" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEX3" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX4" class="javascript remove "></code></pre>
+            <pre><code id="contentREPLACEX5" class="javascript add"></code></pre>
+            <pre><code id="contentREPLACEX6" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEX7" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEX8" class="javascript add"></code></pre>
+        </div>
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentREPLACEDRAW1" class="javascript"></code></pre>
+            <pre><code id="contentREPLACEDRAW2" class="javascript remove"></code></pre>
+            <pre><code id="contentREPLACEDRAW3" class="javascript add"></code></pre>
+            <pre><code id="contentREPLACEDRAW4" class="javascript "></code></pre>
+        </div>
+
+        Test out your game. The player moves around but can't go through walls. Awesome.
+
+        Now let's switch gears and do some art.
+
+        <h2>Drawing Monsters</h2>  
+        <div class="drawing-section">
+            I'd like you to draw the 5 monsters used in the game. As a reminder, the strategy I used was to create a basic shape and then in the next two steps draw shading and highlights.
+            <br><br>
+            The tiny resolution and small color palette of each sprite makes this process fairly easy.
+            Importantly, I didn't worry too much about how great these looked or if they made sense (they definitely don't). Rather my goal was simple sprites that all felt distinct from one another.
+            <br><br>
+            First, the lowly Bird. 
+            <img src="art/bird.png">
+            Here, I made a lizardy dude that I'm calling Snake for some reason.
+            <img src="art/snake.png">
+            Some blobby thing that's going to have lot of health thus called Tank.
+            <img src="art/tank.png">
+            Sort of a big dinosaur head called Eater.
+            <img src="art/eater.png">
+            The last monster is the Jester.
+            <img src="art/jester.png">
+            While we're here, let's draw an HP pip sprite.
+            <img src="art/hp.png">
+         </div>
+        With the hard part out of the way, let's code up the monsters. For now, each one will only differ by sprite and starting HP. More detail to follow.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container margin-bottom">
+            <pre><code id="contentPLAYER" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentFIVEMONSTERS" class="javascript add"></code></pre>
+        </div>
+
+        We need to think about how we're going to <em>spawn</em> the monsters into the game. Right off the bat, I know we're going to want to scale the number of monsters based on the current map level, so first let's add a variable to keep track of that.
+
+        <div class="filename">index.html</div>
+        <div class="code-container margin-bottom">
+            <pre><code id="contentPRELEVELVAR" class="javascript"></code></pre>
+            <pre><code id="contentLEVELVAR" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTLEVELVAR" class="javascript"></code></pre>
+        </div>
+        Then two new functions: one to spawn a single monster and another to create an bunch of monsters by repeatedly calling the first.
+
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentRANDOMPASSABLE" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript add"></code></pre>
+            <pre><code id="contentSPAWNMONSTERS" class="javascript add"></code></pre>
+        </div>
+        In this code, we're going to make an array of 
+        <div class="code-container-inline inline"><pre><code class="javascript">monsters</code></pre></div>,
+        and spawn some monsters into it. How many do we want to spawn? One more than the current level (2 on the first floor, 3 on the second floor, etc.)
+        <br><br>
+        In 
+        <div class="code-container-inline inline"><pre><code class="javascript">spawnMonster</code></pre></div>
+        , we start with an array of 
+        <div class="code-container-inline inline"><pre><code class="javascript">Monster</code></pre></div>
+        classes that we just coded. To grab a random one, we'll 
+        <div class="code-container-inline inline"><pre><code class="javascript">shuffle</code></pre></div>
+         the array and grab the first element. Here again you see the use of the
+        <div class="code-container-inline inline"><pre><code class="javascript">new</code></pre></div> keyword but this time combined with a variable instead of the literal name of a class. We start them each on a 
+        <div class="code-container-inline inline"><pre><code class="javascript">randomPassableTile</code></pre></div>
+         like we did with the player. Then we add them to our 
+        <div class="code-container-inline inline"><pre><code class="javascript">monsters</code></pre></div> array.
+
+
+        <br><br>
+        Only two more things to get monsters into the game: actually triggering 
+        <div class="code-container-inline inline"><pre><code class="javascript">generateMonsters</code></pre></div>
+        and then drawing them.
+
+        <div class="filename">map.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREGENERATEMONSTERS" class="javascript"></code></pre>
+            <pre><code id="contentGENERATEMONSTERS" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTGENERATEMONSTERS" class="javascript"></code></pre>
+        </div>
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREDRAWMONSTERS" class="javascript"></code></pre>
+            <pre><code id="contentDRAWMONSTERS" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTDRAWMONSTERS" class="javascript"></code></pre>
+        </div>
+
+        Check it out. We've got monsters on the map. They aren't doing much besides blocking our path. We'll need some monster AI to make this more interesting.
+        <br><br>
+        I often use a pathfinding algorithm called <strong>A*</strong> to handle monster movement. But take a look at the <a href="https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode" target="_blank">pseudocode</a>. It's hard to get right, even if you've written it before. If you <em>did</em> want to use <strong>A*</strong>, I would strongly recommend a library like rot.js to handle it.
+        <br><br>
+        Instead we're going to take a shortcut and use "greedy" movement, which simply means trying to get closer on <em>every</em> turn even if it's not the ideal path in the long term. Monsters will try to move closer even when that gets them trapped. Trust me, this will still lead to interesting (but unique) gameplay.
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREMONSTERUPDATE" class="javascript"></code></pre>
+            <pre><code id="contentMONSTERUPDATE" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTMONSTERUPDATE" class="javascript"></code></pre>
+        </div>
+        Our movement code will go in a method called
+        <div class="code-container-inline inline"><pre><code class="javascript">doStuff</code></pre></div>. Why not just do it all in 
+        <div class="code-container-inline inline"><pre><code class="javascript">update</code></pre></div>? We very often want to separate updates (things like status effect counters or health regeneration) from monster actions.
+        <br><br>
+        We start by getting a monster's passable, adjacent neighbors that are either empty and can be moved to or contain the player and can be attacked. Now we need to pick the <em>closest</em> tile to the player. We do that with a
+        <div class="code-container-inline inline"><pre><code class="javascript">sort</code></pre></div>
+        that is going to sort our 
+        <div class="code-container-inline inline"><pre><code class="javascript">neighbors</code></pre></div>
+        by their distance to the player, picking the first one (which will be closest), and trying to move to it.
+        <br><br>
+        Here's the method for calculating distance, specifically <a href="https://en.wikipedia.org/wiki/Taxicab_geometry" target="_blank">Manhattan distance</a>.
+        <div class="filename">tile.js</div>
+        <div class="code-container margin-bottom">
+            <pre><code id="contentPREDIST" class="javascript"></code></pre>
+            <pre><code id="contentDIST" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTDIST" class="javascript"></code></pre>
+        </div>
+
+        When should we call 
+        <div class="code-container-inline inline"><pre><code class="javascript">update</code></pre></div>?
+        In game dev, the code to update the world and the monsters in it is commonly called a "tick". So we need one of those.
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentPRETICK" class="javascript"></code></pre>
+            <pre><code id="contentTICK" class="javascript add"></code></pre>
+        </div>
+        We iterate over 
+        <div class="code-container-inline inline"><pre><code class="javascript">monsters</code></pre></div>
+        (importantly in <em>reverse</em> so they can be safely deleted), call 
+        <div class="code-container-inline inline"><pre><code class="javascript">update</code></pre></div>
+        if each monster is alive, and if not delete them with 
+        <div class="code-container-inline inline"><pre><code class="javascript">splice</code></pre></div>.
+        <br><br>
+        The last piece of the puzzle is when to call 
+        <div class="code-container-inline inline"><pre><code class="javascript">tick</code></pre></div>
+        and I bet you can guess. In a turn based roguelike, monsters move immediately after the player takes an action.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentPREPLAYERTRYMOVE" class="javascript"></code></pre>
+            <pre><code id="contentPLAYERTRYMOVE" class="javascript add"></code></pre>
+            <pre><code id="contentPOSTPLAYERTRYMOVE" class="javascript"></code></pre>
+        </div>
+        We override the 
+        <div class="code-container-inline inline"><pre><code class="javascript">tryMove</code></pre></div>
+        method in the
+        <div class="code-container-inline inline"><pre><code class="javascript">Player</code></pre></div>
+        class. The overriden method that we wrote earlier in 
+        <div class="code-container-inline inline"><pre><code class="javascript">Monster</code></pre></div>
+        is still available for us to use by calling 
+        <div class="code-container-inline inline"><pre><code class="javascript">super.tryMove(dx, dy)</code></pre></div>. If that method returns true
+        (meaning the player action was a success instead of, say, bumping into a wall), we can trigger 
+        <div class="code-container-inline inline"><pre><code class="javascript">tick</code></pre></div>
+        and all the monsters will then move.
+        <br><br>
+        Try out your game and that's exactly what you should see.
+        <br><br>
+        In the next section, we're going to get the monsters attacking and fill out the details in our 5 monster implementations.
+	</div>
+
+	<script>
+		let content = {
+			MONSTER: `
+class Monster{
+	constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+	}
+
+	draw(){
+        drawSprite(this.sprite, this.tile.x, this.tile.y);
+	}
+			`,
+			CLOSEBRACE: `
+}
+			`,
+			MOVE: `
+    tryMove(dx, dy){
+        let newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
+            }
+            return true;
+        }
+    }
+
+    move(tile){
+        if(this.tile){
+            this.tile.monster = null;
+        }
+        this.tile = tile;
+        tile.monster = this;
+    }
+			`,
+            PLAYER: `
+class Player extends Monster{
+    constructor(tile){
+        super(tile, 0, 3);
+        this.isPlayer = true;
+    }
+}
+        `,
+        REPLACEX1:
+        `
+    let tileSize = 64;
+    let numTiles = 9;
+    let uiWidth = 4;
+        `,
+        REPLACEX2:
+        `
+    let x = y = 0;
+        `,
+        REPLACEX3:
+        `
+    let spritesheet = new Image();
+    spritesheet.src = 'spritesheet.png';
+
+    document.querySelector("html").onkeypress = function(e){
+        `,
+        REPLACEX4:
+        `
+        if(e.key=="w") y--;
+        if(e.key=="s") y++;
+        if(e.key=="a") x--;
+        if(e.key=="d") x++;
+        `,
+        REPLACEX5:
+        `
+        if(e.key=="w") player.tryMove(0, -1);
+        if(e.key=="s") player.tryMove(0, 1);
+        if(e.key=="a") player.tryMove(-1, 0);
+        if(e.key=="d") player.tryMove(1, 0);
+        `,
+        REPLACEX6:
+        `
+    };
+
+    setInterval(draw, 15);
+
+    setupCanvas();
+
+    generateLevel();
+
+        `,
+        REPLACEX7:
+        `
+    let startingTile = randomPassableTile();
+    x = startingTile.x;
+    y = startingTile.y;       
+        `,
+        REPLACEX8:
+        `
+    let player = new Player(randomPassableTile());
+        `,
+        REPLACEDRAW1:
+        `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<numTiles;i++){
+        for(let j=0;j<numTiles;j++){
+            getTile(i,j).draw();
+        }
+    }
+
+        `,
+        REPLACEDRAW2:
+        `
+    drawSprite(0, x, y);
+        `,
+        REPLACEDRAW3:
+        `
+    player.draw();
+        `,
+        REPLACEDRAW4:
+        `
+}
+        `,
+        FIVEMONSTERS:
+        `
+class Bird extends Monster{
+    constructor(tile){
+        super(tile, 4, 3);
+    }
+}
+
+class Snake extends Monster{
+    constructor(tile){
+        super(tile, 5, 1);
+    }
+}
+
+class Tank extends Monster{
+    constructor(tile){
+        super(tile, 6, 2);
+    }
+}
+
+class Eater extends Monster{
+    constructor(tile){
+        super(tile, 7, 1);
+    }
+}
+
+class Jester extends Monster{
+    constructor(tile){
+        super(tile, 8, 2);
+    }
+}
+        `,
+        PRELEVELVAR:
+        `
+<script>
+    let tileSize = 64;
+    let numTiles = 9;
+    let uiWidth = 4;
+        `,
+        LEVELVAR:
+        `
+    let level = 1;
+        `,
+        POSTLEVELVAR:
+        `
+
+    let spritesheet = new Image();
+    spritesheet.src = 'spritesheet.png';
+        `,
+        RANDOMPASSABLE:
+        `
+function randomPassableTile(){
+    let tile;
+    tryTo('get random passable tile', function(){
+        let x = randomRange(0,numTiles-1);
+        let y = randomRange(0,numTiles-1);
+        tile = tiles[x][y];
+        return tile.passable && !tile.monster;
+    });
+    return tile;
+}
+        `,
+        SPAWNMONSTERS:
+        `
+function generateMonsters(){
+    monsters = [];
+    let numMonsters = level+1;
+    for(let i=0;i<numMonsters;i++){
+        spawnMonster();
+    }
+}
+
+function spawnMonster(){
+    let monsterType = shuffle([Bird, Snake, Tank, Eater, Jester])[0];
+    let monster = new monsterType(randomPassableTile());
+    monsters.push(monster);
+}
+        `,
+        PREGENERATEMONSTERS:
+        `
+function generateLevel(){
+    tryTo('generate map', function(){
+        return generateTiles() == randomPassableTile().getConnectedTiles().length;
+    });
+
+        `,
+        GENERATEMONSTERS:
+        `
+    generateMonsters();
+        `,
+        POSTGENERATEMONSTERS:
+        `
+}
+        `,
+        PREDRAWMONSTERS:
+        `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<numTiles;i++){
+        for(let j=0;j<numTiles;j++){
+            getTile(i,j).draw();
+        }
+    }
+
+        `,
+        DRAWMONSTERS:
+        `
+    for(let i=0;i<monsters.length;i++){
+        monsters[i].draw();
+    }
+        `,
+        POSTDRAWMONSTERS:
+        `
+
+    player.draw();
+}
+        `,
+        PREMONSTERUPDATE:
+        `
+class Monster{
+    constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+    }
+
+        `,
+        MONSTERUPDATE:
+        `
+    update(){
+        this.doStuff();
+    }
+
+    doStuff(){
+       let neighbors = this.tile.getAdjacentPassableNeighbors();
+       
+       neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
+
+       if(neighbors.length){
+           neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+           let newTile = neighbors[0];
+           this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+       }
+   }
+        `,
+        POSTMONSTERUPDATE:
+        `
+
+
+    draw(){
+        drawSprite(this.sprite, this.tile.x, this.tile.y);
+    }
+        `,
+        PREDIST:
+        `
+class Tile{
+    constructor(x, y, sprite, passable){
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.passable = passable;
+    }
+
+        `,
+        DIST:
+        `
+    //manhattan distance
+    dist(other){
+        return Math.abs(this.x-other.x)+Math.abs(this.y-other.y);
+    }
+        `,
+        POSTDIST:
+        `
+
+    getNeighbor(dx, dy){
+        return getTile(this.x + dx, this.y + dy)
+    }
+        `,
+        PRETICK:
+        `
+
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        for(let i=0;i<numTiles;i++){
+            for(let j=0;j<numTiles;j++){
+                getTile(i,j).draw();
+            }
+        }
+
+
+        for(let i=0;i<monsters.length;i++){
+            monsters[i].draw();
+        }
+
+        player.draw();
+    }
+
+        `,
+        TICK:
+        `
+    function tick(){
+        for(let k=monsters.length-1;k>=0;k--){
+            if(!monsters[k].dead){
+                monsters[k].update();
+            }else{
+                monsters.splice(k,1);
+            }
+        }
+    }
+        `,
+        PREPLAYERTRYMOVE:
+        `
+class Player extends Monster{
+    constructor(tile){
+        super(tile, 0, 3);
+        this.isPlayer = true;
+    }
+
+        `,
+        PLAYERTRYMOVE:
+        `
+    tryMove(dx, dy){
+        if(super.tryMove(dx,dy)){
+            tick();
+        }
+    }
+        `,
+        POSTPLAYERTRYMOVE:
+        `
+}
+        `
+        
+	   };
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>

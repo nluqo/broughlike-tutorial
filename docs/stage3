@@ -16,9 +16,13 @@ class Monster{
 	draw(){
 		drawSprite(this.sprite, this.tile.x, this.tile.y);
 	}
+-------------------------------------- 
 
+
+
+-------------------------------------- 
 	tryMove(dx, dy){
-		const newTile = this.tile.getNeighbor(dx,dy);
+		let newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
 			if(!newTile.monster){
 				this.move(newTile);
@@ -73,17 +77,17 @@ let player = new Player(randomPassableTile());
 
 -------------------------------------- index.html (DELETE AND REPLACE)
 document.querySelector("html").onkeypress = function(e){
-    if(e.which==119) y--;
-    if(e.which==115) y++;
-    if(e.which==97) x--;
-    if(e.which==100) x++;
+    if(e.key=="w") y--;
+    if(e.key=="s") y++;
+    if(e.key=="a") x--;
+    if(e.key=="d") x++;
 };
 -------------------------------------- 
 document.querySelector("html").onkeypress = function(e){
-    if(e.which==119) player.tryMove(0, -1);
-    if(e.which==115) player.tryMove(0, 1);
-    if(e.which==97) player.tryMove(-1, 0);
-    if(e.which==100) player.tryMove(1, 0);
+    if(e.key=="w") player.tryMove(0, -1);
+    if(e.key=="s") player.tryMove(0, 1);
+    if(e.key=="a") player.tryMove(-1, 0);
+    if(e.key=="d") player.tryMove(1, 0);
 };
 -------------------------------------- 
 
@@ -154,7 +158,7 @@ Then two new functions: one to spawn a single monster and another to create an a
 -------------------------------------- map.js
 function generateMonsters(){
 	monsters = [];
-	const numMonsters = level+1;
+	let numMonsters = level+1;
 	for(let i=0;i<numMonsters;i++){
 		spawnMonster();
 	}
@@ -162,7 +166,7 @@ function generateMonsters(){
 
 function spawnMonster(){
 	let monsterType = shuffle([Snake, Eater, Tank, Jester, Bird])[0];
-	const monster = new monsterType(randomPassableTile());
+	let monster = new monsterType(randomPassableTile());
 	monsters.push(monster);
 }
 
@@ -194,15 +198,15 @@ Instead we're going to take a shortcut and use "greedy" movement. Monsters will 
 	}
 
 	doStuff(){
-		const neighbors = this.tile.getAdjacentPassableNeighbors()
+		let neighbors = this.tile.getAdjacentPassableNeighbors()
 							.filter(t => t.passable && (!t.monster || t.monster.isPlayer));
 
-		const sortedNeighbors = neighbors.sort(function(a,b){
+		let sortedNeighbors = neighbors.sort(function(a,b){
 			return a.dist(player.tile) - b.dist(player.tile);
 		});
 
 		if(sortedNeighbors.length){
-			const newTile = sortedNeighbors[0];
+			let newTile = sortedNeighbors[0];
 			this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
 		}
 	}

@@ -47,7 +47,7 @@ class Tile{
 		let connectedTiles = [this];
 		let frontier = [this];
 		while(frontier.length){
-			const neighbors = frontier.pop()
+			let neighbors = frontier.pop()
 								.getAdjacentPassableNeighbors()
 								.filter(t => !connectedTiles.includes(t));
 			connectedTiles = connectedTiles.concat(neighbors);

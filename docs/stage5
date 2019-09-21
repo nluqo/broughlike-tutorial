@@ -20,13 +20,13 @@ We'll be moving some code in index.html to new functions in game.js.
 
 -------------------------------------- index.html
 <script>
-	const maxHp = 6; 
-	const startingHp = 3;												//ADD
-	const numLevels = 6;												//ADD
+	let maxHp = 6; 
+	let startingHp = 3;												//ADD
+	let numLevels = 6;												//ADD
 	
-	const tileSize = 64;
-	const numTiles = 11;
-	const uiWidth = 4;
+	let tileSize = 64;
+	let numTiles = 11;
+	let uiWidth = 4;
 
 	let level = 1;
 	let gameState = "loading";											//ADD
@@ -42,10 +42,10 @@ We'll be moving some code in index.html to new functions in game.js.
 		}else if(gameState == "dead"){									//ADD...
 			showTitle();												//ADD...
 		}else{															//ADD...
-		    if(e.which==119) player.tryMove(0,-1);
-		    if(e.which==115) player.tryMove(0,1);
-		    if(e.which==97) player.tryMove(-1, 0);
-		    if(e.which==100) player.tryMove(1, 0);
+		    if(e.key=="w") player.tryMove(0,-1);
+		    if(e.key=="s") player.tryMove(0,1);
+		    if(e.key=="a") player.tryMove(-1, 0);
+		    if(e.key=="d") player.tryMove(1, 0);
 		}
 	};
 

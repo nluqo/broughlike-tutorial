@@ -41,7 +41,7 @@ class Monster{
 	}
 
 	tryMove(dx, dy){
-		const newTile = this.tile.getNeighbor(dx,dy);
+		let newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
 			this.lastMove = [dx,dy];
 			if(!newTile.monster){
@@ -108,15 +108,15 @@ class Monster{
 	}
 
 	doStuff(){
-		const neighbors = this.tile.getAdjacentPassableNeighbors()
+		let neighbors = this.tile.getAdjacentPassableNeighbors()
 							.filter(t => t.passable && (!t.monster || t.monster.isPlayer));
 
-		const sortedNeighbors = neighbors.sort(function(a,b){
+		let sortedNeighbors = neighbors.sort(function(a,b){
 			return a.dist(player.tile) - b.dist(player.tile);
 		});
 
 		if(sortedNeighbors.length){
-			const newTile = sortedNeighbors[0];
+			let newTile = sortedNeighbors[0];
 			this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
 		}
 	}
@@ -146,7 +146,7 @@ class Player extends Monster{
 	}
 
 	castSpell(index){
-		const spellName = this.spells[index];
+		let spellName = this.spells[index];
 		if(spellName){
 			delete this.spells[index];
 			spells[spellName](this);

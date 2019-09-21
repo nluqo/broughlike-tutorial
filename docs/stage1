@@ -1,6 +1,6 @@
 Drawing to the screen
 
-You should already everything you need installed: a browser (e.g. Firefox), a text editor (e.g. Notepad), and an image editor (e.g. Paint). However, the apps that I'm going to use and that I recommend are Chrome, Sublime Text, and GIMP.
+You should already everything you need installed: a browser (e.g. Firefox), a text editor (e.g. Notepad), and an image editor (e.g. Paint). However, the apps that I'm going to use and that I recommend are Google Chrome, Sublime Text, and GIMP.
 
 
 First open your text editor and create a file called *index.html*, type in "Hello, World!", and save the file.
@@ -35,10 +35,10 @@ There's our player character! But the player doesn't move. Replace the fillRect 
 	x = y = 0;																//EVERYTHING ADDED EXCEPT </script>
 
 	document.querySelector("html").onkeypress = function(e){
-	    if(e.which==119) y--;
-	    if(e.which==115) y++;
-	    if(e.which==97) x--;
-	    if(e.which==100) x++;
+	    if(e.key=="w") y--;
+	    if(e.key=="s") y++;
+	    if(e.key=="a") x--;
+	    if(e.key=="d") x++;
 	};
 
 	function draw(){
@@ -166,9 +166,9 @@ We forgot to define a few variables. Let's do that now in the original script ta
 
 
 --------------------------------------
-	const tileSize = 64;
-	const numTiles = 9;
-	const uiWidth = 4;
+	let tileSize = 64;
+	let numTiles = 9;
+	let uiWidth = 4;
 --------------------------------------
 
 That should fix the error we saw. Now we can also utilize some of these variables in the draw call.
@@ -180,7 +180,7 @@ You'll notice that the "player" rectangle gets bigger and when you move to the b
 	    ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
 --------------------------------------
 
-Finally, let's replace our little rectangle with a real sprite. You could make the whole game in rectangles if you wanted, but you're no Mike Bithell.
+Finally, let's replace our little rectangle with a real sprite. You could make the whole game in rectangles if you wanted (it worked for Mike Bithell), but I'm not talented enough for that. I'm going to use GIMP.
 
 Open up your favorite image editor. Make a rectangle that's 512 by 16 pixels. Normally, a spritesheet is arranged in big square
 but it works just as well and more simply as a long line of sprites.

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 0</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>JavaScript Broughlike Tutorial</h1>
+		This is a tutorial about writing a broughlike (a small, roguelike similar to <a href="https://store.steampowered.com/app/274700/868HACK/" target="_blank">868-HACK</a> or <a href="https://itunes.apple.com/us/app/cinco-paus/id1249999336" target="_blank">Cinco Paus</a>) from scratch in JavaScript.
+		<div class="centered">
+			<img src="screens/brough-screen.png" alt="Screenshot of tutorial">
+		</div>
+		<h2>Why this tutorial? Why broughlikes? Why JavaScript?</h2>
+		The rest of this page provides answers and gives a very brief introduction to some JavaScript features we'll be using.
+		<br><br>
+		If you want to make more traditional roguelikes with JavaScript and rot.js, start <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial" target="_blank">here</a>. If you're looking for a good Unity starter for making broughlikes, <a href="https://github.com/st33d/broglike">try this</a>.
+
+		<h2>What's different about this tutorial?</h2>
+		<ol>
+			<li>You already have all the software you need: a web browser, a text editor, and an image editor.</li>
+			<li>The result will  be easily shareable and require no downloads to play</li>
+			<li>We'll make all the assets from scratch: code, images, and sound</li>
+			<li>No dependencies. No frameworks. No libraries.</li>
+			<li>We're aiming for a game that is at least somewhat compelling</li>
+		</ol>
+		In many tutorials, you have to download a bunch of software, fight with versioning problems, write code where a library does all the heavy lifting so you're left with no understanding of how it does it, and glue together premade assets you never figure out how to make yourself. The end result is often a clone or shallow toy that no one would actually want to play anyway.
+		<br><br>
+		Features the finished game will have:
+		<ul>
+			<li>a small map with easily modifiable grid size</li>
+			<li>multiple levels</li>
+			<li>monsters</li>
+			<li>spells</li>
+			<li>collectible treasure</li>
+			<li>high scores, preserved across browser launches</li>
+			<li>sounds</li>
+			<li>animation and screen shake</li>
+		</ul>
+		We're going to do all that in less than 850 lines of code.
+		<br><br>
+		A warning up front: I'm <em>not</em> going to focus on best practices here. I'm shooting for the shortest and simplest code. Quick and dirty.
+
+		<h2>What the hell is a broughlike and why do I care?</h2>
+
+		<a href="https://en.wikipedia.org/wiki/Michael_Brough_(game_designer)" target="_blank">Michael Brough</a> is a game designer most well known for a series of cleverly crafted roguelike games, known as "broughlikes", with the following features:
+
+		<ul>
+			<li>Tiny grids</li>
+			<li>Parity mechanics</li>
+			<li>Low randomness</li>
+			<li>Highly replability despite simple rules</li>
+		</ul>
+
+		<div class="centered">
+			<img src="screens/brough-games.png" alt="Screenshots of 4 Michael Brough games">
+		</div>
+
+		The beauty of broughlikes lie in their simplicity. 868-HACK is played on a 6x6 grid and features only 4 types of monsters. So it may appear that this kind of game is easy to produce. Yes and no. Their simplicity belies the excruciating attention to detail and design work that goes into each one. Go read <a href="http://mightyvision.blogspot.com/">Brough's blog</a> if you don't believe me.
+		<br><br>
+		So these games are very easy to program, but hard to design. A perfect fit if you suspect you might be a talented designer, but a novice programmer. Also great for game jams; 868-HACK started out in the Seven Day Roguelike Challenge of 2013!
+		<br><br>
+		A basic level of programming knowledge will be helpful, but we'll cover a bit of JavaScript before starting (feel free to skip to the next section if you're already comfortable with JavaScript.)
+
+		<h2>Why JavaScript?</h2>
+		I was inspired to create this tutorial after struggling with and failing to complete the Unity <a href="https://unity3d.com/learn/tutorials/s/2d-roguelike-tutorial">2D roguelike tutorial</a>. This was embarrassing because I've been programming for over a decade and have made a bunch of roguelikes and even sold one, but that Unity tutorial was simply too much. The steps required constant cross referencing with a Unity 4 to 5 upgrade guide, they contained random gotchas that broke everything, and there was a bunch of completely unnecessary junk thrown on like box colliders and rigid body physics.
+		<br><br>
+		Now, I'm not here to tell you that Unity is bad. But if you're trying to learn how to make games, I think JavaScript is a <strong>great starting point</strong>.
+		<ul>
+			<li>It's accessible. You have all the tools already. You can start tinkering with JS in this very tab. You have a fully featured debugger too.</li>
+			<li>No compile times. Refresh and see changes immediately.</li>
+			<li>JavaScript objects and arrays are light years ahead of collection types in other languages as far as brevity, ease of use, and utility.</li>
+			<li>JavaScript lets you get away with so much (weak types, undefined properties, type coercion). You can lament the lack of safety or embrace it and become super productive.</li>
+		</ul>
+		<h2>Some JavaScript basics</h2>
+		While on this page, open the Console in your browser dev tools and follow along. Open the tools with either: Ctrl+Shift+I <em>or</em> right click and "Inspect" <em>or</em> from your browser menu). Type commands into the Console, press enter, and see what you get.
+
+		<h3>VARIABLES</h3>
+		<div class="code-container-inline"><pre><code id="contentA" class="javascript"></code></pre></div>
+		<br>
+		Variables are used to store data and use it later. This is how we declare variables and assign them an initial value in one shot. <br><br>
+
+		Type any previously defined variable like
+		<div class="code-container-inline inline"><pre><code class="javascript inline">bottles</code></pre></div>
+		into the console to see its value.
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentC" class="javascript"></code></pre></div>
+		<br>
+		Declares a global variable (assuming <div class="code-container-inline inline"><pre><code class="javascript inline">balloons</code></pre></div> is not already declared).
+
+		<h3>TYPES</h3>
+		You don't have to specify a variable's type, though each will still have a type under the hood.
+		<br><br>
+		The important thing to know is what types you have available: strings
+        (<div class="code-container-inline inline"><pre><code class="javascript inline">"foo"</code></pre></div>),
+        numbers
+        (<div class="code-container-inline inline"><pre><code class="javascript inline">1.2345</code></pre></div>),
+        booleans (<div class="code-container-inline inline"><pre><code class="javascript inline">true</code></pre></div>
+        or <div class="code-container-inline inline"><pre><code class="javascript inline">false</code></pre></div>). There's also objects, arrays, and functions, all of which we'll cover in a moment.
+		<br><br>
+		If you use two differing types together in one operation or comparison, JavaScript will do "type coercion": try to do the most sensible thing by changing one of the types so the operation goes through. For example:
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentD" class="javascript"></code></pre></div>
+		<br>
+		Results in the string "99problems".
+
+		<h3>COMMENTS</h3>
+		<div class="code-container-inline"><pre><code id="contentE" class="javascript"></code></pre></div>
+
+		<h3>OPERATORS</h3>
+		Common arithmetical operators are available:
+        <div class="code-container-inline inline"><pre><code class="javascript inline">+</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">-</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">*</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">/</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">%</code></pre></div>
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentF" class="javascript"></code></pre></div>
+		<br>
+		Results in 1.6666666666666667 
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentG" class="javascript"></code></pre></div>
+		<br>
+		Results in 2. This is the "modulus" operator; it basically does remainders.
+		<br><br>
+		We'll also use comparison operators like:
+        <div class="code-container-inline inline"><pre><code class="javascript inline">==</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">!=</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">&lt;</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">&gt;</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">&gt;=</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">&lt;=</code></pre></div>
+
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentH" class="javascript"></code></pre></div>
+		<br>
+		Is true.
+		<br><br>
+		<div class="code-container-inline"><pre><code id="contentI" class="javascript"></code></pre></div>
+		<br>
+		Is false.
+		<br><br>
+		For anything else, there's the built-in 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">Math</code></pre></div>
+         object:
+        <div class="code-container-inline inline"><pre><code class="javascript inline">Math.random()</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">Math.abs()</code></pre></div>
+        <div class="code-container-inline inline"><pre><code class="javascript inline">Math.floor()</code></pre></div>
+        etc.
+
+		<h3>CONDITIONALS</h3>
+		<div class="code-container"><pre><code id="contentJ" class="javascript"></code></pre></div>
+		The
+		<div class="code-container-inline inline"><pre><code class="javascript inline">if</code></pre></div>
+		statement evaluates some expression and runs the inner block if the expression was true. Otherwise the
+		<div class="code-container-inline inline"><pre><code class="javascript inline">else</code></pre></div>
+		block is executed.
+		<br><br>
+		If you were to run this several times, you would see that the first block is entered only 25% of the time.
+		<br><br>
+		We'll also use two other conditionals: an inline version of
+		<div class="code-container-inline inline"><pre><code class="javascript inline">if</code></pre></div>
+		with no braces and the ternary operator
+		<div class="code-container-inline inline"><pre><code class="javascript inline">?</code></pre></div>.
+		This does the exact same thing as the above code:
+
+		<div class="code-container"><pre><code id="contentK" class="javascript"></code></pre></div>
+
+
+		<h3>FUNCTIONS</h3>
+
+		<div class="code-container"><pre><code id="contentL" class="javascript"></code></pre></div>
+		Functions are little blocks of code that we can pass data to and from. They help us reuse, document, and organize our code.
+		<br><br>
+		The really important thing to know about functions in JavaScript is that they're <em>first class citizens</em>. You can assign functions to variables and pass or return functions to other functions. That gives us a ton of flexibility.
+		<br><br>
+		You should also be aware there are a few other ways to represent functions such as "fat arrow" syntax, which does pretty much the same thing:
+		<div class="code-container"><pre><code id="contentM" class="javascript"></code></pre></div>
+
+
+		<h3>LOOPS</h3>
+		<div class="code-container"><pre><code id="contentN" class="javascript"></code></pre></div>
+		The 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">while</code></pre></div>
+        loop evaluates some expression and repeatedly runs the inner block as long as it's true. You can end the loop early with a 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">break</code></pre></div>
+        statement.
+        <br><br>
+		<div class="code-container"><pre><code id="contentO" class="javascript"></code></pre></div>
+		The 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">for</code></pre></div>
+        loop repeatedly runs the inner block. How many times? That's determined by the expressions in parentheses. Here we're starting at 1, going up by 1 each time, and iterating as long as we're less or equal to 10. The variable
+        <div class="code-container-inline inline"><pre><code class="javascript inline">i</code></pre></div>
+        we declare will be useful for accessing array elements...
+
+
+		<h3>ARRAYS</h3>
+
+		When you need multiple instances of the same thing (think bullets, tiles, monsters, etc.), arrays are what you need.
+
+		<div class="code-container"><pre><code id="contentP" class="javascript"></code></pre></div>
+		Making a new array is dirt simple. You can even prepopulate them.
+		<br><br>
+		You access array elements by passing their index (starting from 0) in brackets. 
+        <div class="code-container-inline inline"><pre><code class="javascript inline">someNumbers[1]</code></pre></div>
+        gives you 200.
+
+		<div class="code-container"><pre><code id="contentQ" class="javascript"></code></pre></div>
+		Here we're creating an array, adding an element with push, iterating over the array, and uppercasing each element.
+		<br><br>
+		JavaScript includes a bunch of really nice helper methods on arrays such as filter, includes, and forEach that we'll be using throughout the tutorial.
+
+
+		<h3>OBJECTS</h3>
+		Objects also store elements, but with string indexes (keys), instead of numerical ones.
+
+		<div class="code-container"><pre><code id="contentR" class="javascript"></code></pre></div>
+		The syntax uses a different kind of bracket and requires keys to come before elements, but is otherwise similar to arrays. You can access properties of an object through either dot or bracket notation.
+
+
+		<h3>CLASSES</h3>
+		You don't have to use classes if you don't want to. But I think they're decent for representing certain things in our game.
+		<br><br>
+		If this is a little overwhelming, don't worry! Important takeaways are below
+
+		<div class="code-container"><pre><code id="contentS" class="javascript"></code></pre></div>
+
+		<ul>
+			<li>You can make a specialized version of another class with "extends". Later we'll make a Monster class and extend it to make our specific monster type</li>
+			<li>You make a new instance of a class with the "new" operator, which calls the constructor method.</li>
+			<li>The "this" keyword is a reference to the current instance.</li>
+		</ul>
+		<br>
+		OK, let's get started then. In the next section, we'll figure out how to draw to the screen in just 6 lines of code.
+	</div>
+
+	<script>
+		let content = {
+			A: `
+let bottles = 99;
+			`,
+			B: `
+let problems = 99;
+			`,
+			C: `
+balloons = 99;
+			`,
+			D: `
+99 + "problems"
+			`,
+			E: `
+//this is a comment. it doesn't affect anything, but is SUPER helpful for explaining how and why something works
+			`,
+			F: `
+5 / 3
+			`,
+			G: `
+5 % 3
+			`,
+			H: `
+"duck" == "duck"
+			`,
+			I: `
+3 < 2
+			`,
+			J: `
+if( Math.random() < 0.25 ){
+    console.log("25% chance");
+}else{
+    console.log("75% chance");
+}
+			`,
+			K: `
+let chance = Math.random() < 0.25 ? "25% chance" : "75% chance";
+console.log(chance);
+			`,
+			L: `
+function sayHello(name){
+    alert("Hello, " + name);
+}
+
+sayHello("friendo");
+			`,
+			M: `
+let sayHi = name => alert("Hi, " + name);
+sayHi("my dude");
+			`,
+			N: `
+while( Math.random() < 0.99 ){
+    console.log("likely");
+}
+			`,
+			O: `
+for(let i=1; i<=10; i++){
+    console.log(i);
+}
+			`,
+			P: `
+let stuff = [];
+let someNumbers = [100, 200, 300];
+
+console.log(someNumbers[1]);
+			`,
+			Q: `
+let characters = ["mario", "luigi"];
+characters.push("wario");
+
+for(let i=0; i<characters.length; i++){
+    characters[i] = characters[i].toUpperCase();
+}
+
+console.log(characters);
+			`,
+			R: `
+let box = {};
+box.stuff = "some stuff";
+
+let name = {
+	first: "Bobby",
+	last: "Tables"
+};
+
+console.log(box);
+console.log(name.first);
+console.log(name["last"]);
+			`,
+			S: `
+class Dragon{
+    constructor(noise){
+        this.noise = noise;
+    }
+
+    rawr(){
+        console.log(this.noise);
+    }
+
+    breathe(){
+        console.log("...");
+    }
+}
+
+class FireBreathingDragon extends Dragon{
+    //overrides Dragon's breathe method
+    breathe(){
+        console.log("🔥");
+    }
+}
+
+let dragonA = new Dragon("RAWR");
+let dragonB = new FireBreathingDragon("RAWR!");
+
+dragonA.rawr();             //logs "RAWR"
+dragonA.breathe();          //logs "..."
+
+dragonB.rawr();             //logs "RAWR!"
+dragonB.breathe();          //logs "🔥"
+			`
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>

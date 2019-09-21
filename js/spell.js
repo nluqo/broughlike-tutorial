@@ -99,7 +99,7 @@ spells = {
 		boltTravel(player.lastMove, 13 + Math.abs(player.lastMove[1]), 4);
 	},
 	CROSS: function(){
-		const directions = [
+		let directions = [
 			[0, -1],
 			[0, 1],
 			[-1, 0],
@@ -110,7 +110,7 @@ spells = {
 		}
 	},
 	EX: function(){
-		const directions = [
+		let directions = [
 			[-1, -1],
 			[-1, 1],
 			[1, -1],

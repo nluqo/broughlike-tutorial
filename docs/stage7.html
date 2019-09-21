@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Broughlike tutorial - Stage 7</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="outer">
+		<h1>Stage 7 - Animation, Screenshake, & Sounds</h1>
+        Turn based movement without animation is not only a bit boring, but it also makes deciphering gameplay difficult. Monsters jump all over the screen and it's impossible to tell exactly what's happening.
+        <br><br>
+        Luckily, smoothing turn based movement is a piece of cake. When a monster moves from one tile to another, we start out by drawing them immediately in the new tile BUT with an 
+        <div class="code-container-inline inline"><pre><code class="javascript">offsetX</code></pre></div>
+         and 
+         <div class="code-container-inline inline"><pre><code class="javascript">offsetY</code></pre></div>
+          that represents the gap between the old and new position. So for the very first instant after movement, the offsets make the monster appear to be at their old tile, even though their "official" position is at their new tile.
+        <br><br>
+        Each frame, we reduce the offsets and in doing so, the sprites slide into place. When the offsets reach 0, sprites appear precisely at the their actual position.
+        <img src="screens/smoothmovement.jpg">
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentOFFSET1" class="javascript"></code></pre>
+            <pre><code id="contentOFFSET2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentOFFSET3" class="javascript"></code></pre>
+            <pre><code id="contentOFFSET4" class="javascript add"></code></pre>
+            <pre><code id="contentOFFSET5" class="javascript"></code></pre>
+        </div>
+
+        We initialize the offsets to 0 and then when moving, we calculate them as the difference between the old tile and the new tile position. Say you move to the right 1 tile. You've moved +1 in the X direction, so this code will set the offset to -1. That way you'll start out being drawn to the LEFT of your new tile position (the opposite direction you moved in).
+        <br><br>
+        Let's start adding in those offsets.
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentDISPLAYPOSITION1" class="javascript add"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION2" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION3" class="javascript remove"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION4" class="javascript add"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION5" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION6" class="javascript remove"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION7" class="javascript add"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION8" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION10" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION11" class="javascript remove"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION12" class="javascript add"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION13" class="javascript"></code></pre>
+        </div>
+
+        We're adding two new functions called
+        <div class="code-container-inline inline"><pre><code class="javascript">getDisplayX</code></pre></div>
+        and 
+        <div class="code-container-inline inline"><pre><code class="javascript">getDisplayY</code></pre></div>
+        which will return a monster's <em>apparent</em> position. I say "apparent" because in a grid based game like this each monster is only ever positioned exactly on a specific tile for gameplay purposes. Once adding these wrapper functions, we just need to replace all the instances where the 
+        <div class="code-container-inline inline"><pre><code class="javascript">x</code></pre></div>
+        and 
+        <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>
+         tile coordinates were referenced directly.
+        <br><br>
+        Now here's the magic, the code that actually animates these offsets:
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentDISPLAYPOSITION2" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION4" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION5" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION7" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION8" class="javascript"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentDISPLAYPOSITION9" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+        </div>
+
+        <br><br>
+        During each draw call, we're also reducing the value of the offsets by one eigth of a tile, which is what produces the sliding animation.
+        <br><br>
+        <div class="code-container-inline inline"><pre><code class="javascript">Math.sign()</code></pre></div> produces either -1, 0, or +1 if passed a negative, zero, or positive number respectively. This lets us move in the correct direction if the offset is still non-zero and completely stop altering the offset if it is zero.
+        <br><br>
+        Something interesting to note here is this actually won't work with a value like 0.1 instead of 0.125 (i.e. 1/8) because of floating point math. If you type
+        <div class="code-container-inline inline"><pre><code class="javascript">0.1 + 0.1 + 0.1</code></pre></div>
+        into the console instead of 
+        <div class="code-container-inline inline"><pre><code class="javascript">0.3</code></pre></div>
+        you'll get
+        <div class="code-container-inline inline"><pre><code class="javascript">0.30000000000000004</code></pre></div>.
+        Floating point numbers can only be represented precisely if they are powers of two (e.g. 1/2, 1/4, 1/8). Obviously we could have written this to accomodate any kind of number with more code, but it's nice to do it all in only two lines.
+        <br><br>
+        <h2>Bump attack</h2>
+        With that, basic animation between tiles is in place. And just two extra lines can add a bump attack animation.
+
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentBUMP1" class="javascript"></code></pre>
+            <pre><code id="contentBUMP2" class="javascript add"></code></pre>
+            <pre><code id="contentBUMP3" class="javascript"></code></pre>
+        </div>
+
+        When bump attacking, monsters are not really moving between tiles. Instead we're setting their offset so that the moment after attack they'll appear partially <em>in</em> the tile they're attacking. That's why we divided by 2. We want the monster to look like they've jumped halfway into their opponent's tile to give them a wallop.
+
+        <h2>Screenshake</h2>
+
+        Screenshake uses a similar concept to offset animation: draw things in their proper place and then just tack on some additional offsets. And also reduce the value of those offsets every frame until they're 0 (the screenshake should quickly fade out).
+        <br><br>
+        In the case of screenshake, the offsets are random and they will apply to <em>everything</em> on screen. This lets us do our screenshake offset in a single place: 
+        <div class="code-container-inline inline"><pre><code class="javascript">drawSprite</code></pre></div>.
+        <br><br>
+        We'll start out declaring a 
+         <div class="code-container-inline inline"><pre><code class="javascript">shakeAmount</code></pre></div>
+        variable for the magnitude of the shake and two component variables 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeX</code></pre></div>
+        and
+         <div class="code-container-inline inline"><pre><code class="javascript">shakeY</code></pre></div>.
+         All are assigned 0 because of course we don't want to start out shaking.
+
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentSHAKE1" class="javascript"></code></pre>
+            <pre><code id="contentSHAKE2" class="javascript add"></code></pre>
+        </div>
+
+        After each monster hit, we add some shake.
+
+
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentSHAKE3" class="javascript"></code></pre>
+            <pre><code id="contentSHAKE4" class="javascript add"></code></pre>
+            <pre><code id="contentSHAKE5" class="javascript"></code></pre>
+        </div>
+        <br><br>
+        The part that actually affects what you see is here in
+        <div class="code-container-inline inline"><pre><code class="javascript">drawSprite</code></pre></div>.
+        Remember that the 6th and 7th arguments to 
+        <div class="code-container-inline inline"><pre><code class="javascript">drawImage</code></pre></div>
+        are for the destination X & Y coordinates (where on screen to draw).
+        Adding
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeX</code></pre></div>
+        and
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeY</code></pre></div>
+        does the job.
+        <br><br>
+        Then we'll add a new 
+        <div class="code-container-inline inline"><pre><code class="javascript">screenshake</code></pre></div>
+         method that will handle splitting out 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeAmount</code></pre></div>
+        into X & Y components and damping the amount.
+
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentSHAKE6" class="javascript"></code></pre>
+            <pre><code id="contentSHAKE7" class="javascript remove"></code></pre>
+            <pre><code id="contentSHAKE8" class="javascript add"></code></pre>
+            <pre><code id="contentSHAKE9" class="javascript"></code></pre>
+            <pre><code id="contentSHAKE10" class="javascript add"></code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentNEWLINE" class="javascript"></code></pre>
+            <pre><code id="contentSHAKE11" class="javascript add"></code></pre>
+        </div>
+
+        The 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeAmount</code></pre></div> is reduced by 1 every frame unless it's already 0. Notice this is yet another example here of type coercion. 0 gets coerced into
+        <div class="code-container-inline inline"><pre><code class="javascript">false</code></pre></div>
+        and any other number gets coerced into 
+        <div class="code-container-inline inline"><pre><code class="javascript">true</code></pre></div>.
+        <br><br>
+        The next part uses some basic <a href="https://en.wikipedia.org/wiki/Trigonometry" target="_blank">trigonometry</a>. A quick refresher in case you forgot your trig classes: if you provide an angle, <strong>cosine</strong> will tell you big the X component is and <strong>sine</strong> will tell you how big the Y component is. Our JavaScript trig functions deal in <em>radians</em> instead of degrees, which is why we'll be referencing 
+        <div class="code-container-inline inline"><pre><code class="javascript">Math.PI*2</code></pre></div>
+        radians (the number of radians in a circle) instead of say
+        360 degrees.
+        <br><br>
+        We select a random 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeAngle</code></pre></div>
+         and then use 
+        <div class="code-container-inline inline"><pre><code class="javascript">Math.cos</code></pre></div>
+        and
+        <div class="code-container-inline inline"><pre><code class="javascript">Math.sin</code></pre></div>
+        to find the X & Y components. We multiply by the 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeAmount</code></pre></div>
+        and finally 
+        <div class="code-container-inline inline"><pre><code class="javascript">round</code></pre></div>
+         off to ensure there is no sub-pixel nonsense going on (that can look really bad).
+        <br><br>
+        Our screenshake is pretty subtle, but for fun try setting the 
+        <div class="code-container-inline inline"><pre><code class="javascript">shakeAmount</code></pre></div>
+        on hit to a ridiculously high amount like 50 or higher and see what happens.
+
+        <h2>Sounds</h2>
+        To really polish things up, we need sound!
+        <br><br>
+        We're going to make 5 sounds, from scratch:
+        <ul>
+            <li><strong>hit1.wav</strong>: when the player hits a monster</li>
+            <li><strong>hit2:wav</strong>: when a monster hits the player</li>
+            <li><strong>treasure.wav</strong>: when the player picks up a treasure</li>
+            <li><strong>newLevel.wav</strong>: when the player exits a level</li>
+            <li><strong>spell.wav</strong>: when a player casts a spell</li>
+        </ul>
+
+        <div class="drawing-section">
+            To make our sounds, we're going to use a tool called Bfxr.
+
+            <img src="screens/bfxr.png">
+
+            Now this might look an overwhelming monstrousity (audio software always is). But I promise it's the easiest game development tool I've ever used and creating very nice sounds can be done in a couple button clicks.
+            <br><br>
+            First navigate to <a href="http://bfxr.net">bfxr.net</a>. You might have to fiddle around with your Flash settings to get it to launch.
+            <br><br>
+            Really all you need to do is click one of the buttons in the upper left. The rest of the UI is for tweaking those sounds further, but that's optional. Our first sound "hit1.wav" can be generated with the <em>Hit/Hurt</em> button. We can continue to click that button to generate new sounds until we get one we like. You'll also find the buttons <em>Powerup</em> and <em>Jump</em> useful for the other types of sounds we want to generate.
+            <br><br>
+            If you want to try out some customization options, the easiest one to start would be <em>Mutation</em> which mutates your current sound randomly. Selecting different synths is also pretty straightforward. I find <em>Sin</em> to be the softest option and it's great for soothing electronic noises like boops and beeps. <em>White</em> is great for static and rough sounding noises like explosions.
+            <br><br>
+            After you're done, simply select <em>Export Wav</em>, name the file according to our naming scheme shown earlier, and save it into our project under a "sounds" folder.
+            <br><br>
+            Generate the 5 sounds and then we'll get back into coding.
+        </div>
+        To play audio in the browser we use the 
+        <div class="code-container-inline inline"><pre><code class="javascript">Audio</code></pre></div>
+        API. We'll create a new 
+        <div class="code-container-inline inline"><pre><code class="javascript">Audio</code></pre></div>
+        object passing the audio URL and then call 
+        <div class="code-container-inline inline"><pre><code class="javascript">play</code></pre></div>
+        on it.
+
+        <div class="filename">index.html</div>
+        <div class="code-container">
+            <pre><code id="contentINITSOUNDS1" class="javascript"></code></pre>
+            <pre><code id="contentINITSOUNDS2" class="javascript add"></code></pre>
+            <pre><code id="contentINITSOUNDS3" class="javascript"></code></pre>
+        </div>
+
+        <div class="filename">game.js</div>
+        <div class="code-container">
+            <pre><code id="contentINITSOUNDS4" class="javascript add"></code></pre>
+        </div>
+
+        We immediately call
+        <div class="code-container-inline inline"><pre><code class="javascript">initSounds</code></pre></div>
+        to load our 5 sounds and store them in a global object called 
+        <div class="code-container-inline inline"><pre><code class="javascript">sounds</code></pre></div>.
+        To play a sound, we call
+        <div class="code-container-inline inline"><pre><code class="javascript">playSound</code></pre></div> with the desired sound name. The only oddity is 
+        <div class="code-container-inline inline"><pre><code class="javascript">currentTime</code></pre></div>. Without resetting this to 0, trying to play a sound that's already in the progress of playing (like hitting a bunch of enemies quickly) sounds terrible.
+        <br><br>
+        Now let's call 
+        <div class="code-container-inline inline"><pre><code class="javascript">playSound</code></pre></div>
+         in 4 places (the "spell" sound will be covered in the next section):
+        
+        <div class="filename">monster.js</div>
+        <div class="code-container">
+            <pre><code id="contentHITSOUND1" class="javascript"></code></pre>
+            <pre><code id="contentHITSOUND2" class="javascript add"></code></pre>
+            <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
+        </div>
+
+        <div class="filename">tile.js</div>
+        <div class="code-container">
+            <pre><code id="contentTREASURESOUND1" class="javascript"></code></pre>
+            <pre><code id="contentTREASURESOUND2" class="javascript add"></code></pre>
+            <pre><code id="contentTREASURESOUND3" class="javascript"></code></pre>
+            <pre><code class="break">...</code></pre>
+            <pre><code id="contentNEWLEVELSOUND1" class="javascript"></code></pre>
+            <pre><code id="contentNEWLEVELSOUND2" class="javascript add"></code></pre>
+            <pre><code id="contentNEWLEVELSOUND3" class="javascript"></code></pre>
+        </div>
+
+        Now the game is really starting to look and sound like something nice! For our last addition, we'll add spells in the next section.
+	</div>
+
+	<script>
+		let content = {
+            CLOSINGBRACEINDENT1: `
+    }
+            `,
+            NEWLINE: `
+
+            `,
+            OFFSET1: `
+class Monster{
+    constructor(tile, sprite, hp){
+        this.move(tile);
+        this.sprite = sprite;
+        this.hp = hp;
+        this.teleportCounter = 2;
+            `,
+            OFFSET2: `
+        this.offsetX = 0;                                                   
+        this.offsetY = 0;                                                 
+            `,
+            OFFSET3: `
+    move(tile){
+        if(this.tile){
+            this.tile.monster = null;
+            `,
+            OFFSET4: `
+            this.offsetX = this.tile.x - tile.x;    
+            this.offsetY = this.tile.y - tile.y;
+            `,
+            OFFSET5: `
+        }
+        this.tile = tile;
+        tile.monster = this;
+        tile.stepOn(this);
+    }
+            `,
+            DISPLAYPOSITION1: `
+    getDisplayX(){                     
+        return this.tile.x + this.offsetX;
+    }
+
+    getDisplayY(){                                                                  
+        return this.tile.y + this.offsetY;
+    }   
+            `,
+            DISPLAYPOSITION2: `
+
+    draw(){
+        if(this.teleportCounter > 0){        
+            `,
+            DISPLAYPOSITION3: `
+            drawSprite(10, this.tile.x, this.tile.y);
+            `,
+            DISPLAYPOSITION4: `
+            drawSprite(10, this.getDisplayX(),  this.getDisplayY());
+            `,
+            DISPLAYPOSITION5: `
+        }else{      
+            `,
+            DISPLAYPOSITION6: `
+            drawSprite(this.sprite, this.tile.x, this.tile.y);
+            `,
+            DISPLAYPOSITION7: `
+            drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY());
+            `,
+            DISPLAYPOSITION8: `
+            this.drawHp();                                 
+        }
+            `,
+            DISPLAYPOSITION9: `
+        this.offsetX -= Math.sign(this.offsetX)*(1/8);     
+        this.offsetY -= Math.sign(this.offsetY)*(1/8); 
+            `,
+            DISPLAYPOSITION10: `
+    }
+
+    drawHp(){
+        for(let i=0;i<this.hp;i++){
+            drawSprite(
+                10,
+            `,
+            DISPLAYPOSITION11: `
+                this.tile.x + (i%3)*(5/16),
+                this.tile.y - Math.floor(i/3)*(5/16)
+            `,
+            DISPLAYPOSITION12: `
+                this.getDisplayX() + (i%3)*(5/16),   
+                this.getDisplayY() - Math.floor(i/3)*(5/16)
+            `,
+            DISPLAYPOSITION13: `
+            );                                              
+        }
+    }
+            `,
+            BUMP1: `
+    tryMove(dx, dy){
+        let newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
+            }else{
+                if(this.isPlayer != newTile.monster.isPlayer){
+                    this.attackedThisTurn = true;
+                    newTile.monster.stunned = true;
+                    newTile.monster.hit(1);
+
+                `,
+                BUMP2: `
+                    this.offsetX = (newTile.x - this.tile.x)/2;         
+                    this.offsetY = (newTile.y - this.tile.y)/2;         
+                `,
+                BUMP3: `
+                }
+            }
+            return true;
+        }
+    }
+            `,
+            SHAKE1: `
+    let gameState = "loading";  
+
+    let startingHp = 3; 
+    let numLevels = 6;     
+
+            `,
+            SHAKE2: `
+    let shakeAmount = 0;       
+    let shakeX = 0;                 
+    let shakeY = 0;                  
+            `,
+            SHAKE3: `
+    tryMove(dx, dy){
+        let newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
+            }else{
+                if(this.isPlayer != newTile.monster.isPlayer){
+                    this.attackedThisTurn = true;
+                    newTile.monster.stunned = true;
+                    newTile.monster.hit(1);
+
+            `,
+            SHAKE4: `
+                    shakeAmount = 5;
+            `,
+            SHAKE5: `
+
+                    this.offsetX = (newTile.x - this.tile.x)/2;         
+                   this.offsetY = (newTile.y - this.tile.y)/2;         
+                }
+            }
+            return true;
+        }
+    }
+            `,
+            SHAKE6: `
+    function drawSprite(sprite, x, y){
+        ctx.drawImage(
+            spritesheet,
+            sprite*16,
+            0,
+            16,
+            16,
+            `,
+            SHAKE7: `
+            x*tileSize,
+            y*tileSize,
+            `,
+            SHAKE8: `
+            x*tileSize + shakeX,
+            y*tileSize + shakeY,
+            `,
+            SHAKE9: `
+            tileSize,
+            tileSize
+        );
+    }
+
+    function draw(){
+        if(gameState == "running" || gameState == "dead"){
+            ctx.clearRect(0,0,canvas.width,canvas.height);   
+
+            `,
+            SHAKE10: `
+            screenshake();             
+            `,
+            SHAKE11: `
+    function screenshake(){
+        if(shakeAmount){
+            shakeAmount--;
+        }
+        let shakeAngle = Math.random()*Math.PI*2;
+        shakeX = Math.round(Math.cos(shakeAngle)*shakeAmount);
+        shakeY = Math.round(Math.sin(shakeAngle)*shakeAmount);
+    }
+            `,
+            INITSOUNDS1: `
+    setInterval(draw, 15);
+
+    setupCanvas();
+
+    let player;
+
+            `,
+            INITSOUNDS2: `
+    initSounds(); 
+            `,
+            INITSOUNDS3: `
+<\/script>
+            `,
+            INITSOUNDS4: `
+function initSounds(){          
+    sounds = {
+        hit1: new Audio('sounds/hit1.wav'),
+        hit2: new Audio('sounds/hit2.wav'),
+        treasure: new Audio('sounds/treasure.wav'),
+        newLevel: new Audio('sounds/newLevel.wav'),
+        spell: new Audio('sounds/spell.wav'),
+    };
+}
+
+function playSound(soundName){                       
+    sounds[soundName].currentTime = 0;  
+    sounds[soundName].play();
+}
+            `,
+            HITSOUND1: `
+    hit(damage){
+        this.hp -= damage;
+        if(this.hp <= 0){
+            this.die();
+        }
+
+            `,
+            HITSOUND2: `
+        if(this.isPlayer){                                                     
+            playSound("hit1");                                              
+        }else{                                                       
+            playSound("hit2");                                              
+        }       
+            `,
+            TREASURESOUND1: `
+class Floor extends Tile{
+    constructor(x,y){
+        super(x, y, 2, true);
+    };
+
+    stepOn(monster){        
+        if(monster.isPlayer && this.treasure){   
+            score++;     
+            `,
+            TREASURESOUND2: `
+            playSound("treasure");
+            `,
+            TREASURESOUND3: `
+            this.treasure = false;
+            spawnMonster();
+        }
+    }
+}
+            `,
+            NEWLEVELSOUND1: `
+class Exit extends Tile{
+    constructor(x, y){
+        super(x, y, 11, true);
+    }
+
+    stepOn(monster){
+        if(monster.isPlayer){
+            `,
+            NEWLEVELSOUND2: `
+            playSound("newLevel");    
+            `,
+            NEWLEVELSOUND3: `
+            if(level == numLevels){
+                addScore(score, true);
+                showTitle();
+            }else{
+                level++;
+                startLevel(Math.min(maxHp, player.hp+1));
+            }
+        }
+    }
+}
+            `
+		};
+	</script>
+
+	<link rel="stylesheet" href="highlight.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="highlight.min.js"></script>
+	<script src="diff.js"></script>
+</body>
+</html>

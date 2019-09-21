@@ -16,7 +16,7 @@ spells = {
 
 We're going to store our spells in an object literal called, unsurprisingly, "spells".
 
-WOOP warps the player to a random passable tile. Notice the function operates on the player object. All of our spells will be player-cast, but it's not hard at all to have monster-castable spells by passing in a "caster" monster and apply everything to that.
+WOOP warps the player to a random passable tile. Notice the function operates on the player object. All of our spells will be player-cast, but it's not hard at all to have spells castable by either players or monsters by passing in a "caster" entity and applying everything to that.
 
 We're going to let the player select spells with the number keys 1-9.
 
@@ -27,10 +27,10 @@ document.querySelector("html").onkeypress = (e) => {
 	}else if(gameState == "dead"){
 		showTitle();
 	}else{
-	    if(e.which==119) player.tryMove(0,-1);
-	    if(e.which==115) player.tryMove(0,1);
-	    if(e.which==97) player.tryMove(-1, 0);
-	    if(e.which==100) player.tryMove(1, 0);
+	    if(e.key=="w") player.tryMove(0,-1);
+	    if(e.key=="s") player.tryMove(0,1);
+	    if(e.key=="a") player.tryMove(-1, 0);
+	    if(e.key=="d") player.tryMove(1, 0);
 
 	    if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);					//ADD
 	}
@@ -66,7 +66,7 @@ class Player extends Monster{
 	}
 
 	castSpell(index){
-		const spellName = this.spells[index];
+		let spellName = this.spells[index];
 		if(spellName){
 			delete this.spells[index];
 			spells[spellName](this);
@@ -129,7 +129,7 @@ function startGame(){
 
 This should be pretty straightforward with the exception of this expression: (i+1) + ") " + (player.spells[i] || "")
 
-We're adding 1 back to our spell index, adding a parentheses and space, and then adding the spell name. If the spell has been deleted, we handle that with the or operator || and instead simply add empty string. The result with our first spell should be: 
+We're adding 1 back to our spell index to make it like normal human counting, adding a parentheses and space, and then adding the spell name. If the spell has been deleted, we handle that with the "OR" operator || and instead simply add an empty string. The result with our first spell should be: 
 
 1) WOOP
 
@@ -338,7 +338,7 @@ class Monster{
 	...
 
 	tryMove(dx, dy){
-		const newTile = this.tile.getNeighbor(dx,dy);
+		let newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
 			this.lastMove = [dx,dy];												//ADD
 
@@ -418,7 +418,7 @@ class Monster{
 ...
 
 	tryMove(dx, dy){
-		const newTile = this.tile.getNeighbor(dx,dy);
+		let newTile = this.tile.getNeighbor(dx,dy);
 		if(newTile.passable){
 			this.lastMove = [dx,dy];
 			if(!newTile.monster){
@@ -558,7 +558,7 @@ Spell 14: CROSS
 
 ---------------------------------- spell.js
 CROSS: function(){
-	const directions = [
+	let directions = [
 		[0, -1],
 		[0, 1],
 		[-1, 0],
@@ -577,7 +577,7 @@ Spell 15: EX
 
 ---------------------------------- spell.js
 EX: function(){
-	const directions = [
+	let directions = [
 		[-1, -1],
 		[-1, 1],
 		[1, -1],
