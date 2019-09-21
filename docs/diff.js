@@ -20,7 +20,7 @@ document.querySelectorAll("pre code").forEach(n => {
 	if(n.classList.contains('add')){
 		prefixChar += '<span class="noselect">&nbsp;+&nbsp;</span>';
 	}else if(n.classList.contains('remove')){
-		prefixChar += '<span class="noselect">&nbsp;-&nbsp;&nbsp;</span>';
+		prefixChar += '<span class="noselect">&nbsp;-&nbsp;</span>';
 	}else{
 		prefixChar += '<span class="noselect">&nbsp;&nbsp;&nbsp;</span>';
 	}

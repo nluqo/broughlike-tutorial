@@ -70,6 +70,8 @@ function tick(){
        }
    }
 
+   player.update();
+
    if(player.dead){    
       addScore(score, false);
        gameState = "dead";
@@ -98,13 +100,15 @@ function showTitle(){
 function startGame(){                                           
     level = 1;
     score = 0;
-    numSpells = 1;
+    //TODO: REVERT
+    //numSpells = 1;
+    numSpells = 9;
     startLevel(startingHp);
 
     gameState = "running";
 }
 
-function startLevel(playerHp){     
+function startLevel(playerHp, playerSpells){      
   spawnRate = 15;              
   spawnCounter = spawnRate;      
 
@@ -112,6 +116,9 @@ function startLevel(playerHp){
 
    player = new Player(randomPassableTile());
    player.hp = playerHp;
+   if(playerSpells){
+        player.spells = playerSpells;
+    } 
 
    randomPassableTile().replace(Exit);  
 }

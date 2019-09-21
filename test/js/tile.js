@@ -48,12 +48,25 @@ class Tile{
 
  
  	draw(){
-    drawSprite(this.sprite, this.x, this.y);
+        drawSprite(this.sprite, this.x, this.y);
 
-    if(this.treasure){                      
-         drawSprite(12, this.x, this.y);                                             
-     }   
+        if(this.treasure){                      
+             drawSprite(12, this.x, this.y);                                             
+         }  
+
+        if(this.effectCounter){                    
+            this.effectCounter--;
+            ctx.globalAlpha = this.effectCounter/30;
+            drawSprite(this.effect, this.x, this.y);
+            ctx.globalAlpha = 1;
+        }
  	}
+
+    setEffect(effectSprite){                                  
+        this.effect = effectSprite;
+        this.effectCounter = 30;
+    }
+
 }
 
  class Floor extends Tile{
@@ -63,7 +76,11 @@ class Tile{
 
    stepOn(monster){        
       if(monster.isPlayer && this.treasure){   
-        score++;             
+        score++;
+        if(score % 3 == 0 && numSpells < 9){                         
+            numSpells++;                
+            player.addSpell();            
+        }        
         playSound("treasure");           
         this.treasure = false;
         spawnMonster();
