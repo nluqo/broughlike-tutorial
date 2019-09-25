@@ -163,3 +163,20 @@ img{
 	margin: 5px 0;
 	text-align: center;
 }
+
+.header{
+	font-weight: bold;
+	font-family: Helvetica, Arial, Sans-serif;
+	color: #5E606A;
+	font-size: 12px;
+	text-align: center;
+	padding: 10px;
+}
+
+.header a{
+	display: block;
+}
+
+.header a:first-child{
+	color: #5E606A;
+}

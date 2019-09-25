@@ -100,9 +100,7 @@ function showTitle(){
 function startGame(){                                           
     level = 1;
     score = 0;
-    //TODO: REVERT
-    //numSpells = 1;
-    numSpells = 9;
+    numSpells = 1;
     startLevel(startingHp);
 
     gameState = "running";

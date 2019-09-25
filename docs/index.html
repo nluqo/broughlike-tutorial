@@ -6,159 +6,30 @@
 </head>
 <body>
 	<div id="outer">
-		<pre><code id="contentA" class="html"></code></pre>
-		<pre><code id="contentB" class="html add"></code></pre>
-		<pre><code id="contentC" class="html remove"></code></pre>
-		<pre><code id="contentD" class="javascript"></code></pre>
-		<pre><code id="contentE" class="javascript add "></code></pre>
-		<pre><code id="contentF" class="javascript remove"></code></pre>
+		<h1>JavasScript Broguelike Tutorial</h1>
+		This is a tutorial about writing a broughlike (a small, roguelike similar to <a href="https://store.steampowered.com/app/274700/868HACK/" target="_blank">868-HACK</a> or <a href="https://itunes.apple.com/us/app/cinco-paus/id1249999336" target="_blank">Cinco Paus</a>) from scratch in JavaScript.
+		<br><br>
+		Check out the <a href="stage0.html">Introduction</a> to see why I created this and how it differs from other tutorial.
+		<div class="centered">
+			<a href="stage0.html"><img src="screens/brough-screen.png" alt="Screenshot of tutorial"></a>
+		</div>
+
+		<h2>Table of Contents</h2>
+		<ul>
+			<li><a href="stage0.html">Stage 0 - Introduction</a></li>
+			<li><a href="stage1.html">Stage 1 - Drawing to the screen</a></li>
+			<li><a href="stage2.html">Stage 2 - Map generation</a></li>
+			<li><a href="stage3.html">Stage 3 - Monsters</a></li>
+			<li><a href="stage4.html">Stage 4 - Monsters Part 2</a></li>
+			<li><a href="stage5.html">Stage 5 - Game lifecycle</a></li>
+			<li><a href="stage6.html">Stage 6 - Treasure & score</a></li>
+			<li><a href="stage7.html">Stage 7 - Animation, screenshake, & sounds</a></li>
+			<li><a href="stage8.html">Stage 8 - Spells</a></li>
+		</ul>
 	</div>
 
 	<script>
-		//foo
-		let content = {
-			A: `
-			<!DOCTYPE html>
-			<!-- wot -->
-			<html>
-			<head>
-				<title>Broughlike tutorial - Stage 0</title>
-				<meta charset="utf-8">
-			</head>
-			<body>
-				<div id="outer">
-					<pre><code id="contentA" class="html"></code></pre>
-					<pre><code id="contentB" class="html add"></code></pre>
-					<pre><code id="contentC" class="html remove"></code></pre>
-					<pre><code id="contentD" class="javascript"></code></pre>
-				</div>
-
-				<link rel="stylesheet" href="highlight.min.css">
-				<link rel="stylesheet" href="style.css">
-			</body>
-			</html>
-			`,
-			B: `
-			<!-- wot -->
-			<script src="js/game.js"><\/script>
-			<script src="js/map.js"><\/script>
-			<script src="js/tile.js"><\/script>
-			<script src="js/monster.js"><\/script>
-			<script src="js/util.js"><\/script>
-			<script src="js/spell.js"><\/script>
-			`,
-			C: `
-			<!-- wot -->
-			<script src="js/game.js"><\/script>
-			<script src="js/map.js"><\/script>
-			<script src="js/tile.js"><\/script>
-			<script src="js/monster.js"><\/script>
-			<script src="js/util.js"><\/script>
-			<script src="js/spell.js"><\/script>
-			`,
-			D: `
-			//wot
-			Object.keys(content).forEach(k => {
-				let contentContainer = document.querySelector("#content"+k);
-				if(contentContainer){
-					contentContainer.textContent = content[k];
-				}else{
-					console.log("MISSING CONTAINER FOR #content"+k);
-				}
-			});
-
-			hljs.initHighlightingOnLoad();
-
-			document.querySelectorAll("pre code").forEach(n => {
-				let lines = n.innerHTML.split("\n");
-				let prefixChar = '';
-				if(n.classList.contains('add')){
-					prefixChar = '+';
-				}else if(n.classList.contains('remove')){
-					prefixChar = '-';
-				}
-				if(lines.length){
-					let lineHtml = lines[0];
-					//ignore first and last lines
-					for(let i=1;i<lines.length-1;i++){
-						lineHtml += "\n";
-						lineHtml += prefixChar;
-						lineHtml += lines[i] ;
-					}
-					n.innerHTML = lineHtml;
-				}
-			});
-
-			`,
-			E: `
-			//wot
-			Object.keys(content).forEach(k => {
-				let contentContainer = document.querySelector("#content"+k);
-				if(contentContainer){
-					contentContainer.textContent = content[k];
-				}else{
-					console.log("MISSING CONTAINER FOR #content"+k);
-				}
-			});
-
-			hljs.initHighlightingOnLoad();
-
-			document.querySelectorAll("pre code").forEach(n => {
-				let lines = n.innerHTML.split("\n");
-				let prefixChar = '';
-				if(n.classList.contains('add')){
-					prefixChar = '+';
-				}else if(n.classList.contains('remove')){
-					prefixChar = '-';
-				}
-				if(lines.length){
-					let lineHtml = lines[0];
-					//ignore first and last lines
-					for(let i=1;i<lines.length-1;i++){
-						lineHtml += "\n";
-						lineHtml += prefixChar;
-						lineHtml += lines[i] ;
-					}
-					n.innerHTML = lineHtml;
-				}
-			});
-
-			`,
-			F: `
-			//wot
-			Object.keys(content).forEach(k => {
-				let contentContainer = document.querySelector("#content"+k);
-				if(contentContainer){
-					contentContainer.textContent = content[k];
-				}else{
-					console.log("MISSING CONTAINER FOR #content"+k);
-				}
-			});
-
-			hljs.initHighlightingOnLoad();
-
-			document.querySelectorAll("pre code").forEach(n => {
-				let lines = n.innerHTML.split("\n");
-				let prefixChar = '';
-				if(n.classList.contains('add')){
-					prefixChar = '+';
-				}else if(n.classList.contains('remove')){
-					prefixChar = '-';
-				}
-				if(lines.length){
-					let lineHtml = lines[0];
-					//ignore first and last lines
-					for(let i=1;i<lines.length-1;i++){
-						lineHtml += "\n";
-						lineHtml += prefixChar;
-						lineHtml += lines[i] ;
-					}
-					n.innerHTML = lineHtml;
-				}
-			});
-
-			`
-		};
+		let content = {};
 	</script>
 
 	<link rel="stylesheet" href="highlight.min.css">
@@ -167,5 +38,3 @@
 	<script src="diff.js"></script>
 </body>
 </html>
-
-

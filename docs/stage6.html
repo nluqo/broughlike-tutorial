@@ -6,10 +6,14 @@
 </head>
 <body>
 	<div id="outer">
-		<h1>Treasure & Score</h1>
-        To give our game some replayability, we'll add a high score mechanic. The player will pick up a treasure to gain a point, but doing so will spawn another monster. Each level will have 3 treasures.
+        <div class="header">
+            <a href="index.html">JavaScript Broughlike Tutorial</a>
+            <a href="stage5.html">Previously: Game Lifecycle</a>
+        </div>
+		<h1>Stage 6 - Treasure & Score</h1>
+        To give our game some replayability, we'll add a high score mechanic. The player will pick up a treasure to gain a point, but doing so will spawn another monster. Each level will have 3 treasures. This system will be supported by a
         <div class="code-container-inline inline"><pre><code class="javascript">score</code></pre></div>
-        that resets to 
+        variable that resets to 
         <div class="code-container-inline inline"><pre><code class="javascript">0</code></pre></div>
         before every game.
 
@@ -168,7 +172,7 @@
 
         We iterate over an array of strings representing a row of data. We pad out each string with spaces until it is 10 characters long and add it to the last string. We return the combined string, which should be a perfectly spaced out row of score data.
         <br><br>
-        The next section adds some nifty animation and screenshake.
+        The <a href="stage7.html">next section</a> adds some nifty animation and screenshake.
 	</div>
 
 	<script>
