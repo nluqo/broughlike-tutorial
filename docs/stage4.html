@@ -42,11 +42,12 @@
             </li>
             <li>
                 <strong>
-                    <div class="code-container-inline inline"><pre><code class="javascript">Math.floor(i,3)</code></pre></div>
+                    <div class="code-container-inline inline"><pre><code class="javascript">Math.floor(i/3)</code></pre></div>
                 </strong> - this increases by one every 3 pips.
             </li>
         </ul>
         The result means pips are drawn first left to right offset by 5 pixels each and then stacked vertically offset by 5 pixels for each row.
+        <img src="screens/hp.png">
         <h2>Attacking</h2>
         Now onto attacking. We can let the monsters attack the player and vice versa with a small addition to
         <div class="code-container-inline inline"><pre><code class="javascript">tryMove</code></pre></div>.
@@ -147,7 +148,7 @@
         <div class="code-container-inline inline"><pre><code class="javascript">Tank</code></pre></div>
         monster stuns itself if it wasn't already
         <div class="code-container-inline inline"><pre><code class="javascript">stunned</code></pre></div>
-        at the beginning of the turn. Effectively, this results in action only ever other turn.
+        at the beginning of the turn. Effectively, this results in action only every other turn.
 
         <h2>Eater</h2>
         Then comes the 
@@ -204,7 +205,8 @@
         </div>
         You can use
         <div class="code-container-inline inline"><pre><code class="javascript">replace</code></pre></div>
-        any time one tile type changes into another type. One thing that's not coded here is to copy over monsters and items present on the old tile to the new tile. Keep that in mind for future additions.
+        any time one tile type changes into another type. Here it's a wall replacing a floor, but imagine if a water tile replaced a floor!
+        <br><br>One thing that's not coded here is to copy over monsters and items present on the old tile to the new tile. Keep that in mind for future additions.
 
 
         <h2>Jester</h2>
@@ -220,7 +222,7 @@
             </div>
 
             With those enemy behaviors in place, our little broughlike is starting to feel like... a game. 😍
-            <br><br>
+            <img src="screens/behavior.gif">
 			In the <a href="stage5.html">next section</a>, we'll turn this thing into a proper game with a title screen, multiple levels, and victory and failure conditions.
 	</div>
 
@@ -228,51 +230,51 @@
 		let content = {
 			DRAWHP1:
 			`
-draw(){
-    drawSprite(this.sprite, this.tile.x, this.tile.y);
-			`,
-			DRAWHP2:
-			`
-    this.drawHp();
+    draw(){
+        drawSprite(this.sprite, this.tile.x, this.tile.y);
+    			`,
+    			DRAWHP2:
+    			`
+        this.drawHp();
 			`,
 			DRAWHP3:
 			`
-}
+    }
 
 			`,
 			DRAWHP4:
 			`
-drawHp(){
-    for(let i=0; i<this.hp; i++){
-        drawSprite(
-            9,
-            this.tile.x + (i%3)*(5/16),
-            this.tile.y - Math.floor(i/3)*(5/16)
-        );
-    }
-}		
+    drawHp(){
+        for(let i=0; i<this.hp; i++){
+            drawSprite(
+                9,
+                this.tile.x + (i%3)*(5/16),
+                this.tile.y - Math.floor(i/3)*(5/16)
+            );
+        }
+    }		
 			`,
             ATTACK1:
             `
-tryMove(dx, dy){
-    let newTile = this.tile.getNeighbor(dx,dy);
-    if(newTile.passable){
-        if(!newTile.monster){
-            this.move(newTile);
+    tryMove(dx, dy){
+        let newTile = this.tile.getNeighbor(dx,dy);
+        if(newTile.passable){
+            if(!newTile.monster){
+                this.move(newTile);
             `,
             ATTACK2:
             `
-        }else{
-            if(this.isPlayer != newTile.monster.isPlayer){
-                newTile.monster.hit(1);
-            }
+            }else{
+                if(this.isPlayer != newTile.monster.isPlayer){
+                    newTile.monster.hit(1);
+                }
             `,
             ATTACK3:
             `
+            }
+            return true;
         }
-        return true;
     }
-}
 
             `,
             ATTACK4:
@@ -432,14 +434,14 @@ class Monster{
             PREMAXHP:
             `
 <script>
-    let tileSize = 64;
-    let numTiles = 9;
-    let uiWidth = 4;
-    let level = 1;
+    tileSize = 64;
+    numTiles = 9;
+    uiWidth = 4;
+    level = 1;
             `,
             MAXHP:
             `
-    let maxHp = 6; 
+    maxHp = 6; 
             `,
             PREREPLACE:
             `

@@ -38,7 +38,7 @@
 		</ul>
 		We're going to do all that in less than 850 lines of code.
 		<br><br>
-		A warning up front: I'm <em>not</em> going to focus on best practices here. I'm shooting for the shortest and simplest code. Quick and dirty.
+		A warning up front: I'm <em>not</em> going to focus on best practices here. I'm shooting for the shortest and simplest code. For example, I plan to use tons of global variables (generally a terrible idea, but they make things easier on smaller projects). I trust that you can learn the best practices later.
 
 		<h2>What the hell is a broughlike and why do I care?</h2>
 
@@ -46,9 +46,8 @@
 
 		<ul>
 			<li>Tiny grids</li>
-			<li>Parity mechanics</li>
 			<li>Low randomness</li>
-			<li>Highly replability despite simple rules</li>
+			<li>High replability despite simple rules</li>
 		</ul>
 
 		<div class="centered">
@@ -155,7 +154,7 @@
 		<div class="code-container-inline inline"><pre><code class="javascript inline">else</code></pre></div>
 		block is executed.
 		<br><br>
-		If you were to run this several times, you would see that the first block is entered only 25% of the time.
+		If you were to run this several times, you would see that the first block is entered only about 25% of the time.
 		<br><br>
 		We'll also use two other conditionals: an inline version of
 		<div class="code-container-inline inline"><pre><code class="javascript inline">if</code></pre></div>
@@ -225,9 +224,15 @@
 		<div class="code-container"><pre><code id="contentS" class="javascript"></code></pre></div>
 
 		<ul>
-			<li>You can make a specialized version of another class with "extends". Later we'll make a Monster class and extend it to make our specific monster type</li>
-			<li>You make a new instance of a class with the "new" operator, which calls the constructor method.</li>
-			<li>The "this" keyword is a reference to the current instance.</li>
+			<li>You can make a specialized version of another class with
+				<div class="code-container-inline inline"><pre><code class="javascript inline">extends</code></pre></div>.
+				Later we'll make a Monster class and extend it to make our specific monster type</li>
+			<li>You make a new instance of a class with the
+			<div class="code-container-inline inline"><pre><code class="javascript inline">new</code></pre></div>
+			operator, which calls the constructor method.</li>
+			<li>The
+			<div class="code-container-inline inline"><pre><code class="javascript inline">this</code></pre></div>
+			keyword is a reference to the current instance.</li>
 		</ul>
 		<br>
 		OK, let's get started then. In the <a href="stage1.html">next section</a>, we'll figure out how to draw to the screen in just 6 lines of code.

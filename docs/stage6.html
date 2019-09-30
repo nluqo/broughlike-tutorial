@@ -67,6 +67,7 @@
         <div class="filename">tile.js</div>
         <div class="code-container">
             <pre><code id="contentDRAWTREASURE3" class="javascript"></code></pre>
+            <pre><code id="contentDELETETODO" class="javascript remove"></code></pre>
             <pre><code id="contentDRAWTREASURE4" class="javascript add"></code></pre>
             <pre><code id="contentCLOSINGBRACEINDENT1" class="javascript"></code></pre>
         </div>
@@ -154,7 +155,9 @@
             <pre><code id="contentDRAWSCORES3" class="javascript add"></code></pre>
         </div>
 
-        Don't panic. You could draw the scores in MUCH less code if you prefer, but we're taking our time to carefully sort and align the scores here. And it's also artificially long because we've split drawText arguments onto multiple lines for clarity.
+        Don't panic. You could draw the scores in MUCH less code if you prefer, but we're taking our time to carefully sort and align the scores here. And it's also artificially long because we've split
+        <div class="code-container-inline inline"><pre><code class="javascript">drawText</code></pre></div>
+        arguments onto multiple lines for clarity.
         <br><br>
         Let me break it down:
         <ul>
@@ -172,6 +175,7 @@
 
         We iterate over an array of strings representing a row of data. We pad out each string with spaces until it is 10 characters long and add it to the last string. We return the combined string, which should be a perfectly spaced out row of score data.
         <br><br>
+        <img src="screens/high-scores.png">
         The <a href="stage7.html">next section</a> adds some nifty animation and screenshake.
 	</div>
 
@@ -430,6 +434,9 @@ function rightPad(textArray){
     });
     return finalText;
 }
+            `,
+            DELETETODO: `
+        //TODO: complete
             `
 		};
 	</script>

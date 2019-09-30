@@ -29,7 +29,7 @@
         <div class="code-container-inline inline"><pre><code class="javascript">y</code></pre></div>
         coordinates, a 
         <div class="code-container-inline inline"><pre><code class="javascript">sprite</code></pre></div>
-        (simply the position in the spritesheet),
+        (simply the numeric position in the spritesheet),
         and a 
         <div class="code-container-inline inline"><pre><code class="javascript">passable</code></pre></div>
         flag. For the most basic maps, all you need to know is how to distinguish between walls and floors and
@@ -70,10 +70,14 @@
         This makes a 2D array called 
         <div class="code-container-inline inline"><pre><code class="javascript">tiles</code></pre></div>
         and populates it with about 30% walls and 70% floors.
+        <br><br>It does so by looping over the columns and then, for each column, looping over the rows and creating new wall/floor tiles in each spot as appropriate.
         <img src="screens/2darray.png">
         So our map is actually there and the way you can confirm this is by going into the dev tools and simply typing "tiles".
+        <img src="screens/tiles-console.png">
         <br><br>
-        But let's draw it. All we need to do is iterate over every tile and call draw on it.
+        But let's draw it. All we need to do is iterate over every tile and call
+        <div class="code-container-inline inline"><pre><code class="javascript">draw</code></pre></div>
+        on it.
         <br><br>
         But first, I want to wrap access to the tile array in a function called
         <div class="code-container-inline inline"><pre><code class="javascript">getTile</code></pre></div>
@@ -96,9 +100,9 @@
             <pre><code id="contentAFTERITERATETILES" class="javascript"></code></pre>
         </div>
 
-        Cool.
-        <br><br> 
-        We haven't added an outer wall though. Let's modify generateTiles() and reuse the inBounds() function to make one.
+        Cool. We haven't added an outer wall though. Let's reuse the
+        <div class="code-container-inline inline"><pre><code class="javascript">inBounds</code></pre></div>
+        function to make one.
         <div class="filename">map.js</div>
         <div class="code-container">
             <pre><code id="contentBEFOREINBOUND" class="javascript"></code></pre>
@@ -107,7 +111,9 @@
             <pre><code id="contentAFTERINBOUND" class="javascript"></code></pre>
         </div>
 
-        We're not interacting with the tiles though. We start on a wall and we're walking right through them!
+        <img src="screens/walls-drawn.png">
+        <br><br> 
+        Only thing is the walls are not doing anything. We start on a wall and we're walking right through them!
         <br><br>
         To fix that first problem, we're simply going to teleport the player to a random floor tile when the game starts.
         <br><br>
@@ -181,9 +187,11 @@
 
        They key here is 
        <div class="code-container-inline inline"><pre><code class="javascript">getConnectedTiles</code></pre></div>.
-       Imagine you are drawing a dungeon map on grid paper and you want to color in the floors. How do you do it?
+       Imagine you are drawing a dungeon map on grid paper and you want to color in all the connected floor spaces. How would you do it?
+       <img src="screens/floodfill.gif">
+       <div class="centered"><a target="_blank" href="https://en.wikipedia.org/wiki/Flood_fill#/media/File:Recursive_Flood_Fill_4_(aka).gif">diagram by André Karwath</a></div>
        <br><br>
-       One way is pick a random floor tile on the grid, expand outwards repeatedly, and color connected floor tiles until you're done. You obviously wouldn't draw wall tiles the same color as the floor and you wouldn't recolor floor tiles once you drew them the first time. That's exactly the idea behind the <a href="https://en.wikipedia.org/wiki/Flood_fill">flood fill</a> algorithm and here's more pseudocode for a function that does it:
+       One way is pick a random floor tile on the grid, expand outwards repeatedly, and color connected floor tiles until you're done. You obviously would ignore wall tiles and you wouldn't recolor floor tiles once you drew them the first time. That's exactly the idea behind the <a href="https://en.wikipedia.org/wiki/Flood_fill">flood fill</a> algorithm and here's more pseudocode for a function that does it:
         <div class="code-container">
             <pre><code id="contentPSEUDO_B" class="javascript"></code></pre>
         </div>
@@ -192,6 +200,7 @@
         <div class="code-container">
             <pre><code id="contentCONNECTEDOLD" class="javascript"></code></pre>
             <pre><code id="contentCONNECTEDNEW" class="javascript add"></code></pre>
+            <pre><code id="contentCONNECTEDAFTER" class="javascript"></code></pre>
         </div>
         OK, that seems like a lot so let's break it down.
         <br><br>
@@ -225,7 +234,10 @@
         To reiterate: we keep trying to make levels until we find one that has no disconnected islands. The way we know there are no disconencted islands is when we've made only a single connected "island". If we have one big island of floor tiles, the number of tiles on that island should match the total number of floor tiles on the map. When we're able to satisfy that condition, we're happy with our level and we can stop.
         <br><br>
         So now let's check our work. Refresh a bunch of times and you'll never see a disconnected island again.
-        <br><br>
+        <img src="screens/stage2-complete.png">
+        Just for fun, you might try out different values of
+        <div class="code-container-inline inline"><pre><code class="javascript">numTiles</code></pre></div>. Here's what I got with a value of 24 (much higher and the timeout was usually reached):
+        <img src="screens/kicks.png">
         In the <a href="stage3.html">next section</a>, we'll create our monsters and make sure the player can't walk through walls.
 	<!--
 
@@ -283,14 +295,14 @@ class Wall extends Tile{
             `,
             PREGENERATELEVEL:
             `
-setInterval(draw, 15);
+    setInterval(draw, 15);
 
-setupCanvas();
+    setupCanvas();
 
             `,
             GENERATELEVEL:
             `
-generateLevel();
+    generateLevel();
             `,
             GENERATETILES:
             `
@@ -393,7 +405,7 @@ function randomPassableTile(){
     tryTo('get random passable tile', function(){
         let x = randomRange(0,numTiles-1);
         let y = randomRange(0,numTiles-1);
-        tile = tiles[x][y];
+        tile = getTile(x, y);
         return tile.passable && !tile.monster;
     });
     return tile;
@@ -420,14 +432,13 @@ let spritesheet = new Image();
     generateLevel();
             `,
             USERANDOMPASSABLETILE: `
-let startingTile = randomPassableTile();
-x = startingTile.x;
-y = startingTile.y;
+    startingTile = randomPassableTile();
+    x = startingTile.x;
+    y = startingTile.y;
             `,
             PSEUDO_A: `
 /*
-    generate a level
-    make a note of how many passable tiles we generated
+    generate a level and make note of how many passable tiles we generated
 
     starting from a random passable tile, get all tiles connected to it
 
@@ -449,7 +460,7 @@ y = startingTile.y;
         pick one
         get its neighbors
         filter out the walls
-        filter out the tiles we've already checked
+        filter out the tiles we've already found were connected
         add the filtered neighbors to a list of connected tiles and to the tiles that need to be checked
 
     return the list of connected tiles
@@ -538,6 +549,13 @@ class Tile{
         }
         return connectedTiles;
     }
+            `,
+            CONNECTEDAFTER: `
+
+    draw(){
+        drawSprite(this.sprite, this.x, this.y);
+    }
+}
             `,
             SHUFFLEOLD: `
 function randomRange(min, max){

@@ -21,6 +21,9 @@
         <img class="screen" src="screens/helloworld.png">
         <br><br>
         Let's replace our "Hello World!" text with the next 6 lines, which are all you need to draw to the screen:
+
+        
+        <div class="filename">index.html</div>
         <div class="code-container"><pre><code id="contentA" class="html"></code></pre></div>
         The 
         <div class="code-container-inline inline"><pre><code class="html inline">canvas</code></pre></div> is an HTML tag on which we can draw shapes, images, and text. Our
@@ -34,6 +37,7 @@
         <br><br>
         Our little black rectangle might not look like much yet, but that's our player character!  Sadly the player doesn't move. We just need a little bit more code to handle the player's current position (I'll be highlighting removed lines with red and added lines with green).
 
+        <div class="filename">index.html</div>
         <div class="code-container">
                 <pre><code id="contentB" class="html"></code></pre>
                 <pre><code id="contentC" class="javascript remove"></code></pre>
@@ -60,9 +64,11 @@
         call is updated to use our new coordinate variables, moved into a function, and triggered with
         <div class="code-container-inline inline"><pre><code class="javascript inline">setInterval</code></pre></div>
         to make sure the screen is drawn every 15 milliseconds (more than 60 frames per second).
-        <br><br>
-        There's no code to clear the character aftering rendering though. Let's do that at the beginning of every draw call.
+        
+        <img src="screens/snake.png">
+        It works but... there's no code to clear the character aftering rendering though. Let's do that at the beginning of every draw call.
 
+        <div class="filename">index.html</div>
         <div class="code-container">
                 <pre><code id="contentF" class="javascript"></code></pre>
                 <pre><code id="contentG" class="javascript add"></code></pre>
@@ -71,22 +77,24 @@
 
         In 20 lines of code, we have a moving player. We're 90% of the way to having a functioning game. 😉
         <br><br>
-        One problem is the canvas is not aligned properly and we don't know where it ends. Let's add an outline and center the canvas. To do this, we're going to add a 
+        One problem is the canvas is not aligned properly, it's very small, and we don't know where it ends. Let's add an outline and center the canvas. To do this, we're going to add a 
         <div class="code-container-inline inline"><pre><code class="html inline">style</code></pre></div>
         tag to the top of our file and put CSS in it. If we had a lot of CSS, it would be better to put it in a separate file but the small amount we need fits well in the document.
 
+        <div class="filename">index.html</div>
         <div class="code-container">
             <pre><code id="contentSTYLE" class="html add"></code></pre>
             <pre><code id="contentSTYLEAFTER" class="html"></code></pre>
         </div>
         <br>
-        A couple more lines at the top to make this truly valid HTML. The 
+        A couple more lines at the very top to make this truly valid HTML. The 
         <div class="code-container-inline inline"><pre><code class="html inline">doctype</code></pre></div>
         tells the browser we're an HTML page, duh. And a
         <div class="code-container-inline inline"><pre><code class="html inline">title</code></pre></div>
         is required for... reasons.
 
-        <div class="code-container"><pre><code id="contentDOCTYPE" class="html"></code></pre></div>
+        <div class="filename">index.html</div>
+        <div class="code-container"><pre><code id="contentDOCTYPE" class="html add"></code></pre></div>
 
         By the way, you might be used to 
         <div class="code-container-inline inline"><pre><code class="html inline">html</code></pre></div>
@@ -115,6 +123,7 @@
         <div class="code-container-inline inline"><pre><code class="html inline">script</code></pre></div>
         tags.
 
+        <div class="filename">index.html</div>
         <div class="code-container">
                 <pre><code id="contentI" class="html"></code></pre>
                 <pre><code id="contentJ" class="html add"></code></pre>
@@ -126,7 +135,7 @@
         <div class="code-container"><pre><code id="contentNAMESPACE" class="javascript"></code></pre></div>
         Then when you read
         <div class="code-container-inline inline"><pre><code class="javascript inline">game.someFunction()</code></pre></div>
-        you'll know exactly where to find it. For now, I'm going to stick to global functions.
+        you'll know exactly where to find it (in the file game.js). For now, I'm going to stick to global functions.
         <br><br>
         Let's <em>move</em> our
         <div class="code-container-inline inline"><pre><code class="javascript inline">canvas</code></pre></div>
@@ -135,6 +144,7 @@
         definitions to a new function in game.js and call that new function from index.html.
         <div class="filename">index.html</div>
 
+        <div class="filename">index.html</div>
         <div class="code-container">
                 <pre><code id="contentL" class="html"></code></pre>
                 <pre><code id="contentM" class="html remove"></code></pre>
@@ -163,7 +173,7 @@
         Run the code.
         <br><br>
         <img class="screen" src="screens/tileSizeUndefined.png">
-        You should get an error. We forgot to define a few variables. Let's do that now.
+        You should get an error. Uh oh. We forgot to define a few variables. Let's do that now.
 
 
 
@@ -174,6 +184,8 @@
                 <pre><code id="contentW" class="javascript"></code></pre>
         </div>
 
+        These 3 variables tell us respectively: how big a tile should be in on screen pixels, how wide/tall our map will be measured in tiles, and how much space we should reserve for the game UI.
+        <br><br>
         That should fix the error we saw. Now we can also utilize some of these variables in the draw call.
         <br><br>
 
@@ -250,8 +262,8 @@
             <pre><code id="contentAG" class="javascript"></code></pre>
         </div>
 
-
-        It works, but there's a few problem. The sprites are too small for one. The bigger problem though is that this displays the <em>whole</em> spritesheet. We need to call drawImage with <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage" target="_blank">9 arguments</a>.
+        <img src="screens/tinysprite.png">
+        It works, but there's a few problem. The sprites are too small for one. The bigger problem though is that this displays the <em>whole</em> spritesheet. We need to call <div class="code-container-inline inline"><pre><code class="javascript inline">drawImage</code></pre></div> with <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage" target="_blank">9 arguments</a>.
         <br><br>
         It sounds bad, but it's pretty simple once you see the purpose. The first argument is the name of the image. The last four arguments are totally identical to the ones we used in 
         <div class="code-container-inline inline"><pre><code class="javascript inline">drawRect</code></pre></div>.
@@ -261,7 +273,11 @@
         <br><br>
         <div class="code-container-inline inline"><pre><code class="javascript inline">ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);</code></pre></div>
         <br><br>
-        Since we're going to be making this same call repeatedly, let's move this code out to a new function in game.js and move the draw function too. And let's put each argument on a different line to make it clearer.
+        Since we're going to be making this same call repeatedly, let's move this code out to a new function called
+        <div class="code-container-inline inline"><pre><code class="javascript inline">drawSprite</code></pre></div>
+        and move/update our
+        <div class="code-container-inline inline"><pre><code class="javascript inline">draw</code></pre></div>
+        function too. And let's put each argument on a different line to make it clearer.
         <div class="filename">index.html</div>
         <div class="code-container">
                 <pre><code id="contentAH" class="javascript remove"></code></pre>
@@ -273,6 +289,8 @@
             <pre><code id="contentAJ" class="javascript add"></code></pre>
         </div>
 
+        <img src="screens/blurry.png">
+
         Now one more hiccup. Our sprite looks like poop. The reason is the way browser scales images by default. It makes sene for photos but not for pixel art. For years, displaying scaled pixel art in browsers was basically impossible. Luckily we only need one line to correct it.
         <div class="filename">game.js</div>
         <div class="code-container">
@@ -280,7 +298,9 @@
             <pre><code id="contentAL" class="javascript add"></code></pre>
             <pre><code id="contentAM" class="javascript"></code></pre>
         </div>
-        And we're done! If you're feeling a little overwhelmed by all these arcane references to interacting with the DOM, take heart that we're pretty much past all of that. Our entry point into drawing stuff on the screen is to load images, grab a canvas element, get its context, and start calling draw operations on it. A lot of boilerplate right? But the good news is that we don't need any more hooks into the DOM and the rest of the code we write will be fairly self contained.
+        And we're done! If you're feeling a little overwhelmed by all these arcane references to interacting with the DOM (the way the browser connect HTML and JS together), I understand.
+        <br><br>Take heart that we're pretty much past all of that. Our entry point into drawing stuff on the screen is to load images, grab a canvas element, get its context, and start calling draw operations on it. A lot of boilerplate right? But the good news is that we don't need any more hooks into the DOM and the rest of the code we write will be fairly self contained.
+        <img src="screens/stage1-complete.png">
         <br><br>
         In the <a href="stage2.html">next section</a>, we'll generate a map.
 
@@ -318,7 +338,7 @@
     ctx.fillRect(0,0,20,20,20);
             `,
             D: `
-    let x = y = 0;
+    x = y = 0;
 
     document.querySelector("html").onkeypress = function(e){
         if(e.key=="w") y--;
@@ -386,7 +406,7 @@ game = {
     ctx = canvas.getContext("2d");
           `,
             N: `
-    let x = y = 0;
+    x = y = 0;
 
     document.querySelector("html").onkeypress = function(e){
         if(e.key=="w") y--;
@@ -433,58 +453,58 @@ function setupCanvas(){
 <script>
             `,
             V: `
-    let tileSize = 64;
-    let numTiles = 9;
-    let uiWidth = 4;
+    tileSize = 64;
+    numTiles = 9;
+    uiWidth = 4;
             `,
             W: `
 
-    let x = y = 0;
+    x = y = 0;
             `,
             X: `
-function draw(){
+    function draw(){
             `,
             Y: `
-    ctx.clearRect(0,0,1000,1000);
-    ctx.fillRect (x*20,y*20,20,20);
+        ctx.clearRect(0,0,1000,1000);
+        ctx.fillRect (x*20,y*20,20,20);
             `,
             Z: `
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
             `,
             AA: `
-}
+    }
             `,
             AB: `
 <script>
-    let tileSize = 64;
-    let numTiles = 9;
-    let uiWidth = 4;
+    tileSize = 64;
+    numTiles = 9;
+    uiWidth = 4;
 
-    let x = y = 0;
+    x = y = 0;
             `,
             AC: `
-    let spritesheet = new Image();
+    spritesheet = new Image();
     spritesheet.src = 'spritesheet.png';
             `,
             AD: `
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
             `,
             AE: `
-    ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
+        ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
             `,
             AF: `
-    ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
+        ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
             `,
             AG: `
-}
+    }
             `,
             AH: `
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
-}
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
+    }
             `,
             AI: `
 function setupCanvas(){

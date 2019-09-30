@@ -104,7 +104,7 @@
         <br><br>
         In 
         <div class="code-container-inline inline"><pre><code class="javascript">startLevel</code></pre></div>,
-        we generate our level and set up the <div class="code-container-inline inline"><pre><code class="javascript">player</code></pre></div>. The <div class="code-container-inline inline"><pre><code class="javascript">player</code></pre></div> gets initalized with 
+        we move over the code that we took out of index.html. Also <div class="code-container-inline inline"><pre><code class="javascript">player</code></pre></div> gets initalized with 
         <div class="code-container-inline inline"><pre><code class="javascript">hp</code></pre></div>
          equal to the value passed in 
         <div class="code-container-inline inline"><pre><code class="javascript">playerHp</code></pre></div>. This value starts as 3, but in a little bit we'll use this function to persist player HP across levels.
@@ -263,7 +263,7 @@
         <div class="code-container-inline inline"><pre><code class="javascript">"px monospace"</code></pre></div>
         might look a little cryptic. We're actually writing a bit of CSS : we specify a font size in "px" units (pixels) and specify the type of font we want, which is "monospace".
         <br><br>
-        We're going to leave the Y position up to the caller, but to make things easier this function will handle X. We're going to draw text in two places basically: justified centered on the title screen and on the far right during play. The 
+        We're going to leave the Y position up to the caller, but to make things easier this function will handle X. We're going to draw text in two places basically: justified centered on the title screen and on the far right (where the UI is) during play. The 
         <div class="code-container-inline inline"><pre><code class="javascript">centered</code></pre></div>
          variable lets us toggle between these two.
         <br><br>
@@ -274,7 +274,7 @@
         When you want to center <em>any</em> element, whether on the canvas or in HTML, the calculation is the same. For X: half the container width minus half the content width. For Y: half the container height minus half the content height. The reason is obvious when you see it:
         <br><br>
 
-        [diagram of centering]
+        <img src="screens/centering.png">
         <br><br>
         This is a good example of where HTML & CSS would be a lot easier to use! For one there are many easy ways to center things in CSS (there weren't for about 20 years but now there certainly are). And for two getting the width or height of an HTML element is very easy. None of this
         <div class="code-container-inline inline"><pre><code class="javascript">measureText</code></pre></div>
@@ -312,7 +312,7 @@
         We're drawing the level number on the UI during play and drawing the name of the game on the title screen. I chose a silly name. I'm sure you can do better.
         <br><br>
         Try it out. I think it's looking good. At this point, the game can be considered a fully playable and complete game. It's just not very interesting yet. We'll get there.
-        <br><br>
+        <img src="screens/title-screen.png">
         In the <a href="stage6.html">next section</a>, we'll be adding treasure and score mechanics.
 	</div>
 
@@ -321,23 +321,23 @@
 			LOADING1:
             `
 <script> 
-    let tileSize = 64;
-    let numTiles = 11;
-    let uiWidth = 4;
-    let level = 1;
-    let maxHp = 6;
+    tileSize = 64;
+    numTiles = 11;
+    uiWidth = 4;
+    level = 1;
+    maxHp = 6;
 
-    let spritesheet = new Image();
+    spritesheet = new Image();
     spritesheet.src = 'spritesheet.png';
             `,
             LOADING2:
             `
     spritesheet.onload = showTitle;
                              
-    let gameState = "loading";  
+    gameState = "loading";  
 
-    let startingHp = 3; 
-    let numLevels = 6;          
+    startingHp = 3; 
+    numLevels = 6;          
             `,
             LOADING3:
             `
@@ -380,7 +380,6 @@
             `,
             LOADING9:
             `
-    let player;
             `,
             LOADING10:
             `  

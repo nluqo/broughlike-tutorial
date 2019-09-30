@@ -93,7 +93,7 @@
         <div class="code-container-inline inline"><pre><code class="javascript">3</code></pre></div>.
         <br><br>
         I'm setting an extra flag called 
-        <div class="code-container-inline inline"><pre><code class="javascript">isPlayer</code></pre></div>.
+        <div class="code-container-inline inline"><pre><code class="javascript">isPlayer</code></pre></div> to dintinguish from other monsters.
         Some people might say this is a little kludgy, but I find this kind of flag very easy to use.
         <br><br>
         Ok, now let's put that player class to use and rip out all our
@@ -209,7 +209,7 @@
         </div>
 
         Check it out. We've got monsters on the map. They aren't doing much besides blocking our path. We'll need some monster AI to make this more interesting.
-        <br><br>
+        <h2>Monster movement</h2>
         I often use a pathfinding algorithm called <strong>A*</strong> to handle monster movement. But take a look at the <a href="https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode" target="_blank">pseudocode</a>. It's hard to get right, even if you've written it before. If you <em>did</em> want to use <strong>A*</strong>, I would strongly recommend a library like rot.js to handle it.
         <br><br>
         Instead we're going to take a shortcut and use "greedy" movement, which simply means trying to get closer on <em>every</em> turn even if it's not the ideal path in the long term. Monsters will try to move closer even when that gets them trapped. Trust me, this will still lead to interesting (but unique) gameplay.
@@ -275,7 +275,7 @@
         and all the monsters will then move.
         <br><br>
         Try out your game and that's exactly what you should see.
-        <br><br>
+        <img src="screens/chasing.gif">
         In the <a href="stage4.html">next section</a>, we're going to get the monsters attacking and fill out the details in our 5 monster implementations.
 	</div>
 
@@ -325,17 +325,19 @@ class Player extends Monster{
         `,
         REPLACEX1:
         `
-    let tileSize = 64;
-    let numTiles = 9;
-    let uiWidth = 4;
+<script>
+    tileSize = 64;
+    numTiles = 9;
+    uiWidth = 4;
+
         `,
         REPLACEX2:
         `
-    let x = y = 0;
+    x = y = 0;
         `,
         REPLACEX3:
         `
-    let spritesheet = new Image();
+    spritesheet = new Image();
     spritesheet.src = 'spritesheet.png';
 
     document.querySelector("html").onkeypress = function(e){
@@ -367,13 +369,13 @@ class Player extends Monster{
         `,
         REPLACEX7:
         `
-    let startingTile = randomPassableTile();
+    startingTile = randomPassableTile();
     x = startingTile.x;
     y = startingTile.y;       
         `,
         REPLACEX8:
         `
-    let player = new Player(randomPassableTile());
+    player = new Player(randomPassableTile());
         `,
         REPLACEDRAW1:
         `
@@ -434,18 +436,18 @@ class Jester extends Monster{
         PRELEVELVAR:
         `
 <script>
-    let tileSize = 64;
-    let numTiles = 9;
-    let uiWidth = 4;
+    tileSize = 64;
+    numTiles = 9;
+    uiWidth = 4;
         `,
         LEVELVAR:
         `
-    let level = 1;
+    level = 1;
         `,
         POSTLEVELVAR:
         `
 
-    let spritesheet = new Image();
+    spritesheet = new Image();
     spritesheet.src = 'spritesheet.png';
         `,
         RANDOMPASSABLE:
@@ -455,7 +457,7 @@ function randomPassableTile(){
     tryTo('get random passable tile', function(){
         let x = randomRange(0,numTiles-1);
         let y = randomRange(0,numTiles-1);
-        tile = tiles[x][y];
+        tile = getTile(x, y);
         return tile.passable && !tile.monster;
     });
     return tile;
@@ -543,11 +545,10 @@ class Monster{
            let newTile = neighbors[0];
            this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
        }
-   }
+    }
         `,
         POSTMONSTERUPDATE:
         `
-
 
     draw(){
         drawSprite(this.sprite, this.tile.x, this.tile.y);
@@ -580,36 +581,35 @@ class Tile{
         `,
         PRETICK:
         `
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    function draw(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-
-        for(let i=0;i<numTiles;i++){
-            for(let j=0;j<numTiles;j++){
-                getTile(i,j).draw();
-            }
+    for(let i=0;i<numTiles;i++){
+        for(let j=0;j<numTiles;j++){
+            getTile(i,j).draw();
         }
-
-
-        for(let i=0;i<monsters.length;i++){
-            monsters[i].draw();
-        }
-
-        player.draw();
     }
+
+
+    for(let i=0;i<monsters.length;i++){
+        monsters[i].draw();
+    }
+
+    player.draw();
+}
 
         `,
         TICK:
         `
-    function tick(){
-        for(let k=monsters.length-1;k>=0;k--){
-            if(!monsters[k].dead){
-                monsters[k].update();
-            }else{
-                monsters.splice(k,1);
-            }
+function tick(){
+    for(let k=monsters.length-1;k>=0;k--){
+        if(!monsters[k].dead){
+            monsters[k].update();
+        }else{
+            monsters.splice(k,1);
         }
     }
+}
         `,
         PREPLAYERTRYMOVE:
         `

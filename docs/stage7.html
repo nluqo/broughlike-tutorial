@@ -78,7 +78,7 @@
         </div>
 
         <br><br>
-        During each draw call, we're also reducing the value of the offsets by one eigth of a tile, which is what produces the sliding animation.
+        During each draw call, we're reducing the value of the offsets by one eigth of a tile, which is what produces the sliding animation.
         <br><br>
         <div class="code-container-inline inline"><pre><code class="javascript">Math.sign()</code></pre></div> produces either -1, 0, or +1 if passed a negative, zero, or positive number respectively. This lets us move in the correct direction if the offset is still non-zero and completely stop altering the offset if it is zero.
         <br><br>
@@ -271,8 +271,9 @@
             <pre><code id="contentNEWLEVELSOUND2" class="javascript add"></code></pre>
             <pre><code id="contentNEWLEVELSOUND3" class="javascript"></code></pre>
         </div>
-
-        Now the game is really starting to look and sound like something nice! For our last addition, we'll add spells in the <a href="stage8.html">next section</a>.
+        Now the game is really starting to look and sound like something nice!
+        <img src="screens/animation23.gif">
+        For our last addition, we'll add spells in the <a href="stage8.html">next section</a>.
 	</div>
 
 	<script>
@@ -354,7 +355,7 @@ class Monster{
     drawHp(){
         for(let i=0;i<this.hp;i++){
             drawSprite(
-                10,
+                9,
             `,
             DISPLAYPOSITION11: `
                 this.tile.x + (i%3)*(5/16),
@@ -394,16 +395,16 @@ class Monster{
     }
             `,
             SHAKE1: `
-    let gameState = "loading";  
+    gameState = "loading";  
 
-    let startingHp = 3; 
-    let numLevels = 6;     
+    startingHp = 3; 
+    numLevels = 6;     
 
             `,
             SHAKE2: `
-    let shakeAmount = 0;       
-    let shakeX = 0;                 
-    let shakeY = 0;                  
+    shakeAmount = 0;       
+    shakeX = 0;                 
+    shakeY = 0;                  
             `,
             SHAKE3: `
     tryMove(dx, dy){
@@ -432,52 +433,50 @@ class Monster{
     }
             `,
             SHAKE6: `
-    function drawSprite(sprite, x, y){
-        ctx.drawImage(
-            spritesheet,
-            sprite*16,
-            0,
-            16,
-            16,
-            `,
-            SHAKE7: `
-            x*tileSize,
-            y*tileSize,
-            `,
-            SHAKE8: `
-            x*tileSize + shakeX,
-            y*tileSize + shakeY,
-            `,
-            SHAKE9: `
-            tileSize,
-            tileSize
-        );
-    }
+function drawSprite(sprite, x, y){
+    ctx.drawImage(
+        spritesheet,
+        sprite*16,
+        0,
+        16,
+        16,
+        `,
+        SHAKE7: `
+        x*tileSize,
+        y*tileSize,
+        `,
+        SHAKE8: `
+        x*tileSize + shakeX,
+        y*tileSize + shakeY,
+        `,
+        SHAKE9: `
+        tileSize,
+        tileSize
+    );
+}
 
-    function draw(){
-        if(gameState == "running" || gameState == "dead"){
-            ctx.clearRect(0,0,canvas.width,canvas.height);   
+function draw(){
+    if(gameState == "running" || gameState == "dead"){
+        ctx.clearRect(0,0,canvas.width,canvas.height);   
 
             `,
             SHAKE10: `
-            screenshake();             
+        screenshake();             
             `,
             SHAKE11: `
-    function screenshake(){
-        if(shakeAmount){
-            shakeAmount--;
-        }
-        let shakeAngle = Math.random()*Math.PI*2;
-        shakeX = Math.round(Math.cos(shakeAngle)*shakeAmount);
-        shakeY = Math.round(Math.sin(shakeAngle)*shakeAmount);
+function screenshake(){
+    if(shakeAmount){
+        shakeAmount--;
     }
+    let shakeAngle = Math.random()*Math.PI*2;
+    shakeX = Math.round(Math.cos(shakeAngle)*shakeAmount);
+    shakeY = Math.round(Math.sin(shakeAngle)*shakeAmount);
+}
             `,
             INITSOUNDS1: `
     setInterval(draw, 15);
 
     setupCanvas();
-
-    let player;
 
             `,
             INITSOUNDS2: `
