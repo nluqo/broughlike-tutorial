@@ -63,7 +63,7 @@ spells = {
                 }
             }
         }
-        player.tile.setEffect(15);
+        player.tile.setEffect(13);
         player.heal(2);
     },
     KINGMAKER: function(){
