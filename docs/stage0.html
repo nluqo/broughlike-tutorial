@@ -6,16 +6,10 @@
 </head>
 <body>
 	<div id="outer">
-		<h1>JavaScript Broughlike Tutorial</h1>
-		This is a tutorial about writing a broughlike (a small, roguelike similar to <a href="https://store.steampowered.com/app/274700/868HACK/" target="_blank">868-HACK</a> or <a href="https://itunes.apple.com/us/app/cinco-paus/id1249999336" target="_blank">Cinco Paus</a>) from scratch in JavaScript.
-		<div class="centered">
-			<img src="screens/brough-screen.png" alt="Screenshot of tutorial">
-		</div>
-		<h2>Why this tutorial? Why broughlikes? Why JavaScript?</h2>
-		The rest of this page provides answers and gives a very brief introduction to some JavaScript features we'll be using.
-		<br><br>
-		If you want to make more traditional roguelikes with JavaScript and rot.js, start <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial" target="_blank">here</a>. If you're looking for a good Unity starter for making broughlikes, <a href="https://github.com/st33d/broglike">try this</a>.
-
+        <div class="header">
+            <a href="index.html">JavaScript Broughlike Tutorial</a>
+        </div>
+		<h1>Stage 0 - Introduction</h1>
 		<h2>What's different about this tutorial?</h2>
 		<ol>
 			<li>You already have all the software you need: a web browser, a text editor, and an image editor.</li>
@@ -30,7 +24,7 @@
 		<ul>
 			<li>a small map with easily modifiable grid size</li>
 			<li>multiple levels</li>
-			<li>monsters</li>
+			<li>5 unique monsters</li>
 			<li>spells</li>
 			<li>collectible treasure</li>
 			<li>high scores, preserved across browser launches</li>
@@ -39,7 +33,7 @@
 		</ul>
 		We're going to do all that in less than 850 lines of code.
 		<br><br>
-		A warning up front: I'm <em>not</em> going to focus on best practices here. I'm shooting for the shortest and simplest code. Quick and dirty.
+		A warning up front: I'm <em>not</em> going to focus on best practices here. I'm shooting for the shortest and simplest code. For example, I plan to use tons of global variables (generally a terrible idea, but they make things easier on smaller projects). I trust that you can learn the best practices later.
 
 		<h2>What the hell is a broughlike and why do I care?</h2>
 
@@ -47,9 +41,8 @@
 
 		<ul>
 			<li>Tiny grids</li>
-			<li>Parity mechanics</li>
 			<li>Low randomness</li>
-			<li>Highly replability despite simple rules</li>
+			<li>High replability despite simple rules</li>
 		</ul>
 
 		<div class="centered">
@@ -60,20 +53,20 @@
 		<br><br>
 		So these games are very easy to program, but hard to design. A perfect fit if you suspect you might be a talented designer, but a novice programmer. Also great for game jams; 868-HACK started out in the Seven Day Roguelike Challenge of 2013!
 		<br><br>
-		A basic level of programming knowledge will be helpful, but we'll cover a bit of JavaScript before starting (feel free to skip to the next section if you're already comfortable with JavaScript.)
+		A basic level of programming knowledge will be helpful, but we'll cover a bit of JavaScript before starting (feel free to skip to the <a href="stage1.html">next section</a> if you're already comfortable with JavaScript.)
 
 		<h2>Why JavaScript?</h2>
-		I was inspired to create this tutorial after struggling with and failing to complete the Unity <a href="https://unity3d.com/learn/tutorials/s/2d-roguelike-tutorial">2D roguelike tutorial</a>. This was embarrassing because I've been programming for over a decade and have made a bunch of roguelikes and even sold one, but that Unity tutorial was simply too much. The steps required constant cross referencing with a Unity 4 to 5 upgrade guide, they contained random gotchas that broke everything, and there was a bunch of completely unnecessary junk thrown on like box colliders and rigid body physics.
+		I was inspired to create this tutorial after struggling with and failing to complete the Unity <a href="https://unity3d.com/learn/tutorials/s/2d-roguelike-tutorial" target="_blank">2D roguelike tutorial</a>. This was embarrassing because I've been programming for over a decade and have made a bunch of roguelikes and even <a href="https://store.steampowered.com/app/497800/Golden_Krone_Hotel/" target="_blank">sold one</a>, but that Unity tutorial was simply too much. The steps required constant cross referencing with a Unity 4 to 5 upgrade guide, they contained random gotchas that broke everything, and there was a bunch of completely unnecessary junk thrown on like box colliders and rigid body physics.
 		<br><br>
 		Now, I'm not here to tell you that Unity is bad. But if you're trying to learn how to make games, I think JavaScript is a <strong>great starting point</strong>.
 		<ul>
-			<li>It's accessible. You have all the tools already. You can start tinkering with JS in this very tab. You have a fully featured debugger too.</li>
-			<li>No compile times. Refresh and see changes immediately.</li>
+			<li>It's accessible. You can start tinkering with JS in this very tab. You have a fully featured debugger too.</li>
+			<li>No compile times. Refresh and see changes immediately. This is HUGE for learning and sustained motivation</li>
 			<li>JavaScript objects and arrays are light years ahead of collection types in other languages as far as brevity, ease of use, and utility.</li>
 			<li>JavaScript lets you get away with so much (weak types, undefined properties, type coercion). You can lament the lack of safety or embrace it and become super productive.</li>
 		</ul>
 		<h2>Some JavaScript basics</h2>
-		While on this page, open the Console in your browser dev tools and follow along. Open the tools with either: Ctrl+Shift+I <em>or</em> right click and "Inspect" <em>or</em> from your browser menu). Type commands into the Console, press enter, and see what you get.
+		While on this page, open the Console in your browser dev tools and follow along. Open the tools with either: Ctrl+Shift+I <em>or</em> right click and "Inspect" <em>or</em> from your browser menu). Type commands into the <strong>Console</strong>, press enter, and see what you get.
 
 		<h3>VARIABLES</h3>
 		<div class="code-container-inline"><pre><code id="contentA" class="javascript"></code></pre></div>
@@ -86,7 +79,7 @@
 		<br><br>
 		<div class="code-container-inline"><pre><code id="contentC" class="javascript"></code></pre></div>
 		<br>
-		Declares a global variable (assuming <div class="code-container-inline inline"><pre><code class="javascript inline">balloons</code></pre></div> is not already declared).
+		Declares a global variable (assuming <div class="code-container-inline inline"><pre><code class="javascript inline">balloons</code></pre></div> is not already declared). Global variables will be accessible everywhere.
 
 		<h3>TYPES</h3>
 		You don't have to specify a variable's type, though each will still have a type under the hood.
@@ -156,7 +149,7 @@
 		<div class="code-container-inline inline"><pre><code class="javascript inline">else</code></pre></div>
 		block is executed.
 		<br><br>
-		If you were to run this several times, you would see that the first block is entered only 25% of the time.
+		If you were to run this several times, you would see that the first block is entered only about 25% of the time.
 		<br><br>
 		We'll also use two other conditionals: an inline version of
 		<div class="code-container-inline inline"><pre><code class="javascript inline">if</code></pre></div>
@@ -208,7 +201,12 @@
 		<div class="code-container"><pre><code id="contentQ" class="javascript"></code></pre></div>
 		Here we're creating an array, adding an element with push, iterating over the array, and uppercasing each element.
 		<br><br>
-		JavaScript includes a bunch of really nice helper methods on arrays such as filter, includes, and forEach that we'll be using throughout the tutorial.
+		JavaScript includes a bunch of really nice helper methods on arrays such as
+		<div class="code-container-inline inline"><pre><code class="javascript inline">filter</code></pre></div>,
+		<div class="code-container-inline inline"><pre><code class="javascript inline">includes</code></pre></div>,
+		and 
+		<div class="code-container-inline inline"><pre><code class="javascript inline">forEach</code></pre></div>
+		that we'll be using throughout the tutorial.
 
 
 		<h3>OBJECTS</h3>
@@ -226,12 +224,18 @@
 		<div class="code-container"><pre><code id="contentS" class="javascript"></code></pre></div>
 
 		<ul>
-			<li>You can make a specialized version of another class with "extends". Later we'll make a Monster class and extend it to make our specific monster type</li>
-			<li>You make a new instance of a class with the "new" operator, which calls the constructor method.</li>
-			<li>The "this" keyword is a reference to the current instance.</li>
+			<li>You can make a specialized version of another class with
+				<div class="code-container-inline inline"><pre><code class="javascript inline">extends</code></pre></div>.
+				Later we'll make a Monster class and extend it to make our specific monster type</li>
+			<li>You make a new instance of a class with the
+			<div class="code-container-inline inline"><pre><code class="javascript inline">new</code></pre></div>
+			operator, which calls the constructor method.</li>
+			<li>The
+			<div class="code-container-inline inline"><pre><code class="javascript inline">this</code></pre></div>
+			keyword is a reference to the current instance.</li>
 		</ul>
 		<br>
-		OK, let's get started then. In the next section, we'll figure out how to draw to the screen in just 6 lines of code.
+		OK, let's get started then. In the <a href="stage1.html">next section</a>, we'll figure out how to draw to the screen in just 6 lines of code.
 	</div>
 
 	<script>
